@@ -1,4 +1,6 @@
 #include "pemsa/cart/pemsa_cartridge_module.hpp"
+#include "pemsa/memory/pemsa_memory_module.hpp"
+#include "pemsa/pemsa_emulator.hpp"
 
 #include <iostream>
 
@@ -42,13 +44,17 @@ void PemsaCartridgeModule::gameLoop() {
 	bool highFps = this->globalExists("_update60");
 
 	while (true) {
-		/*if (highFps) {
+		if (highFps) {
 			this->callIfExists("_update60");
 		} else {
 			this->callIfExists("_update");
 		}
 
-		this->callIfExists("_draw");*/
+		this->callIfExists("_draw");
+
+		uint8_t* ram = this->emulator->getMemoryModule()->ram;
+
+		ram[PEMSA_RAM_SCREEN + rand() % 0x2000] = rand() % 256;
 
 		std::unique_lock<std::mutex> uniqueLock(this->mutex);
 		this->lock.wait(uniqueLock);

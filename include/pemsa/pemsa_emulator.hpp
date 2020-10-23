@@ -6,8 +6,9 @@
 #include "pemsa/audio/pemsa_audio_module.hpp"
 #include "pemsa/input/pemsa_input_module.hpp"
 #include "pemsa/cart/pemsa_cartridge_module.hpp"
+#include "pemsa/memory/pemsa_memory_module.hpp"
 
-#define PEMSA_MODULE_COUNT 4
+#define PEMSA_MODULE_COUNT 5
 
 class PemsaEmulator {
 	public:
@@ -20,6 +21,7 @@ class PemsaEmulator {
 		PemsaAudioModule* getAudioModule();
 		PemsaInputModule* getInputModule();
 		PemsaCartridgeModule* getCartridgeModule();
+		PemsaMemoryModule* getMemoryModule();
 	private:
 		PemsaModule* modules[PEMSA_MODULE_COUNT];
 
@@ -27,6 +29,7 @@ class PemsaEmulator {
 		PemsaAudioModule* audioModule;
 		PemsaInputModule* inputModule;
 		PemsaCartridgeModule* cartridgeModule;
+		PemsaMemoryModule* memoryModule;
 };
 
 #endif

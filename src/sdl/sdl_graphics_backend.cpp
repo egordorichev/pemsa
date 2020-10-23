@@ -1,3 +1,6 @@
+#include "pemsa/memory/pemsa_memory_module.hpp"
+#include "pemsa/pemsa_emulator.hpp"
+
 #include "sdl/sdl_graphics_backend.hpp"
 
 static SDL_Color palette[] = {
@@ -19,6 +22,17 @@ static SDL_Color palette[] = {
 	{ 255, 204, 170, 255 }
 };
 
+#define UNPACK_COLOR(i)	(palette[i].r << 24) + (palette[i].g << 16) + (palette[i].b << 8) + 255
+
+static int int_palette[] = {
+	UNPACK_COLOR(0), UNPACK_COLOR(1), UNPACK_COLOR(2), UNPACK_COLOR(3),
+	UNPACK_COLOR(4), UNPACK_COLOR(5), UNPACK_COLOR(6), UNPACK_COLOR(7),
+	UNPACK_COLOR(8), UNPACK_COLOR(9), UNPACK_COLOR(10), UNPACK_COLOR(11),
+	UNPACK_COLOR(12), UNPACK_COLOR(13), UNPACK_COLOR(14), UNPACK_COLOR(15)
+};
+
+#undef UNPACK_COLOR
+
 SdlGraphicsBackend::SdlGraphicsBackend(SDL_Window *window) {
 	this->window = window;
 }
@@ -33,12 +47,14 @@ void SdlGraphicsBackend::createSurface() {
 
 void SdlGraphicsBackend::flip() {
 	Uint32* pixels = (Uint32*) this->surface->pixels;
+	uint8_t* ram = this->emulator->getMemoryModule()->ram;
 
-	SDL_Color color = palette[(int) (SDL_GetTicks() / 1000) % 16];
-	int c = (color.r << 24) + (color.g << 16) + (color.b << 8) + 255;
+	for (int i = 0; i < 0x2000; i++) {
+		uint8_t val = ram[i + PEMSA_RAM_SCREEN];
 
-	for (int i = 0; i < 128 * 128; i++) {
-		pixels[i] = c;
+		// TODO: screen colors
+		pixels[i * 2] = int_palette[val & 0x0f];
+		pixels[i * 2 + 1] = int_palette[val >> 4];
 	}
 }
 
