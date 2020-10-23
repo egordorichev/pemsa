@@ -1,9 +1,5 @@
-#include "sdl/sdl_graphics_backend.hpp"
+#include "sdl/sdl_input_backend.hpp"
 
-void SdlGraphicsBackend::createSurface() {
-
-}
-
-void SdlGraphicsBackend::flip() {
-
+bool SdlInputBackend::isButtonDown(int i, int p) {
+	return false; // TODO
 }

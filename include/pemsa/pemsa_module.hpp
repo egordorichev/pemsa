@@ -12,7 +12,7 @@ class PemsaModule {
 		virtual void init();
 		virtual void update();
 		virtual void onCartridgeLoaded();
-	private:
+	protected:
 		PemsaEmulator* emulator;
 };
 

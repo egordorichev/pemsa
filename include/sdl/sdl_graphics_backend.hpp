@@ -2,11 +2,20 @@
 #define SDL_GRAPHICS_BACKEND_HPP
 
 #include "pemsa/graphics/pemsa_graphics_backend.hpp"
+#include "SDL2/SDL.h"
 
 class SdlGraphicsBackend : public PemsaGraphicsBackend {
 	public:
+		SdlGraphicsBackend(SDL_Window* window);
+		~SdlGraphicsBackend();
+
 		void createSurface() override;
 		void flip() override;
+
+		SDL_Surface* getSurface();
+	private:
+		SDL_Window* window;
+		SDL_Surface* surface;
 };
 
 #endif
