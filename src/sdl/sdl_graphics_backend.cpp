@@ -2,7 +2,7 @@
 
 static SDL_Color palette[] = {
 	{ 0, 0, 0, 255 },
-	{ 29, 43, 8, 255 },
+	{ 29, 43, 83, 255 },
 	{ 126, 37, 83, 255 },
 	{ 0, 135, 81, 255 },
 	{ 171, 82, 54, 255 },
@@ -32,19 +32,16 @@ void SdlGraphicsBackend::createSurface() {
 }
 
 void SdlGraphicsBackend::flip() {
+	Uint32* pixels = (Uint32*) this->surface->pixels;
 
+	SDL_Color color = palette[(int) (SDL_GetTicks() / 1000) % 16];
+	int c = (color.r << 24) + (color.g << 16) + (color.b << 8) + 255;
+
+	for (int i = 0; i < 128 * 128; i++) {
+		pixels[i] = c;
+	}
 }
 
 SDL_Surface *SdlGraphicsBackend::getSurface() {
-	Uint32* pixels = (Uint32*) this->surface->pixels;
-
-	// memset(pixels, 0, 128 * 128 * 4);
-
-	int x = rand() % 128;
-	int y = rand() % 128;
-
-	SDL_Color color = palette[rand() % 16];
-	pixels[x + y * 128] = (color.r << 24) + (color.g << 16) + (color.b << 8) + 255;
-
 	return this->surface;
 }
