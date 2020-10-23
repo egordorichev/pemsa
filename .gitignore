@@ -1,0 +1,8 @@
+dist/
+cmake-build*
+CMakeC*
+Makefile
+cmake-install*
+*.so
+*.a
+
