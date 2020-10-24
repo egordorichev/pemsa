@@ -105,6 +105,51 @@ static int line(lua_State* state) {
 	return 0;
 }
 
+static int rect(lua_State* state) {
+	int x0 = round(luaL_checknumber(state, 1));
+	int y0 = round(luaL_checknumber(state, 2));
+	int x1 = round(luaL_checknumber(state, 3));
+	int y1 = round(luaL_checknumber(state, 3));
+
+	// todo: default from drawstate
+	int c = (int) luaL_optnumber(state, 5, 0) % 16;
+
+	plot_line(x0, y0, x1, y0, c);
+	plot_line(x0, y1, x1, y1, c);
+	plot_line(x0, y0, x0, y1, c);
+	plot_line(x1, y0, x1, y1, c);
+
+	return 0;
+}
+
+static int rectfill(lua_State* state) {
+	int x0 = round(luaL_checknumber(state, 1));
+	int y0 = round(luaL_checknumber(state, 2));
+	int x1 = round(luaL_checknumber(state, 3));
+	int y1 = round(luaL_checknumber(state, 3));
+
+	if (x0 > x1) {
+		swap(&x0, &x1);
+	}
+
+	if (y0 > y1) {
+		swap(&y0, &y1);
+	}
+
+	// todo: default from drawstate
+	int c = (int) luaL_optnumber(state, 5, 0) % 16;
+	PemsaMemoryModule* mem = emulator->getMemoryModule();
+
+	for (int y = y0; y <= y1; y++) {
+		for (int x = x0; x <= x1; x++) {
+			mem->setPixel(x, y, c, PEMSA_RAM_SCREEN);
+		}
+	}
+
+	return 0;
+}
+
+
 static int circ(lua_State* state) {
 	int ox = round(luaL_checknumber(state, 1));
 	int oy = round(luaL_checknumber(state, 2));
@@ -196,6 +241,8 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "cls", cls);
 	lua_register(state, "pset", pset);
 	lua_register(state, "line", line);
+	lua_register(state, "rect", rect);
+	lua_register(state, "rectfill", rectfill);
 	lua_register(state, "circ", circ);
 	lua_register(state, "circfill", circfill);
 }

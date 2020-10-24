@@ -10,7 +10,7 @@ function _draw()
 		local x = cos(a) * d + 64
 		local y = sin(a) * d + 64
 
-		line(x, y, 64, 64, i % 8 + 7)
+		rect(x, y, 64, 64, i % 8 + 7)
 	end
 end
 
