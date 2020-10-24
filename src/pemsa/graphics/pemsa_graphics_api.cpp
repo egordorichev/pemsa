@@ -49,6 +49,15 @@ static int pset(lua_State* state) {
 	return 0;
 }
 
+static int pget(lua_State* state) {
+	int x = round(luaL_checknumber(state, 1));
+	int y = round(luaL_checknumber(state, 2));
+
+	// TODO: take camera/clip/screen bounds into the account
+	lua_pushnumber(state, emulator->getMemoryModule()->getPixel(x, y, PEMSA_RAM_SCREEN));
+	return 1;
+}
+
 static inline void swap(int* a, int* b) {
 	int tmp = *a;
 	*a = *b;
@@ -96,7 +105,7 @@ static int line(lua_State* state) {
 	int x0 = round(luaL_checknumber(state, 1));
 	int y0 = round(luaL_checknumber(state, 2));
 	int x1 = round(luaL_checknumber(state, 3));
-	int y1 = round(luaL_checknumber(state, 3));
+	int y1 = round(luaL_checknumber(state, 4));
 
 	// todo: default from drawstate
 	int c = (int) luaL_optnumber(state, 5, 0) % 16;
@@ -148,7 +157,6 @@ static int rectfill(lua_State* state) {
 
 	return 0;
 }
-
 
 static int circ(lua_State* state) {
 	int ox = round(luaL_checknumber(state, 1));
@@ -240,6 +248,7 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "flip", flip);
 	lua_register(state, "cls", cls);
 	lua_register(state, "pset", pset);
+	lua_register(state, "pget", pget);
 	lua_register(state, "line", line);
 	lua_register(state, "rect", rect);
 	lua_register(state, "rectfill", rectfill);

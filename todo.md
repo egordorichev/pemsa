@@ -7,11 +7,8 @@
 * Pget
 * Spr
 * Sspr
-* Rect + rectfill
-* Line
-* Circ + circfill
 * Oval + ovalfill
-* filp
+* fillp
 * pal
 * palt
 * tline???
@@ -21,6 +18,7 @@
 * btn
 * btnp
 * backend implementation (we need gamepad + multiplayer support for sure)
+* emoji support
 
 # audio
 

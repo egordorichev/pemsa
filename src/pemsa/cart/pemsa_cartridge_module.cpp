@@ -55,6 +55,8 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 	std::stringstream code;
 	int cart_state = -1;
+	int index = 0;
+	uint8_t* rom = this->cart->rom;
 
 	while (std::getline(file, line)) {
 		const char* cline = line.c_str();
@@ -105,6 +107,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 			}
 
 			if (cart_state != old_state) {
+				index = 0;
 				continue;
 			}
 		}
@@ -112,6 +115,15 @@ bool PemsaCartridgeModule::load(const char *path) {
 		switch (cart_state) {
 			case STATE_LUA: {
 				code << line << "\n";
+				break;
+			}
+
+			case STATE_GFX: {
+				for (char c : line) {
+					rom[PEMSA_ROM_GFX + index / 2] = SET_HALF(rom[PEMSA_ROM_GFX + index / 2], HEX_TO_INT(c), index % 2 == 0);
+					index++;
+				}
+
 				break;
 			}
 
