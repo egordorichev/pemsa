@@ -25,7 +25,9 @@ int main(int argc, const char** argv) {
 	}
 
 	SdlGraphicsBackend* graphics = new SdlGraphicsBackend(window);
-	PemsaEmulator emulator(graphics, new SdlAudioBackend(), new SdlInputBackend());
+	SdlInputBackend* input = new SdlInputBackend();
+
+	PemsaEmulator emulator(graphics, new SdlAudioBackend(), input);
 
 	if (!emulator.getCartridgeModule()->load(cart)) {
 		std::cerr << "Failed to load the cart " << cart << "\n";
@@ -53,6 +55,8 @@ int main(int argc, const char** argv) {
 		if (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				running = false;
+			} else {
+				input->handleEvent(&event);
 			}
 		}
 

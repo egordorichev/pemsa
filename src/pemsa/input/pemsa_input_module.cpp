@@ -7,3 +7,7 @@ PemsaInputModule::PemsaInputModule(PemsaEmulator* emulator, PemsaInputBackend* b
 PemsaInputModule::~PemsaInputModule() {
 	delete this->backend;
 }
+
+bool PemsaInputModule::isDown(int button, int player) {
+	return this->backend->isButtonDown(button, player);
+}

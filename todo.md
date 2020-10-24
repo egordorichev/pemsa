@@ -4,7 +4,6 @@
 
 # graphics
 
-* Pget
 * Spr
 * Sspr
 * Oval + ovalfill

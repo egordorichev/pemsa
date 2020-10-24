@@ -1,16 +1,30 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-sset(1, 1, 8)
-function _draw()
-	for x = 0, 7 do
-		for y = 0, 7 do
-			pset(x, y, sget(x, y))
-		end
+local x, y = 64, 64
+
+function _update60()
+	if btn(0) then
+		x = x - 1
 	end
+
+	if btn(1) then
+    x = x - 1
+  end
+
+	if btn(2) then
+    y = y - 1
+  end
+
+	if btn(3) then
+    y = y + 1
+  end
 end
 
-function _update60() end
+function _draw()
+	cls()
+	pset(x, y, 7)
+end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
