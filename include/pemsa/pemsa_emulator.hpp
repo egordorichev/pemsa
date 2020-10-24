@@ -32,4 +32,7 @@ class PemsaEmulator {
 		PemsaMemoryModule* memoryModule;
 };
 
+void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state);
+void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state);
+
 #endif

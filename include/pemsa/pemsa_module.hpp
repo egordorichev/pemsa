@@ -10,7 +10,7 @@ class PemsaModule {
 
 		virtual void defineApi(lua_State* state);
 		virtual void init();
-		virtual void update();
+		virtual void update(double dt);
 		virtual void onCartridgeLoaded();
 	protected:
 		PemsaEmulator* emulator;

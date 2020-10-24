@@ -10,7 +10,7 @@ class PemsaGraphicsModule : public PemsaModule {
 		PemsaGraphicsModule(PemsaEmulator* emulator, PemsaGraphicsBackend* backend);
 		~PemsaGraphicsModule();
 
-		void update() override;
+		void update(double dt) override;
 	private:
 		PemsaGraphicsBackend* backend;
 };

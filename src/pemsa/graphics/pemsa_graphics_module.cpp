@@ -12,7 +12,7 @@ PemsaGraphicsModule::~PemsaGraphicsModule() {
 	delete this->backend;
 }
 
-void PemsaGraphicsModule::update() {
+void PemsaGraphicsModule::update(double dt) {
 	PemsaCartridgeModule* cartridgeModule = this->emulator->getCartridgeModule();
 	std::unique_lock<std::mutex> uniqueLock(*cartridgeModule->getMutex());
 

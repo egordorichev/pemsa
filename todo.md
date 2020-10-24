@@ -1,6 +1,5 @@
 # cart
 
-* Basic cart loading for easier development
 * Lua code patching
 
 # graphics

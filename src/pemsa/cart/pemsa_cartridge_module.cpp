@@ -24,6 +24,12 @@ PemsaCartridgeModule::~PemsaCartridgeModule() {
 	this->cleanupCart();
 }
 
+void PemsaCartridgeModule::update(double dt) {
+	if (this->cart != nullptr) {
+		this->cart->time += dt;
+	}
+}
+
 bool PemsaCartridgeModule::load(const char *path) {
 	std::ifstream file(path);
 
@@ -129,6 +135,9 @@ bool PemsaCartridgeModule::load(const char *path) {
 	this->cart->code = code_cstring;
 
 	pemsa_open_graphics_api(emulator, state);
+	pemsa_open_system_api(emulator, state);
+	pemsa_open_math_api(emulator, state);
+
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
 
 	return true;
@@ -140,6 +149,10 @@ std::condition_variable *PemsaCartridgeModule::getLock() {
 
 std::mutex *PemsaCartridgeModule::getMutex() {
 	return &this->mutex;
+}
+
+PemsaCartridge *PemsaCartridgeModule::getCart() {
+	return this->cart;
 }
 
 void PemsaCartridgeModule::gameLoop() {

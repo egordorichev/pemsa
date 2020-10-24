@@ -13,8 +13,10 @@ class PemsaCartridgeModule : public PemsaModule {
 		PemsaCartridgeModule(PemsaEmulator* emulator);
 		~PemsaCartridgeModule();
 
+		void update(double dt) override;
 		bool load(const char* path);
 
+		PemsaCartridge* getCart();
 		std::condition_variable* getLock();
 		std::mutex* getMutex();
 	private:

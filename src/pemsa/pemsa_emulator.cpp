@@ -20,7 +20,7 @@ PemsaEmulator::~PemsaEmulator() {
 
 void PemsaEmulator::update(double dt) {
 	for (int i = 0; i < PEMSA_MODULE_COUNT; i++) {
-		this->modules[i]->update();
+		this->modules[i]->update(dt);
 	}
 }
 

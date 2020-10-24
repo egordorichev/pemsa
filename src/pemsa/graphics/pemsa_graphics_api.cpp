@@ -2,6 +2,7 @@
 #include "pemsa/pemsa_emulator.hpp"
 
 #include <cmath>
+#include <cstring>
 
 /*
  * I'm sorry to myself and whoever is reading this, but this is literally the only way
@@ -17,6 +18,14 @@ static int flip(lua_State* state) {
 	std::unique_lock<std::mutex> uniqueLock(*cartridgeModule->getMutex());
 	cartridgeModule->getLock()->wait(uniqueLock);
 
+	return 0;
+}
+
+static int cls(lua_State* state) {
+	// todo: take default color from drawstate
+	int color = luaL_optnumber(state, 1, 0);
+
+	memset(emulator->getMemoryModule()->ram + PEMSA_RAM_SCREEN, (color << 4) + color, 0x2000);
 	return 0;
 }
 
@@ -44,5 +53,6 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
 	lua_register(state, "flip", flip);
+	lua_register(state, "cls", cls);
 	lua_register(state, "pset", pset);
 }

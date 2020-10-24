@@ -23,6 +23,8 @@ struct PemsaCartridge {
 	const char* fullPath;
 	const char* cartDataId;
 
+	double time;
+
 	uint8_t rom[PEMSA_CART_ROM_SIZE];
 	uint8_t cartData[PEMSA_CART_DATA_SIZE];
 };
