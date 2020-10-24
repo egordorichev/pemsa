@@ -34,7 +34,7 @@ static int pset(lua_State* state) {
 	}
 
 	// TODO: take camera/clip/screen bounds into the account
-	emulator->getMemoryModule()->setPixel(x, y, c % 16);
+	emulator->getMemoryModule()->setPixel(x, y, c % 16, PEMSA_RAM_SCREEN);
 
 	// TODO: update drawcolor
 	return 0;

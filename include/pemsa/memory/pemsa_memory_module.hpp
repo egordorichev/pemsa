@@ -36,7 +36,7 @@ class PemsaMemoryModule : public PemsaModule {
 	public:
 		PemsaMemoryModule(PemsaEmulator* emulator);
 
-		void setPixel(int x, int y, int c);
+		void setPixel(int x, int y, int c, int region);
 
 		// Don't kill me for using a public field, PERFORMANCE
 		uint8_t ram[PEMSA_RAM_END];

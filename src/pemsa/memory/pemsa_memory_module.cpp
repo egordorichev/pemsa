@@ -5,8 +5,8 @@ PemsaMemoryModule::PemsaMemoryModule(PemsaEmulator *emulator) : PemsaModule(emul
 	memset(this->ram, 0, PEMSA_RAM_END);
 }
 
-void PemsaMemoryModule::setPixel(int x, int y, int c) {
-	int index = (((y << 7) + x) >> 1) + PEMSA_RAM_SCREEN;
+void PemsaMemoryModule::setPixel(int x, int y, int c, int region) {
+	int index = (((y << 7) + x) >> 1) + region;
 
 	// todo: count clip
 

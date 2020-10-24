@@ -1,17 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-function _draw()
-
-	cls()
-
-	camera(-10, -10)
-	
-	for i=0,400 do
-		circfill(64, 64, 32)
-		print(pget(64, 64), 0, 0)
-	end
-	
+while true do
+    pset(1, 1, 10)
+    flip()
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

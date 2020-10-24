@@ -3,6 +3,18 @@
 #include "pemsa/pemsa_emulator.hpp"
 
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <filesystem>
+
+#define STATE_LUA 0
+#define STATE_GFX 1
+#define STATE_GFF 2
+#define STATE_MAP 3
+#define STATE_SFX 4
+#define STATE_MUSIC 5
+#define STATE_LABEL 6
 
 PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator) : PemsaModule(emulator) {
 
@@ -13,16 +25,110 @@ PemsaCartridgeModule::~PemsaCartridgeModule() {
 }
 
 bool PemsaCartridgeModule::load(const char *path) {
+	std::ifstream file(path);
+
+	if (file.bad()) {
+		std::cerr << "Failed to open the file\n";
+		return false;
+	}
+
+	std::string line;
+
+	if (!std::getline(file, line) || memcmp(line.c_str(), "pico-8 cartridge", 16) != 0) {
+		std::cerr << "Invalid file header\n";
+		return false;
+	}
+
 	this->cart = new PemsaCartridge();
+
+	if (!std::getline(file, line) || memcmp(line.c_str(), "version", 7) != 0) {
+		// TODO: read version from the line and put it in cart rom
+		std::cerr << "Invalid file header\n";
+		return false;
+	}
+
+	std::stringstream code;
+	int cart_state = -1;
+
+	while (std::getline(file, line)) {
+		const char* cline = line.c_str();
+		size_t length = line.size();
+
+		// Smallest label is __lua__ (7 chars)
+		if (length > 6 && memcmp(cline, "__", 2) == 0) {
+			int old_state = cart_state;
+			// Skip the __?
+			cline += 3;
+
+			switch (cline[-1]) {
+				case 'l': {
+					if (memcmp(cline, "ua__", 4) == 0) {
+						cart_state = STATE_LUA;
+					} else if (memcmp(cline, "usic__", 6) == 0) {
+						cart_state = STATE_MUSIC;
+					}
+
+					break;
+				}
+
+				case 'g': {
+					if (memcmp(cline, "fx__", 4) == 0) {
+						cart_state = STATE_GFX;
+					} else if (memcmp(cline, "ff__", 4) == 0) {
+						cart_state = STATE_GFF;
+					}
+
+					break;
+				}
+
+				case 'm': {
+					if (memcmp(cline, "ap__", 4) == 0) {
+						cart_state = STATE_MAP;
+					}
+
+					break;
+				}
+
+				case 's': {
+					if (memcmp(cline, "fx__", 4) == 0) {
+						cart_state = STATE_SFX;
+					}
+
+					break;
+				}
+			}
+
+			if (cart_state != old_state) {
+				continue;
+			}
+		}
+
+		switch (cart_state) {
+			case STATE_LUA: {
+				code << line << "\n";
+				break;
+			}
+
+			default: {
+
+			}
+		}
+	}
+
 	lua_State* state = luaL_newstate();
 
 	this->cart->state = state;
-	this->cart->cartDataId = "test";
+	this->cart->cartDataId = std::filesystem::path(path).stem().c_str();
 	this->cart->fullPath = path;
-	this->cart->code = "local x, z = 0, 0 while true do pset(x, x, z) flip() x = x + 1 z = z + 0.3 if x > 127 then x = 0 end end";
+
+	std::string code_string = code.str();
+	int length = code_string.size() + 1;
+	char* code_cstring = new char[length];
+	memcpy(code_cstring, code_string.c_str(), length);
+
+	this->cart->code = code_cstring;
 
 	pemsa_open_graphics_api(emulator, state);
-
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
 
 	return true;
@@ -66,10 +172,11 @@ void PemsaCartridgeModule::cleanupCart() {
 		return;
 	}
 
+	delete this->cart->code;
+
 	lua_close(this->cart->state);
 
 	// todo: kill the thread somehow
-
 	delete this->gameThread;
 	this->cart = nullptr;
 }
