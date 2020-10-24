@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 function _draw()
-	cls()
+	cls(0)
 
 	for i = 1, 16 do
 		local d = 32 + sin(t() * 0.25) * 16
