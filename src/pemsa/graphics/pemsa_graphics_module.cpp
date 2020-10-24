@@ -19,4 +19,3 @@ void PemsaGraphicsModule::update() {
 	this->backend->flip();
 	cartridgeModule->getLock()->notify_one();
 }
-

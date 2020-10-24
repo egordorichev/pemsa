@@ -15,4 +15,6 @@ class PemsaGraphicsModule : public PemsaModule {
 		PemsaGraphicsBackend* backend;
 };
 
+void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state);
+
 #endif

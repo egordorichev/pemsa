@@ -14,11 +14,14 @@ PemsaCartridgeModule::~PemsaCartridgeModule() {
 
 bool PemsaCartridgeModule::load(const char *path) {
 	this->cart = new PemsaCartridge();
-	this->cart->state = luaL_newstate();
+	lua_State* state = luaL_newstate();
 
+	this->cart->state = state;
 	this->cart->cartDataId = "test";
 	this->cart->fullPath = path;
-	this->cart->code = "function _init() pset(1, 1, 7) end";
+	this->cart->code = "local x, z = 0, 0 while true do pset(x, x, z) flip() x = x + 1 z = z + 0.3 if x > 127 then x = 0 end end";
+
+	pemsa_open_graphics_api(emulator, state);
 
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
 
@@ -42,6 +45,7 @@ void PemsaCartridgeModule::gameLoop() {
 	}
 
 	bool highFps = this->globalExists("_update60");
+	this->callIfExists("_init");
 
 	while (true) {
 		if (highFps) {
@@ -51,10 +55,6 @@ void PemsaCartridgeModule::gameLoop() {
 		}
 
 		this->callIfExists("_draw");
-
-		uint8_t* ram = this->emulator->getMemoryModule()->ram;
-
-		ram[PEMSA_RAM_SCREEN + rand() % 0x2000] = rand() % 256;
 
 		std::unique_lock<std::mutex> uniqueLock(this->mutex);
 		this->lock.wait(uniqueLock);
