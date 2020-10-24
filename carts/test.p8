@@ -1,29 +1,12 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
+sset(1, 1, 8)
 function _draw()
-	for i = 1, 2000 do
-		local x, y = rnd(128), rnd(128)
-		local c = pget(x, y)
-
-		if c > 0 then
-			circ(x, y, 1, max(0, c - 4))
+	for x = 0, 7 do
+		for y = 0, 7 do
+			pset(x, y, sget(x, y))
 		end
-	end
-
-	for i = 1, 4 do
-		local d = 32 + sin(t() * 0.25) * 16
-		local a = i / 4 + t() * 0.3
-		local x = cos(a) * d + 64
-		local y = sin(a) * d + 64
-		d = (sin(t() * 0.5) * 0.5 + 0.5) * 8 + 2
-		a = i / 4 + t () * 0.8
-
-		local tx = x + cos(a) * d
-		local ty = y + sin(a) * d
-
-		-- rect(x, y, 64, 64, i % 8 + 7)
-		line(x, y, tx, ty, i % 8 + 7)
 	end
 end
 

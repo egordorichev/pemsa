@@ -58,6 +58,34 @@ static int pget(lua_State* state) {
 	return 1;
 }
 
+static int sset(lua_State* state) {
+	int x = round(luaL_checknumber(state, 1));
+	int y = round(luaL_checknumber(state, 2));
+
+	int c;
+
+	if (lua_gettop(state) == 3) {
+		c = luaL_checknumber(state, 3);
+	} else {
+		// TODO: read from drawstate
+		c = 6;
+	}
+
+	if (!(x < 0 || y < 0 || x > 127 || y > 127)) {
+		emulator->getMemoryModule()->setPixel(x, y, c % 16, PEMSA_RAM_GFX);
+	}
+
+	return 0;
+}
+
+static int sget(lua_State* state) {
+	int x = round(luaL_checknumber(state, 1));
+	int y = round(luaL_checknumber(state, 2));
+
+	lua_pushnumber(state, emulator->getMemoryModule()->getPixel(x, y, PEMSA_RAM_GFX));
+	return 1;
+}
+
 static inline void swap(int* a, int* b) {
 	int tmp = *a;
 	*a = *b;
@@ -240,6 +268,8 @@ static int circfill(lua_State* state) {
 
 		y++;
 	}
+
+	return 0;
 }
 
 void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
@@ -249,6 +279,8 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "cls", cls);
 	lua_register(state, "pset", pset);
 	lua_register(state, "pget", pget);
+	lua_register(state, "sset", sset);
+	lua_register(state, "sget", sget);
 	lua_register(state, "line", line);
 	lua_register(state, "rect", rect);
 	lua_register(state, "rectfill", rectfill);
