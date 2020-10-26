@@ -24,12 +24,10 @@ function _update60()
 end
 
 function _draw()
-	cls(1)
-
-	pal(0, 0)
-	spr(64, x, y)
-	pal(0, 8, 1)
-	spr(64, 0, 0)
+	cls()
+	circfill(x, y, 8, 10)
+	color(8)
+	pset(1, 1)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

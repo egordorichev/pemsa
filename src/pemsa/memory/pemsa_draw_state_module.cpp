@@ -56,3 +56,11 @@ void PemsaDrawStateModule::setDrawColor(int color, int replacement) {
 	this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE0 + (color & 0x0f)] = replacement & 0x0f;
 	this->setTransparent(color, wasTransparent);
 }
+
+int PemsaDrawStateModule::getColor() {
+	return this->emulator->getMemoryModule()->ram[PEMSA_RAM_DRAW_COLOR];
+}
+
+void PemsaDrawStateModule::setColor(int color) {
+	this->emulator->getMemoryModule()->ram[PEMSA_RAM_DRAW_COLOR] = color & 0x0f;
+}

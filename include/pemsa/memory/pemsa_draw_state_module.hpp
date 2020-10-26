@@ -18,6 +18,9 @@ class PemsaDrawStateModule : public PemsaModule {
 		void setScreenColor(int color, int replacement);
 		int getDrawColor(int color);
 		void setDrawColor(int color, int replacement);
+
+		int getColor();
+		void setColor(int color);
 };
 
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state);

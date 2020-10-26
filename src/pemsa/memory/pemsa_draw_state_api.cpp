@@ -48,9 +48,15 @@ static int palt(lua_State* state) {
 	return 0;
 }
 
+static int color(lua_State* state) {
+	emulator->getDrawStateModule()->setColor(luaL_optnumber(state, 1, 6));
+	return 0;
+}
+
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
 	lua_register(state, "palt", palt);
 	lua_register(state, "pal", pal);
+	lua_register(state, "color", color);
 }

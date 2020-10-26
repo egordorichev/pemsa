@@ -12,6 +12,19 @@
 
 static PemsaEmulator* emulator;
 
+static int read_color(lua_State* state, int slot) {
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	if (lua_isnumber(state, slot)) {
+		int color = lua_tonumber(state, slot);
+		drawStateModule->setColor(color);
+
+		return color;
+	}
+
+	return drawStateModule->getColor();
+}
+
 static int flip(lua_State* state) {
 	PemsaCartridgeModule* cartridgeModule = emulator->getCartridgeModule();
 
@@ -22,7 +35,6 @@ static int flip(lua_State* state) {
 }
 
 static int cls(lua_State* state) {
-	// todo: take default color from drawstate
 	int color = luaL_optnumber(state, 1, 0);
 
 	memset(emulator->getMemoryModule()->ram + PEMSA_RAM_SCREEN, (color << 4) + color, 0x2000);
@@ -33,19 +45,10 @@ static int pset(lua_State* state) {
 	int x = round(luaL_checknumber(state, 1));
 	int y = round(luaL_checknumber(state, 2));
 
-	int c;
-
-	if (lua_gettop(state) == 3) {
-		c = luaL_checknumber(state, 3);
-	} else {
-		// TODO: read from drawstate
-		c = 6;
-	}
+	int c = read_color(state, 3);
 
 	// TODO: take camera into account
 	emulator->getMemoryModule()->setPixel(x, y, c % 16, PEMSA_RAM_SCREEN);
-
-	// TODO: update drawcolor
 	return 0;
 }
 
@@ -62,16 +65,8 @@ static int sset(lua_State* state) {
 	int x = round(luaL_checknumber(state, 1));
 	int y = round(luaL_checknumber(state, 2));
 
-	int c;
-
-	if (lua_gettop(state) == 3) {
-		c = luaL_checknumber(state, 3);
-	} else {
-		// TODO: read from drawstate
-		c = 6;
-	}
-
 	if (!(x < 0 || y < 0 || x > 127 || y > 127)) {
+		int c = read_color(state, 3);
 		emulator->getMemoryModule()->setPixel(x, y, c % 16, PEMSA_RAM_GFX);
 	}
 
@@ -135,10 +130,9 @@ static int line(lua_State* state) {
 	int x1 = round(luaL_checknumber(state, 3));
 	int y1 = round(luaL_checknumber(state, 4));
 
-	// todo: default from drawstate
-	int c = (int) luaL_optnumber(state, 5, 0) % 16;
-
+	int c =  read_color(state, 5);
 	plot_line(x0, y0, x1, y1, c);
+
 	return 0;
 }
 
@@ -148,8 +142,7 @@ static int rect(lua_State* state) {
 	int x1 = round(luaL_checknumber(state, 3));
 	int y1 = round(luaL_checknumber(state, 3));
 
-	// todo: default from drawstate
-	int c = (int) luaL_optnumber(state, 5, 0) % 16;
+	int c = read_color(state, 5);
 
 	plot_line(x0, y0, x1, y0, c);
 	plot_line(x0, y1, x1, y1, c);
@@ -173,8 +166,7 @@ static int rectfill(lua_State* state) {
 		swap(&y0, &y1);
 	}
 
-	// todo: default from drawstate
-	int c = (int) luaL_optnumber(state, 5, 0) % 16;
+	int c = read_color(state, 5);
 	PemsaMemoryModule* mem = emulator->getMemoryModule();
 
 	for (int y = y0; y <= y1; y++) {
@@ -191,8 +183,7 @@ static int circ(lua_State* state) {
 	int oy = round(luaL_checknumber(state, 2));
 	int r = round(luaL_optnumber(state, 3, 1));
 
-	// todo: default from drawstate
-	int c = (int) luaL_optnumber(state, 4, 0) % 16;
+	int c = read_color(state, 4);
 
 	int x = r;
 	int y = 0;
@@ -245,8 +236,7 @@ static int circfill(lua_State* state) {
 	int oy = round(luaL_checknumber(state, 2));
 	int r = round(luaL_optnumber(state, 3, 1));
 
-	// todo: default from drawstate
-	int c = (int) luaL_optnumber(state, 4, 0) % 16;
+	int c = read_color(state, 4);
 
 	int x = r;
 	int y = 0;

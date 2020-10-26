@@ -23,6 +23,5 @@
 
 * stat
 * cursor
-* color
 * clip
 * mouse/keyboard states
