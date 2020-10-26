@@ -2,14 +2,14 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 local x, y = 64, 64
-
+btn(0)
 function _update60()
 	if btn(0) then
 		x = x - 1
 	end
 
 	if btn(1) then
-    x = x - 1
+    x = x + 1
   end
 
 	if btn(2) then

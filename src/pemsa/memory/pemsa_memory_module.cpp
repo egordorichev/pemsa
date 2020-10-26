@@ -1,5 +1,5 @@
 #include "pemsa/memory/pemsa_memory_module.hpp"
-#include "pemsa/pemsa_util.hpp"
+#include "pemsa/util/pemsa_util.hpp"
 #include <cstring>
 
 PemsaMemoryModule::PemsaMemoryModule(PemsaEmulator *emulator) : PemsaModule(emulator) {

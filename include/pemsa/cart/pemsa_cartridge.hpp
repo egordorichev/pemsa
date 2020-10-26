@@ -20,6 +20,8 @@ struct PemsaCartridge {
 	lua_State* state;
 
 	const char* code;
+	int codeLength;
+
 	const char* fullPath;
 	const char* cartDataId;
 

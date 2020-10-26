@@ -14,7 +14,6 @@
 
 # input
 
-* btn
 * btnp
 * backend implementation (we need gamepad + multiplayer support for sure)
 * emoji support

@@ -25,6 +25,7 @@ class PemsaCartridgeModule : public PemsaModule {
 		std::condition_variable lock;
 		std::mutex mutex;
 		std::thread* gameThread;
+		bool threadRunning;
 
 		void gameLoop();
 		void cleanupCart();
@@ -33,5 +34,7 @@ class PemsaCartridgeModule : public PemsaModule {
 		bool globalExists(const char* name);
 		void reportLuaError();
 };
+
+void pemsa_open_input_api(PemsaEmulator* machine, lua_State* state);
 
 #endif

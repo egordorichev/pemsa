@@ -2,6 +2,8 @@
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
 
+#include "lualib.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -15,6 +17,14 @@
 #define STATE_SFX 4
 #define STATE_MUSIC 5
 #define STATE_LABEL 6
+
+static const char* take_string(std::string str) {
+	int length = str.size() + 1;
+	char* cstr = new char[length];
+	memcpy(cstr, str.c_str(), length);
+
+	return cstr;
+}
 
 PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator) : PemsaModule(emulator) {
 
@@ -136,19 +146,21 @@ bool PemsaCartridgeModule::load(const char *path) {
 	lua_State* state = luaL_newstate();
 
 	this->cart->state = state;
-	this->cart->cartDataId = std::filesystem::path(path).stem().c_str();
+	this->cart->cartDataId = take_string(std::filesystem::path(path).stem());
 	this->cart->fullPath = path;
 
-	std::string code_string = code.str();
-	int length = code_string.size() + 1;
-	char* code_cstring = new char[length];
-	memcpy(code_cstring, code_string.c_str(), length);
+	std::string codeString = code.str();
 
-	this->cart->code = code_cstring;
+	this->cart->code = take_string(codeString);
+	this->cart->codeLength = codeString.length();
+
+	// TODO: tbh should limit the functions from here?
+	luaL_openlibs(state);
 
 	pemsa_open_graphics_api(emulator, state);
 	pemsa_open_system_api(emulator, state);
 	pemsa_open_math_api(emulator, state);
+	pemsa_open_input_api(emulator, state);
 
 	memcpy(emulator->getMemoryModule()->ram, rom, 0x4300);
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
@@ -169,9 +181,17 @@ PemsaCartridge *PemsaCartridgeModule::getCart() {
 }
 
 void PemsaCartridgeModule::gameLoop() {
-	lua_State* state = this->cart->state;
+	this->threadRunning = true;
 
-	if (luaL_dostring(state, this->cart->code) != 0) {
+	lua_State* state = this->cart->state;
+	lua_pushcfunction(state, pemsa_trace_lua);
+
+	if (luaL_loadbuffer(state, this->cart->code, this->cart->codeLength, "=cart") != 0) {
+		this->reportLuaError();
+		return;
+	}
+
+	if (lua_pcall(state, 0, 0, lua_gettop(state) - 1) != 0) {
 		this->reportLuaError();
 		return;
 	}
@@ -179,7 +199,7 @@ void PemsaCartridgeModule::gameLoop() {
 	bool highFps = this->globalExists("_update60");
 	this->callIfExists("_init");
 
-	while (true) {
+	while (this->threadRunning) {
 		if (highFps) {
 			this->callIfExists("_update60");
 		} else {
@@ -198,25 +218,28 @@ void PemsaCartridgeModule::cleanupCart() {
 		return;
 	}
 
-	delete this->cart->code;
-
 	lua_close(this->cart->state);
 
-	// todo: kill the thread somehow
-	delete this->gameThread;
+	this->threadRunning = false;
 	this->cart = nullptr;
+
+	delete this->gameThread;
+	delete this->cart->code;
+	delete this->cart->cartDataId;
 }
 
 void PemsaCartridgeModule::callIfExists(const char *method_name) {
 	lua_State* state = this->cart->state;
+
+	lua_pushcfunction(state, pemsa_trace_lua);
 	lua_getglobal(state, method_name);
 
-	if (lua_isfunction(state, -1)) {
+	if (lua_isnil(state, -1)) {
+		lua_pop(state, 2);
+	} else {
 		if (lua_pcall(state, 0, 0, lua_gettop(state) - 1) != 0) {
 			this->reportLuaError();
 		}
-	} else {
-		lua_pop(state, 1);
 	}
 }
 
@@ -230,9 +253,9 @@ bool PemsaCartridgeModule::globalExists(const char *name) {
 	return exists;
 }
 
-
 void PemsaCartridgeModule::reportLuaError() {
 	if (this->cart != nullptr) {
 		std::cerr << lua_tostring(this->cart->state, -1) << "\n";
+		this->threadRunning = false;
 	}
 }

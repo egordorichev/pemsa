@@ -11,8 +11,7 @@ int btn(lua_State* state) {
 	return 1;
 }
 
-void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
+void pemsa_open_input_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
-
 	lua_register(state, "btn", btn);
 }

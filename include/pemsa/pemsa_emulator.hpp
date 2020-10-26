@@ -7,7 +7,7 @@
 #include "pemsa/input/pemsa_input_module.hpp"
 #include "pemsa/cart/pemsa_cartridge_module.hpp"
 #include "pemsa/memory/pemsa_memory_module.hpp"
-#include "pemsa/pemsa_util.hpp"
+#include "pemsa/util/pemsa_util.hpp"
 
 #define PEMSA_MODULE_COUNT 5
 
