@@ -39,9 +39,36 @@ static int fset(lua_State* state) {
 	return 0;
 }
 
+static int mget(lua_State* state) {
+	int x = luaL_checknumber(state, 1);
+	int y = luaL_checknumber(state, 2);
+
+	if (x < 0 || y < 0 || x > 127 || y > 63) {
+		lua_pushnumber(state, 0);
+	} else {
+		lua_pushnumber(state, emulator->getMemoryModule()->ram[PEMSA_RAM_MAP + x + y * 128]);
+	}
+
+	return 1;
+}
+
+static int mset(lua_State* state) {
+	int x = luaL_checknumber(state, 1);
+	int y = luaL_checknumber(state, 2);
+	int tile = luaL_checknumber(state, 3);
+
+	if (!(x < 0 || y < 0 || x > 127 || y > 63)) {
+		emulator->getMemoryModule()->ram[PEMSA_RAM_MAP + x + y * 128] = tile % 256;
+	}
+
+	return 0;
+}
+
 void pemsa_open_memory_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
 	lua_register(state, "fget", fget);
 	lua_register(state, "fset", fset);
+	lua_register(state, "mget", mget);
+	lua_register(state, "mset", mset);
 }

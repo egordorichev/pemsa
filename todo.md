@@ -7,7 +7,6 @@
 * Oval + ovalfill
 * tline???
 * print
-* fget/fset()
 * mget/mset()
 
 # input
