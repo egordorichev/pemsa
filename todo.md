@@ -7,8 +7,8 @@
 * Oval + ovalfill
 * tline???
 * print
-* map()
 * fget/fset()
+* mget/mset()
 
 # input
 

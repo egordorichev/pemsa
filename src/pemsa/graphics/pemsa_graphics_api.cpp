@@ -288,25 +288,11 @@ static int circfill(lua_State* state) {
 	return 0;
 }
 
-static int spr(lua_State* state) {
-	int n = luaL_checknumber(state, 1);
-
-	if (n < 0 || n > 255) {
-		return 0;
-	}
-
-	int x = round(luaL_optnumber(state, 2, 0));
-	int y = round(luaL_optnumber(state, 3, 0));
-
-	// TODO: subtract camera position from x & y
-
+static void plot_sprite(int n, int x, int y, int width, int height, bool flipX, bool flipY) {
 	int sprX = (n & 0x0f) << 3;
 	int sprY = (n >> 4) << 3;
-	int width = luaL_optnumber(state, 4, 1);
-	int height = luaL_optnumber(state, 5, 1);
 
-	bool flipX = pemsa_optional_bool(state, 6, false);
-	bool flipY = pemsa_optional_bool(state, 7, false);
+	// TODO: subtract camera position from x & y
 
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
@@ -322,7 +308,24 @@ static int spr(lua_State* state) {
 			memoryModule->setPixel((int) x + (flipX ? 8 * width - i : i), (int) y + (flipY ? 8 * height - j : j), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
 		}
 	}
+}
 
+static int spr(lua_State* state) {
+	int n = luaL_checknumber(state, 1);
+
+	if (n < 0 || n > 255) {
+		return 0;
+	}
+
+	int x = round(luaL_optnumber(state, 2, 0));
+	int y = round(luaL_optnumber(state, 3, 0));
+	int width = luaL_optnumber(state, 4, 1);
+	int height = luaL_optnumber(state, 5, 1);
+
+	bool flipX = pemsa_optional_bool(state, 6, false);
+	bool flipY = pemsa_optional_bool(state, 7, false);
+
+	plot_sprite(n, x, y, width, height, flipX, flipY);
 	return 0;
 }
 
@@ -397,6 +400,47 @@ static int sspr(lua_State* state) {
 	return 0;
 }
 
+static int map(lua_State* state) {
+	int mx = luaL_optint(state, 1, 0);
+	int my = luaL_optint(state, 2, 0);
+	int x = luaL_optint(state, 3, 0);
+	int y = luaL_optint(state, 4, 0);
+	int mw = luaL_optint(state, 5, 16);
+	int mh = luaL_optint(state, 6, 16);
+	int layer = luaL_optinteger(state, 7, 0);
+
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+	uint8_t* ram = memoryModule->ram;
+
+	for (int cy = fmax(0, my); cy < fmin(64, my + mh); cy++) {
+		for (int cx = fmax(0, mx); cx < fmin(128, mx + mw); cx++) {
+			int tile = ram[PEMSA_RAM_MAP + cx + cy * 128];
+
+			if (tile == 0) {
+				continue;
+			} else if (layer != 0) {
+				int flagMask = ram[PEMSA_RAM_GFX_PROPS + tile];
+				bool found = false;
+
+				for (int i = 0; i < 8; i++) {
+					if ((flagMask & (1 << i)) == 1 && (layer & (1 << i)) == 0) {
+						found = true;
+						break;
+					}
+				}
+
+				if (found) {
+					continue;
+				}
+			}
+
+			plot_sprite(tile, cx * 8 + x, cy * 8 + y, 1, 1, false, false);
+		}
+	}
+
+	return 0;
+}
+
 void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -413,4 +457,5 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "circfill", circfill);
 	lua_register(state, "spr", spr);
 	lua_register(state, "sspr", sspr);
+	lua_register(state, "map", map);
 }

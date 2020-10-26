@@ -2,10 +2,11 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 palt(0, false)
+palt(14, true)
+
 function _draw()
 	cls(1)
-	local z = t()
-	sspr(0, 0, 16, 16, 64 + sin(z * 0.1) * 32, 64 + cos(z * 0.1) * 32, 32 * (cos(z)), 32 * (sin(z)), true, true)
+	map()
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

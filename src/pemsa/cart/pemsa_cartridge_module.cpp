@@ -137,6 +137,20 @@ bool PemsaCartridgeModule::load(const char *path) {
 				break;
 			}
 
+			case STATE_MAP: {
+				for (int i = 0; i < line.length(); i += 2) {
+					rom[PEMSA_ROM_MAP + index] = (HEX_TO_INT(line.at(i)) << 4) + HEX_TO_INT(line.at(i + 1));
+					index++;
+				}
+
+				break;
+			}
+
+			case STATE_GFF: {
+
+				break;
+			}
+
 			default: {
 
 			}
