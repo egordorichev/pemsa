@@ -12,6 +12,14 @@ class PemsaDrawStateModule : public PemsaModule {
 
 		void reset();
 		bool isTransparent(int color);
+		void setTransparent(int color, bool transparent);
+
+		int getScreenColor(int color);
+		void setScreenColor(int color, int replacement);
+		int getDrawColor(int color);
+		void setDrawColor(int color, int replacement);
 };
+
+void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state);
 
 #endif

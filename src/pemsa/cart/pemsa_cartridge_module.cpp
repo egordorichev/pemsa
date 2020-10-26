@@ -161,6 +161,8 @@ bool PemsaCartridgeModule::load(const char *path) {
 	pemsa_open_system_api(emulator, state);
 	pemsa_open_math_api(emulator, state);
 	pemsa_open_input_api(emulator, state);
+	pemsa_open_memory_api(emulator, state);
+	pemsa_open_draw_state_api(emulator, state);
 
 	memcpy(emulator->getMemoryModule()->ram, rom, 0x4300);
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);

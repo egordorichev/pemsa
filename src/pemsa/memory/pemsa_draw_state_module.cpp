@@ -25,3 +25,34 @@ void PemsaDrawStateModule::reset() {
 bool PemsaDrawStateModule::isTransparent(int color) {
 	return (this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE0 + color] & 0x10) != 0;
 }
+
+void PemsaDrawStateModule::setTransparent(int color, bool transparent) {
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+	color &= 0x0f;
+
+	if (transparent) {
+		ram[PEMSA_RAM_PALETTE0 + color] &= 0x0f;
+		ram[PEMSA_RAM_PALETTE0 + color] |= 0x10;
+	} else {
+		ram[PEMSA_RAM_PALETTE0 + color] &= 0x0f;
+	}
+}
+
+int PemsaDrawStateModule::getScreenColor(int color) {
+	return this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE1 + (color & 0x0f)];
+}
+
+void PemsaDrawStateModule::setScreenColor(int color, int replacement) {
+	this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE1 + (color & 0x0f)] = replacement & 0x0f;
+}
+
+int PemsaDrawStateModule::getDrawColor(int color) {
+	return this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE0 + (color & 0x0f)];
+}
+
+void PemsaDrawStateModule::setDrawColor(int color, int replacement) {
+	bool wasTransparent = this->isTransparent(color);
+
+	this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE0 + (color & 0x0f)] = replacement & 0x0f;
+	this->setTransparent(color, wasTransparent);
+}

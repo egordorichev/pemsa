@@ -42,4 +42,6 @@ class PemsaMemoryModule : public PemsaModule {
 		uint8_t ram[PEMSA_RAM_END];
 };
 
+void pemsa_open_memory_api(PemsaEmulator* machine, lua_State* state);
+
 #endif

@@ -2,6 +2,8 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 local x, y = 64, 64
+palt(0, false)
+palt(14, true)
 
 function _update60()
 	if btn(0) then
@@ -23,7 +25,11 @@ end
 
 function _draw()
 	cls(1)
+
+	pal(0, 0)
 	spr(64, x, y)
+	pal(0, 8, 1)
+	spr(64, 0, 0)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

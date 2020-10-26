@@ -24,7 +24,7 @@ static SDL_Color palette[] = {
 
 #define UNPACK_COLOR(i)	(palette[i].r << 24) + (palette[i].g << 16) + (palette[i].b << 8) + 255
 
-static int int_palette[] = {
+static int intPalette[] = {
 	UNPACK_COLOR(0), UNPACK_COLOR(1), UNPACK_COLOR(2), UNPACK_COLOR(3),
 	UNPACK_COLOR(4), UNPACK_COLOR(5), UNPACK_COLOR(6), UNPACK_COLOR(7),
 	UNPACK_COLOR(8), UNPACK_COLOR(9), UNPACK_COLOR(10), UNPACK_COLOR(11),
@@ -48,13 +48,20 @@ void SdlGraphicsBackend::createSurface() {
 void SdlGraphicsBackend::flip() {
 	Uint32* pixels = (Uint32*) this->surface->pixels;
 	uint8_t* ram = this->emulator->getMemoryModule()->ram;
+	PemsaDrawStateModule* drawStateModule = this->emulator->getDrawStateModule();
+
+	int screenPalette[16];
+
+	for (int i = 0; i < 16; i++) {
+		screenPalette[i] = drawStateModule->getScreenColor(i);
+	}
 
 	for (int i = 0; i < 0x2000; i++) {
 		uint8_t val = ram[i + PEMSA_RAM_SCREEN];
 
 		// TODO: screen colors
-		pixels[i * 2] = int_palette[val & 0x0f];
-		pixels[i * 2 + 1] = int_palette[val >> 4];
+		pixels[i * 2] = intPalette[screenPalette[val & 0x0f]];
+		pixels[i * 2 + 1] = intPalette[screenPalette[val >> 4]];
 	}
 }
 

@@ -298,13 +298,13 @@ static int spr(lua_State* state) {
 
 	for (int i = 0; i < 8 * width; i++) {
 		for (int j = 0; j < 8 * height; j++) {
-			int color = memoryModule->getPixel(i + sprX, j + sprY, PEMSA_RAM_GFX);
+			int color = memoryModule->getPixel(i + sprX, j + sprY, PEMSA_RAM_GFX) & 0x0f;
 
 			if (drawStateModule->isTransparent(color)) {
 				continue;
 			}
 
-			memoryModule->setPixel((int) x + (flipX ? 8 * width - i : i), (int) y + (flipY ? 8 * height - j : j), color, PEMSA_RAM_SCREEN);
+			memoryModule->setPixel((int) x + (flipX ? 8 * width - i : i), (int) y + (flipY ? 8 * height - j : j), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
 		}
 	}
 

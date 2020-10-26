@@ -4,12 +4,9 @@
 
 # graphics
 
-* Spr
 * Sspr
 * Oval + ovalfill
 * fillp
-* pal
-* palt
 * tline???
 
 # input
