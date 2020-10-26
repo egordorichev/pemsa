@@ -423,7 +423,7 @@ static int map(lua_State* state) {
 				bool found = false;
 
 				for (int i = 0; i < 8; i++) {
-					if ((flagMask & (1 << i)) == 1 && (layer & (1 << i)) == 0) {
+					if ((layer & (1 << i)) == 1 && (flagMask & (1 << i)) == 0) {
 						found = true;
 						break;
 					}

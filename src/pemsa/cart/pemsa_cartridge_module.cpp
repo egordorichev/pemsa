@@ -147,9 +147,15 @@ bool PemsaCartridgeModule::load(const char *path) {
 			}
 
 			case STATE_GFF: {
+				for (int i = 0; i < line.length(); i += 2) {
+					rom[PEMSA_ROM_GFX_PROPS + index] = (HEX_TO_INT(line.at(i)) << 4) + HEX_TO_INT(line.at(i + 1));
+					index++;
+				}
 
 				break;
 			}
+
+			// todo: music & sfx states
 
 			default: {
 
