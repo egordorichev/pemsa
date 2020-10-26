@@ -9,8 +9,10 @@ class SdlInputBackend : public PemsaInputBackend {
 	public:
 		void handleEvent(SDL_Event* event);
 		bool isButtonDown(int i, int p) override;
+		bool isButtonPressed(int i, int p) override;
+		void update() override;
 	private:
-		bool state[PEMSA_PLAYER_COUNT][PEMSA_BUTTON_COUNT];
+		uint8_t state[PEMSA_PLAYER_COUNT][PEMSA_BUTTON_COUNT];
 };
 
 #endif

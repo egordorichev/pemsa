@@ -6,6 +6,8 @@
 class PemsaInputBackend : public PemsaBackend {
 	public:
 		virtual bool isButtonDown(int i, int p) = 0;
+		virtual bool isButtonPressed(int i, int p) = 0;
+		virtual void update() = 0;
 };
 
 #endif

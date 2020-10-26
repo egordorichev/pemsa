@@ -21,6 +21,9 @@ class PemsaInputModule : public PemsaModule {
 		~PemsaInputModule();
 
 		bool isDown(int button, int player);
+		bool isPressed(int button, int player);
+
+		void update(double dt) override;
 	private:
 		PemsaInputBackend* backend;
 };

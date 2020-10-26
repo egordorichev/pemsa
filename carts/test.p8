@@ -4,9 +4,7 @@ __lua__
 local x, y = 64, 64
 
 function _update60()
-	print(btn())
-
-	--[[if btnp(0) then
+	if btnp(0) then
 		x = x - 1
 	end
 
@@ -20,7 +18,7 @@ function _update60()
 
 	if btnp(3) then
     y = y + 1
-  end]]
+  end
 end
 
 function _draw()

@@ -11,3 +11,11 @@ PemsaInputModule::~PemsaInputModule() {
 bool PemsaInputModule::isDown(int button, int player) {
 	return this->backend->isButtonDown(button, player);
 }
+
+bool PemsaInputModule::isPressed(int button, int player) {
+	return this->backend->isButtonPressed(button, player);
+}
+
+void PemsaInputModule::update(double dt) {
+	this->backend->update();
+}
