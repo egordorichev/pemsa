@@ -7,9 +7,10 @@
 #include "pemsa/input/pemsa_input_module.hpp"
 #include "pemsa/cart/pemsa_cartridge_module.hpp"
 #include "pemsa/memory/pemsa_memory_module.hpp"
+#include "pemsa/memory/pemsa_draw_state_module.hpp"
 #include "pemsa/util/pemsa_util.hpp"
 
-#define PEMSA_MODULE_COUNT 5
+#define PEMSA_MODULE_COUNT 6
 
 class PemsaEmulator {
 	public:
@@ -23,6 +24,7 @@ class PemsaEmulator {
 		PemsaInputModule* getInputModule();
 		PemsaCartridgeModule* getCartridgeModule();
 		PemsaMemoryModule* getMemoryModule();
+		PemsaDrawStateModule* getDrawStateModule();
 	private:
 		PemsaModule* modules[PEMSA_MODULE_COUNT];
 
@@ -31,6 +33,7 @@ class PemsaEmulator {
 		PemsaInputModule* inputModule;
 		PemsaCartridgeModule* cartridgeModule;
 		PemsaMemoryModule* memoryModule;
+		PemsaDrawStateModule* drawStateModule;
 };
 
 void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state);

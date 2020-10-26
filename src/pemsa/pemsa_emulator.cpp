@@ -10,6 +10,7 @@ PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *
 	this->modules[2] = (PemsaModule*) (this->inputModule = new PemsaInputModule(this, input));
 	this->modules[3] = (PemsaModule*) (this->cartridgeModule = new PemsaCartridgeModule(this));
 	this->modules[4] = (PemsaModule*) (this->memoryModule = new PemsaMemoryModule(this));
+	this->modules[5] = (PemsaModule*) (this->drawStateModule = new PemsaDrawStateModule(this));
 }
 
 PemsaEmulator::~PemsaEmulator() {
@@ -42,4 +43,8 @@ PemsaCartridgeModule *PemsaEmulator::getCartridgeModule() {
 
 PemsaMemoryModule *PemsaEmulator::getMemoryModule() {
 	return this->memoryModule;
+}
+
+PemsaDrawStateModule *PemsaEmulator::getDrawStateModule() {
+	return this->drawStateModule;
 }

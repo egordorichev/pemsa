@@ -2,7 +2,6 @@
 #define PEMSA_MEMORY_MODULE_HPP
 
 #include "pemsa/pemsa_module.hpp"
-
 #include <cstdint>
 
 #define PEMSA_RAM_GFX 0x0

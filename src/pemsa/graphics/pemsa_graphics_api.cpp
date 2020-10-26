@@ -42,7 +42,7 @@ static int pset(lua_State* state) {
 		c = 6;
 	}
 
-	// TODO: take camera/clip/screen bounds into the account
+	// TODO: take camera into account
 	emulator->getMemoryModule()->setPixel(x, y, c % 16, PEMSA_RAM_SCREEN);
 
 	// TODO: update drawcolor
@@ -53,7 +53,7 @@ static int pget(lua_State* state) {
 	int x = round(luaL_checknumber(state, 1));
 	int y = round(luaL_checknumber(state, 2));
 
-	// TODO: take camera/clip/screen bounds into the account
+	// TODO: take camera into account
 	lua_pushnumber(state, emulator->getMemoryModule()->getPixel(x, y, PEMSA_RAM_SCREEN));
 	return 1;
 }
@@ -272,6 +272,45 @@ static int circfill(lua_State* state) {
 	return 0;
 }
 
+// spr( n, x, y, [w,] [h,] [flip_x,] [flip_y] )
+static int spr(lua_State* state) {
+	int n = luaL_checknumber(state, 1);
+
+	if (n < 0 || n > 255) {
+		return 0;
+	}
+
+	int x = round(luaL_optnumber(state, 2, 0));
+	int y = round(luaL_optnumber(state, 3, 0));
+
+	// TODO: subtract camera position from x & y
+
+	int sprX = (n & 0x0f) << 3;
+	int sprY = (n >> 4) << 3;
+	int width = luaL_optnumber(state, 4, 1);
+	int height = luaL_optnumber(state, 5, 1);
+
+	bool flipX = pemsa_optional_bool(state, 6, false);
+	bool flipY = pemsa_optional_bool(state, 7, false);
+
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	for (int i = 0; i < 8 * width; i++) {
+		for (int j = 0; j < 8 * height; j++) {
+			int color = memoryModule->getPixel(i + sprX, j + sprY, PEMSA_RAM_GFX);
+
+			if (drawStateModule->isTransparent(color)) {
+				continue;
+			}
+
+			memoryModule->setPixel((int) x + (flipX ? 8 * width - i : i), (int) y + (flipY ? 8 * height - j : j), color, PEMSA_RAM_SCREEN);
+		}
+	}
+
+	return 0;
+}
+
 void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -286,4 +325,5 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "rectfill", rectfill);
 	lua_register(state, "circ", circ);
 	lua_register(state, "circfill", circfill);
+	lua_register(state, "spr", spr);
 }
