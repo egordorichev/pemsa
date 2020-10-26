@@ -4,10 +4,23 @@
 static PemsaEmulator* emulator;
 
 int btn(lua_State* state) {
+	PemsaInputModule* input = emulator->getInputModule();
+
+	if (lua_gettop(state) == 0) {
+		int mask = 0;
+
+		for (int i = 0; i < PEMSA_BUTTON_COUNT * 2; i++) {
+			SET_BIT(mask, i, input->isDown(i % PEMSA_BUTTON_COUNT, i / PEMSA_BUTTON_COUNT));
+		}
+
+		lua_pushnumber(state, mask);
+		return 1;
+	}
+
 	int button = luaL_checknumber(state, 1);
 	int player = luaL_optnumber(state, 2, 0);
 
-	lua_pushboolean(state, emulator->getInputModule()->isDown(button, player));
+	lua_pushboolean(state, input->isDown(button, player));
 	return 1;
 }
 
