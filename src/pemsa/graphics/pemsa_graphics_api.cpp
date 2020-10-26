@@ -1,4 +1,5 @@
 #include "pemsa/graphics/pemsa_graphics_module.hpp"
+#include "pemsa/util/pemsa_font.hpp"
 #include "pemsa/pemsa_emulator.hpp"
 
 #include <cmath>
@@ -22,7 +23,7 @@ static PemsaEmulator* emulator;
 static int read_color(lua_State* state, int slot) {
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
-	if (lua_isnumber(state, slot)) {
+	if (lua_gettop(state) >= slot && lua_isnumber(state, slot)) {
 		int color = lua_tonumber(state, slot);
 		drawStateModule->setColor(color);
 
@@ -454,8 +455,41 @@ static int map(lua_State* state) {
 }
 
 static int print(lua_State* state) {
+	const char* text = luaL_checkstring(state, 1);
 
+	// todo: default to cursor
+	int x = round(luaL_checknumber(state, 2));
+	int y = round(luaL_checknumber(state, 3));
+	int c = read_color(state, 4);
 
+	int index = 0;
+
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+
+	x -= drawStateModule->getCameraX();
+	y -= drawStateModule->getCameraY();
+
+	bool transparent = false;
+
+	while (*text != '\0') {
+		const char** letter = pemsa_get_letter(*text++);
+
+		if (letter != nullptr) {
+			for (int ly = 0; ly < 5; ly++) {
+				for (int lx = 0; lx < 3; lx++) {
+					if (letter[ly][lx] == 'x') {
+						DRAW_PIXEL(x + lx, y + ly, c)
+					}
+				}
+			}
+		}
+
+		x += 4;
+		index++;
+	}
+
+	// todo: update cursor pos, scrolling
 	return 0;
 }
 

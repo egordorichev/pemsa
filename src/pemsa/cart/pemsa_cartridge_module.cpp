@@ -171,6 +171,21 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 	std::string codeString = code.str();
 
+	/*
+	 * todo: patch the code
+	 * 0x10 -> dec
+	 * 0b010010 -> dec
+	 * if(true) -> if true then end
+	 * ?32 -> print(32)
+	 * ░ -> \127
+	 * "string" -> "STRING"
+	 * // -> --
+	 * a \ b -> flr(a / b)
+	 * remove all the comments (replace with whitespace)
+	 * != -> ~=
+	 * a += b -> a = a + b
+	 */
+
 	this->cart->code = take_string(codeString);
 	this->cart->codeLength = codeString.length();
 

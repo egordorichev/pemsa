@@ -1,6 +1,9 @@
 #include "pemsa/pemsa_emulator.hpp"
+#include "pemsa/util/pemsa_font.hpp"
 
 PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *audio, PemsaInputBackend *input) {
+	pemsa_setup_font();
+
 	graphics->setEmulator(this);
 	audio->setEmulator(this);
 	input->setEmulator(this);
