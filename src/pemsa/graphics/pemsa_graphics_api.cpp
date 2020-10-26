@@ -51,16 +51,15 @@ static int cls(lua_State* state) {
 static int pset(lua_State* state) {
 	int x = round(luaL_checknumber(state, 1));
 	int y = round(luaL_checknumber(state, 2));
-
 	int c = read_color(state, 3);
-	// todo: take camera into account
-	
+
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
-	
+
 	bool transparent = drawStateModule->isFillPatternTransparent();
-	
-	DRAW_PIXEL(x, y, c)
+
+	DRAW_PIXEL(x - drawStateModule->getCameraX(), y - drawStateModule->getCameraY(), c)
+
 	return 0;
 }
 
@@ -68,8 +67,9 @@ static int pget(lua_State* state) {
 	int x = round(luaL_checknumber(state, 1));
 	int y = round(luaL_checknumber(state, 2));
 
-	// TODO: take camera into account
-	lua_pushnumber(state, emulator->getMemoryModule()->getPixel(x, y, PEMSA_RAM_SCREEN));
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	lua_pushnumber(state, emulator->getMemoryModule()->getPixel(x - drawStateModule->getCameraX(), y - drawStateModule->getCameraY(), PEMSA_RAM_SCREEN));
+
 	return 1;
 }
 
@@ -124,11 +124,14 @@ static void plot_line(int x0, int y0, int x1, int y1, int c) {
 	int err = 0;
 	int y = y0;
 
+	int cx = drawStateModule->getCameraX();
+	int cy = drawStateModule->getCameraY();
+
 	for (int x = x0; x <= x1; x++) {
 		if (steep) {
-			DRAW_PIXEL(x, y, c)
+			DRAW_PIXEL(y - cx, x - cy, c)
 		} else {
-			DRAW_PIXEL(x, y, c)
+			DRAW_PIXEL(x - cx, y - cy, c)
 		}
 
 		err += d_err;
@@ -264,6 +267,11 @@ static int circfill(lua_State* state) {
 
 	int c = read_color(state, 4);
 
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	ox -= drawStateModule->getCameraX();
+	oy -= drawStateModule->getCameraY();
+
 	int x = r;
 	int y = 0;
 	int error = 1 - r;
@@ -292,10 +300,11 @@ static void plot_sprite(int n, int x, int y, int width, int height, bool flipX, 
 	int sprX = (n & 0x0f) << 3;
 	int sprY = (n >> 4) << 3;
 
-	// TODO: subtract camera position from x & y
-
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	x -= drawStateModule->getCameraX();
+	y -= drawStateModule->getCameraY();
 
 	for (int i = 0; i < 8 * width; i++) {
 		for (int j = 0; j < 8 * height; j++) {
@@ -376,6 +385,9 @@ static int sspr(lua_State* state) {
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
+	dx -= drawStateModule->getCameraX();
+	dy -= drawStateModule->getCameraY();
+
 	while (x < sx + sw && screenX < dx + dw) {
 		y = sy;
 		screenY = dy;
@@ -441,6 +453,12 @@ static int map(lua_State* state) {
 	return 0;
 }
 
+static int print(lua_State* state) {
+
+
+	return 0;
+}
+
 void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -458,4 +476,5 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "spr", spr);
 	lua_register(state, "sspr", sspr);
 	lua_register(state, "map", map);
+	lua_register(state, "print", print);
 }

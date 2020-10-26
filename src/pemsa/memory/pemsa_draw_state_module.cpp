@@ -66,15 +66,11 @@ void PemsaDrawStateModule::setColor(int color) {
 }
 
 void PemsaDrawStateModule::setFillPattern(int p) {
-	uint8_t* ram = emulator->getMemoryModule()->ram;
-
-	ram[PEMSA_RAM_FILL_PATTERN] = p & 0xff;
-	ram[PEMSA_RAM_FILL_PATTERN + 1] = (p >> 8) & 0xff;
+	((int16_t*) (emulator->getMemoryModule()->ram + PEMSA_RAM_FILL_PATTERN))[0] = p;
 }
 
 int PemsaDrawStateModule::getFillPattern() {
-	uint8_t* ram = emulator->getMemoryModule()->ram;
-	return ram[PEMSA_RAM_FILL_PATTERN] | (ram[PEMSA_RAM_FILL_PATTERN + 1] << 8);
+	return ((int16_t*) (emulator->getMemoryModule()->ram + PEMSA_RAM_FILL_PATTERN))[0];
 }
 
 void PemsaDrawStateModule::setFillPatternTransparent(bool transparent) {
@@ -91,4 +87,20 @@ int PemsaDrawStateModule::getFillPatternBit(int x, int y) {
 
 	int i = (y << 2) + x;
 	return (this->getFillPattern() & (1 << 15) >> i) >> (15 - i);
+}
+
+int PemsaDrawStateModule::getCameraX() {
+	return ((int16_t*) (emulator->getMemoryModule()->ram + PEMSA_RAM_CAMERA_X))[0];
+}
+
+void PemsaDrawStateModule::setCameraX(int x) {
+	((int16_t*) (emulator->getMemoryModule()->ram + PEMSA_RAM_CAMERA_X))[0] = x;
+}
+
+int PemsaDrawStateModule::getCameraY() {
+	return ((int16_t*) (emulator->getMemoryModule()->ram + PEMSA_RAM_CAMERA_Y))[0];
+}
+
+void PemsaDrawStateModule::setCameraY(int y) {
+	((int16_t*) (emulator->getMemoryModule()->ram + PEMSA_RAM_CAMERA_Y))[0] = y;
 }

@@ -1,14 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-palt(0, false)
-palt(14, true)
-fset(mget(0, 0), 0, false)
-mset(1, 1, 26)
-
 function _draw()
-	cls(2)
-	map(nil, nil, nil, nil, nil, nil)
+	cls(1)
+	print("Hello, world!", 1, 1)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

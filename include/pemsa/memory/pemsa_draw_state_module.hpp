@@ -29,6 +29,11 @@ class PemsaDrawStateModule : public PemsaModule {
 		bool isFillPatternTransparent();
 
 		int getFillPatternBit(int x, int y);
+
+		int getCameraX();
+		void setCameraX(int x);
+		int getCameraY();
+		void setCameraY(int y);
 };
 
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state);
