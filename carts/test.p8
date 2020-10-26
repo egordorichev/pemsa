@@ -25,9 +25,12 @@ end
 
 function _draw()
 	cls()
+	clip(0, 0, 64, 64)
 	circfill(x, y, 8, 10)
 	color(8)
+	clip()
 	pset(1, 1)
+	circfill(x, y, 4)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

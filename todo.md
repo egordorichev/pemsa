@@ -8,6 +8,7 @@
 * Oval + ovalfill
 * fillp
 * tline???
+* print
 
 # input
 
@@ -23,5 +24,4 @@
 
 * stat
 * cursor
-* clip
 * mouse/keyboard states

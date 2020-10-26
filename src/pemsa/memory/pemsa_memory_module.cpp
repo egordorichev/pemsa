@@ -7,7 +7,7 @@ PemsaMemoryModule::PemsaMemoryModule(PemsaEmulator *emulator) : PemsaModule(emul
 }
 
 void PemsaMemoryModule::setPixel(int x, int y, int c, int region) {
-	if (x < ram[PEMSA_RAM_CLIP_LEFT] || y < ram[PEMSA_RAM_CLIP_TOP] || x > ram[PEMSA_RAM_CLIP_RIGHT] || y > ram[PEMSA_RAM_CLIP_BOTTOM]) {
+	if (x < ram[PEMSA_RAM_CLIP_LEFT] || y < ram[PEMSA_RAM_CLIP_TOP] || x >= ram[PEMSA_RAM_CLIP_RIGHT] || y >= ram[PEMSA_RAM_CLIP_BOTTOM]) {
 		return;
 	}
 

@@ -2,6 +2,8 @@
 #include "pemsa/util/pemsa_util.hpp"
 #include "pemsa/pemsa_emulator.hpp"
 
+#include <cmath>
+
 PemsaEmulator* emulator;
 
 static int pal(lua_State* state) {
@@ -53,10 +55,41 @@ static int color(lua_State* state) {
 	return 0;
 }
 
+static int clamp(int min, int max, int v) {
+	return fmin(max, fmax(min, v));
+}
+
+static int clip(lua_State* state) {
+	int x = 0;
+	int y = 0;
+	int w = 128;
+	int h = 128;
+
+	if (lua_gettop(state) != 0) {
+		x = luaL_checknumber(state, 1);
+		y = luaL_checknumber(state, 2);
+		w = luaL_checknumber(state, 3);
+		h = luaL_checknumber(state, 4);
+	}
+
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+
+	x = clamp(0, 128, x);
+	y = clamp(0, 128, y);
+
+	ram[PEMSA_RAM_CLIP_LEFT] = x;
+	ram[PEMSA_RAM_CLIP_TOP] = y;
+	ram[PEMSA_RAM_CLIP_RIGHT] = clamp(0, 128 - x, x + w);
+	ram[PEMSA_RAM_CLIP_BOTTOM] = clamp(0, 128 - y, y + h);
+
+	return 0;
+}
+
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
 	lua_register(state, "palt", palt);
 	lua_register(state, "pal", pal);
 	lua_register(state, "color", color);
+	lua_register(state, "clip", clip);
 }

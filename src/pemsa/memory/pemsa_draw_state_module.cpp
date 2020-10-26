@@ -18,8 +18,8 @@ void PemsaDrawStateModule::reset() {
 
 	ram[PEMSA_RAM_CLIP_LEFT] = 0;
 	ram[PEMSA_RAM_CLIP_TOP] = 0;
-	ram[PEMSA_RAM_CLIP_RIGHT] = 127;
-	ram[PEMSA_RAM_CLIP_BOTTOM] = 127;
+	ram[PEMSA_RAM_CLIP_RIGHT] = 128;
+	ram[PEMSA_RAM_CLIP_BOTTOM] = 128;
 }
 
 bool PemsaDrawStateModule::isTransparent(int color) {
