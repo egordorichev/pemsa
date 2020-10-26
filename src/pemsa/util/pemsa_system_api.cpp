@@ -28,7 +28,7 @@ static PemsaEmulator* emulator;
 static int printh(lua_State* state) {
 	int top = lua_gettop(state);
 
-	for (int i = top; i >= 1; i--) {
+	for (int i = 1; i <= top; i++) {
 		lua_pushvalue(state, i);
 		const char *str = lua_tostring(state, -1);
 

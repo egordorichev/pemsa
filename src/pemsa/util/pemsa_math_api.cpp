@@ -14,7 +14,8 @@ static int srand(lua_State* state) {
 }
 
 static int abs(lua_State* state) {
-	lua_pushnumber(state, abs(luaL_checknumber(state, 1)));
+	double v = luaL_checknumber(state, 1);
+	lua_pushnumber(state, v < 0 ? v * -1 : v);
 	return 1;
 }
 

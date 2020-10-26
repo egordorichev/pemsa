@@ -4,7 +4,6 @@
 
 # graphics
 
-* Sspr
 * Oval + ovalfill
 * tline???
 * print

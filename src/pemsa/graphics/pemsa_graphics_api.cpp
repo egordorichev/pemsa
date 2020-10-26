@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <iostream>
 
 /*
  * I'm sorry to myself and whoever is reading this, but this is literally the only way
@@ -287,7 +288,6 @@ static int circfill(lua_State* state) {
 	return 0;
 }
 
-// spr( n, x, y, [w,] [h,] [flip_x,] [flip_y] )
 static int spr(lua_State* state) {
 	int n = luaL_checknumber(state, 1);
 
@@ -326,6 +326,77 @@ static int spr(lua_State* state) {
 	return 0;
 }
 
+static int sspr(lua_State* state) {
+	int sx = round(luaL_checknumber(state, 1));
+	int sy = round(luaL_checknumber(state, 2));
+	int sw = round(luaL_checknumber(state, 3));
+	int sh = round(luaL_checknumber(state, 4));
+	int dx = round(luaL_checknumber(state, 5));
+	int dy = round(luaL_checknumber(state, 6));
+	int dw = round(luaL_optnumber(state, 7, sw));
+	int dh = round(luaL_optnumber(state, 8, sh));
+
+	bool flipX = pemsa_optional_bool(state, 9, false);
+	bool flipY = pemsa_optional_bool(state, 10, false);
+
+	if (sw < 0) {
+		sw *= -1;
+		sx -= sw;
+		flipX = !flipX;
+	}
+
+	if (sh < 0) {
+		sh *= -1;
+		sy -= sh;
+		flipY = !flipY;
+	}
+
+	if (dw < 0) {
+		dw *= -1;
+		dx -= dw;
+		flipX = !flipX;
+	}
+
+	if (dh < 0) {
+		dh *= -1;
+		dy -= dh;
+		flipY = !flipY;
+	}
+
+	float ratioX = sw / (float) dw;
+	float ratioY = sh / (float) dh;
+	float x = sx;
+	double screenX = dx;
+	float y;
+	double screenY;
+
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	while (x < sx + sw && screenX < dx + dw) {
+		y = sy;
+		screenY = dy;
+
+		while (y < sy + sh && screenY < dy + dh) {
+			int color = memoryModule->getPixel(x, y, PEMSA_RAM_GFX) & 0x0f;
+
+			if (drawStateModule->isTransparent(color)) {
+				continue;
+			}
+
+			memoryModule->setPixel((int) (flipX ? dx + dw - ((int) screenX - dx) : (int) screenX), (int) (flipY ? dy + dh - ((int) screenY - dy) : (int) screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
+
+			y += ratioY;
+			screenY += 1;
+		}
+
+		x += ratioX;
+		screenX += 1;
+	}
+
+	return 0;
+}
+
 void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -341,4 +412,5 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "circ", circ);
 	lua_register(state, "circfill", circfill);
 	lua_register(state, "spr", spr);
+	lua_register(state, "sspr", sspr);
 }
