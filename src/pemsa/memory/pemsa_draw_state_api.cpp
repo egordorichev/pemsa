@@ -85,6 +85,16 @@ static int clip(lua_State* state) {
 	return 0;
 }
 
+static int fillp(lua_State* state) {
+	double p = luaL_optnumber(state, 1, 0);
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	drawStateModule->setFillPattern(p);
+	drawStateModule->setFillPatternTransparent(((int) p) < p);
+
+	return 0;
+}
+
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -92,4 +102,5 @@ void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "pal", pal);
 	lua_register(state, "color", color);
 	lua_register(state, "clip", clip);
+	lua_register(state, "fillp", fillp);
 }

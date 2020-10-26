@@ -1,36 +1,10 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-local x, y = 64, 64
-palt(0, false)
-palt(14, true)
-
-function _update60()
-	if btn(0) then
-		x = x - 1
-	end
-
-	if btn(1) then
-    x = x + 1
-  end
-
-	if btn(2) then
-    y = y - 1
-  end
-
-	if btn(3) then
-    y = y + 1
-  end
-end
-
 function _draw()
 	cls()
-	clip(0, 0, 64, 64)
-	circfill(x, y, 8, 10)
-	color(8)
-	clip()
-	pset(1, 1)
-	circfill(x, y, 4)
+	fillp(256 + 64 + 32)
+	circfill(64, 64, 32, 8)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

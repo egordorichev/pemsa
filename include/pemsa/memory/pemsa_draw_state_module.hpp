@@ -21,6 +21,14 @@ class PemsaDrawStateModule : public PemsaModule {
 
 		int getColor();
 		void setColor(int color);
+
+		void setFillPattern(int p);
+		int getFillPattern();
+
+		void setFillPatternTransparent(bool transparent);
+		bool isFillPatternTransparent();
+
+		int getFillPatternBit(int x, int y);
 };
 
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state);

@@ -12,6 +12,12 @@
 
 static PemsaEmulator* emulator;
 
+#define DRAW_PIXEL(x, y, c) if (drawStateModule->getFillPatternBit(x, y) == 0) { \
+		memoryModule->setPixel(x, y, drawStateModule->getDrawColor(c), PEMSA_RAM_SCREEN); \
+  } else if (!transparent) { \
+		memoryModule->setPixel(x, y, drawStateModule->getDrawColor(c >> 4), PEMSA_RAM_SCREEN); \
+  }
+
 static int read_color(lua_State* state, int slot) {
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
@@ -46,9 +52,14 @@ static int pset(lua_State* state) {
 	int y = round(luaL_checknumber(state, 2));
 
 	int c = read_color(state, 3);
-
-	// TODO: take camera into account
-	emulator->getMemoryModule()->setPixel(x, y, c % 16, PEMSA_RAM_SCREEN);
+	// todo: take camera into account
+	
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+	
+	bool transparent = drawStateModule->isFillPatternTransparent();
+	
+	DRAW_PIXEL(x, y, c)
 	return 0;
 }
 
@@ -88,7 +99,11 @@ static inline void swap(int* a, int* b) {
 }
 
 static void plot_line(int x0, int y0, int x1, int y1, int c) {
-	PemsaMemoryModule* mem = emulator->getMemoryModule();
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+
+	bool transparent = drawStateModule->isFillPatternTransparent();
+	
 	bool steep = false;
 
 	if (abs(x1 - x0) < abs(y1 - y0)) {
@@ -110,9 +125,9 @@ static void plot_line(int x0, int y0, int x1, int y1, int c) {
 
 	for (int x = x0; x <= x1; x++) {
 		if (steep) {
-			mem->setPixel(y, x, c, PEMSA_RAM_SCREEN);
+			DRAW_PIXEL(x, y, c)
 		} else {
-			mem->setPixel(x, y, c, PEMSA_RAM_SCREEN);
+			DRAW_PIXEL(x, y, c)
 		}
 
 		err += d_err;
@@ -167,11 +182,15 @@ static int rectfill(lua_State* state) {
 	}
 
 	int c = read_color(state, 5);
-	PemsaMemoryModule* mem = emulator->getMemoryModule();
+
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+
+	bool transparent = drawStateModule->isFillPatternTransparent();
 
 	for (int y = y0; y <= y1; y++) {
 		for (int x = x0; x <= x1; x++) {
-			mem->setPixel(x, y, c, PEMSA_RAM_SCREEN);
+			DRAW_PIXEL(x, y, c)
 		}
 	}
 
@@ -189,18 +208,21 @@ static int circ(lua_State* state) {
 	int y = 0;
 	int decisionOver2 = 1 - x;
 
-	PemsaMemoryModule* mem = emulator->getMemoryModule();
-	
-	while (y <= x) {
-		mem->setPixel(ox + x, oy + y, c, PEMSA_RAM_SCREEN);
-		mem->setPixel(ox + y, oy + x, c, PEMSA_RAM_SCREEN);
-		mem->setPixel(ox - x, oy + y, c, PEMSA_RAM_SCREEN);
-		mem->setPixel(ox - y, oy + x, c, PEMSA_RAM_SCREEN);
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 
-		mem->setPixel(ox - x, oy - y, c, PEMSA_RAM_SCREEN);
-		mem->setPixel(ox - y, oy - x, c, PEMSA_RAM_SCREEN);
-		mem->setPixel(ox + x, oy - y, c, PEMSA_RAM_SCREEN);
-		mem->setPixel(ox + y, oy - x, c, PEMSA_RAM_SCREEN);
+	bool transparent = drawStateModule->isFillPatternTransparent();
+
+	while (y <= x) {
+		DRAW_PIXEL(ox + x, oy + y, c)
+		DRAW_PIXEL(ox + y, oy + x, c)
+		DRAW_PIXEL(ox - x, oy + y, c)
+		DRAW_PIXEL(ox - y, oy + x, c)
+
+		DRAW_PIXEL(ox - x, oy - y, c)
+		DRAW_PIXEL(ox - y, oy - x, c)
+		DRAW_PIXEL(ox + x, oy - y, c)
+		DRAW_PIXEL(ox + y, oy - x, c)
 		
 		y++;
 
@@ -216,10 +238,13 @@ static int circ(lua_State* state) {
 }
 
 static inline void horizontalLine(int x0, int y, int x1, int c) {
-	PemsaMemoryModule* mem = emulator->getMemoryModule();
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+
+	bool transparent = drawStateModule->isFillPatternTransparent();
 
 	for (int x = x0; x <= x1; x++) {
-		mem->setPixel(x, y, c, PEMSA_RAM_SCREEN);
+		DRAW_PIXEL(x, y, c)
 	}
 }
 

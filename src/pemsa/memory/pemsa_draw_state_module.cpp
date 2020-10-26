@@ -64,3 +64,31 @@ int PemsaDrawStateModule::getColor() {
 void PemsaDrawStateModule::setColor(int color) {
 	this->emulator->getMemoryModule()->ram[PEMSA_RAM_DRAW_COLOR] = color & 0x0f;
 }
+
+void PemsaDrawStateModule::setFillPattern(int p) {
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+
+	ram[PEMSA_RAM_FILL_PATTERN] = p & 0xff;
+	ram[PEMSA_RAM_FILL_PATTERN + 1] = (p >> 8) & 0xff;
+}
+
+int PemsaDrawStateModule::getFillPattern() {
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+	return ram[PEMSA_RAM_FILL_PATTERN] | (ram[PEMSA_RAM_FILL_PATTERN + 1] << 8);
+}
+
+void PemsaDrawStateModule::setFillPatternTransparent(bool transparent) {
+	emulator->getMemoryModule()->ram[PEMSA_RAM_FILL_PATTERN + 2] = transparent ? 1 : 0;
+}
+
+bool PemsaDrawStateModule::isFillPatternTransparent() {
+	return emulator->getMemoryModule()->ram[PEMSA_RAM_FILL_PATTERN + 2] != 0;
+}
+
+int PemsaDrawStateModule::getFillPatternBit(int x, int y) {
+	x &= 0b11;
+	y &= 0b11;
+
+	int i = (y << 2) + x;
+	return (this->getFillPattern() & (1 << 15) >> i) >> (15 - i);
+}
