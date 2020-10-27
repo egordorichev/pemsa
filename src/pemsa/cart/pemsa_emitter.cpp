@@ -5,6 +5,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	std::stringstream output;
 	PemsaToken token;
 	bool running = true;
+	bool inQuestion = false;
 
 	while (running) {
 		token = scanner->scan();
@@ -41,6 +42,23 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				}
 
 				output << std::string(token.start, token.length) << " ";
+				break;
+			}
+
+			case TOKEN_QUESTION: {
+				output << "print(";
+				inQuestion = true;
+
+				break;
+			}
+
+			case TOKEN_NEW_LINE: {
+				if (inQuestion) {
+					inQuestion = false;
+					output << ')';
+				}
+
+				output << '\n';
 				break;
 			}
 

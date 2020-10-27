@@ -179,10 +179,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 	/*
 	 * todo: patch the code
-	 * 0x10 -> dec
-	 * 0b010010 -> dec
 	 * if(true) -> if true then end
-	 * ?32 -> print(32)
 	 * ░ -> \127
 	 * "string" -> "STRING"
 	 * // -> --

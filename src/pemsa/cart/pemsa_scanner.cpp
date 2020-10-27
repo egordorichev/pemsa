@@ -71,6 +71,8 @@ PemsaToken PemsaScanner::scan() {
 		case '[': return this->makeToken(TOKEN_LEFT_BRACKET);
 		case ']': return this->makeToken(TOKEN_RIGHT_BRACKET);
 		case ';': return this->makeToken(TOKEN_SEMICOLON);
+		case ':': return this->makeToken(TOKEN_COLON);
+		case '?': return this->makeToken(TOKEN_QUESTION);
 		case ',': return this->makeToken(TOKEN_COMMA);
 		case '\\': return this->makeToken(TOKEN_BACKWARDS_SLASH);
 		case '+': return this->makeToken(this->match('=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
