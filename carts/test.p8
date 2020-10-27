@@ -1,7 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-printh(#"hello\153")
+printh([[hello
+im
+mario]])
 printh(true != false)
 function _draw()
 --[[

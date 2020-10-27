@@ -68,7 +68,6 @@ PemsaToken PemsaScanner::scan() {
 		case ')': return this->makeToken(TOKEN_RIGHT_PAREN);
 		case '{': return this->makeToken(TOKEN_LEFT_BRACE);
 		case '}': return this->makeToken(TOKEN_RIGHT_BRACE);
-		case '[': return this->makeToken(TOKEN_LEFT_BRACKET);
 		case ']': return this->makeToken(TOKEN_RIGHT_BRACKET);
 		case ';': return this->makeToken(TOKEN_SEMICOLON);
 		case ':': return this->makeToken(TOKEN_COLON);
@@ -111,6 +110,29 @@ PemsaToken PemsaScanner::scan() {
 			// The closing quote
 			this->advance();
 			return this->makeToken(TOKEN_STRING);
+		}
+
+		case '[': {
+			if (this->peek() == '[') {
+				while (!(this->peek() == ']' && this->peekNext() == ']') && !this->isAtEnd()) {
+					if (this->peek() == '\n') {
+						this->line++;
+					}
+
+					this->advance();
+				}
+
+				if (this->isAtEnd()) {
+					return this->makeErrorToken("Unterminated string");
+				}
+
+				this->advance();
+				this->advance();
+
+				return this->makeToken(TOKEN_MULTILINE_STRING);
+			}
+
+			return this->makeToken(TOKEN_LEFT_BRACKET);
 		}
 	}
 

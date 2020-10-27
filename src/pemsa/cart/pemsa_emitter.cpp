@@ -16,14 +16,24 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				break;
 			}
 
+			case TOKEN_MULTILINE_STRING:
 			case TOKEN_STRING: {
-				output << "\"";
+				bool multiline = token.type == TOKEN_MULTILINE_STRING;
+				output << (multiline ? "[[" : "\"");
 
-				for (int i = 1; i < token.length - 1; i++) {
+				int start = 1;
+				int end = token.length - 1;
+
+				if (multiline) {
+					start++;
+					end--;
+				}
+
+				for (int i = start; i < end; i++) {
 					output << (char) toupper(token.start[i]);
 				}
 
-				output << "\"";
+				output << (multiline ? "]]" : "\"");
 				break;
 			}
 
