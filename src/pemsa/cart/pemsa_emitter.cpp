@@ -52,6 +52,18 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				break;
 			}
 
+			// Can have a different underlying c-string
+			case TOKEN_NOT: {
+				output << " not ";
+				break;
+			}
+
+			// Can have a different underlying c-string
+			case TOKEN_TILDA_EQUAL: {
+				output << " ~= ";
+				break;
+			}
+
 			case TOKEN_NEW_LINE: {
 				if (inQuestion) {
 					inQuestion = false;

@@ -1,6 +1,7 @@
 # cart
 
 * Lua code patching
+* print/printh should support printing any type, boolean should display true/false
 
 # graphics
 

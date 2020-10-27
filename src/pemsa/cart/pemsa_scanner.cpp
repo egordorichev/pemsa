@@ -198,10 +198,27 @@ bool PemsaScanner::skipWhitespace() {
 			}
 
 			case '-':
-			case '\\': {
+			case '/': {
 				if (this->peekNext() == c) {
-					while (this->peek() != '\n' && !this->isAtEnd()) {
+					this->advance();
+					this->advance();
+
+					bool multiline = c == '-' && this->peek() == '[' && this->peekNext() == '[';
+
+					if (multiline) {
 						this->advance();
+						this->advance();
+
+						while (!(this->peek() == ']' && this->peekNext() == ']') && !this->isAtEnd()) {
+							this->advance();
+						}
+
+						this->advance();
+						this->advance();
+					} else {
+						while (this->peek() != '\n' && !this->isAtEnd()) {
+							this->advance();
+						}
 					}
 				} else {
 					return false;

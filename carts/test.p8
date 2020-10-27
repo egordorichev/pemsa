@@ -2,7 +2,11 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 printh(#"hello\153")
+printh(true != false)
 function _draw()
+--[[
+sup
+]]
 	?"\97hello, world", 0x1, 0b00101
 end
 __gfx__

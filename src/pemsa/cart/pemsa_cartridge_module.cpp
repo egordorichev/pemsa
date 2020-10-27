@@ -181,11 +181,9 @@ bool PemsaCartridgeModule::load(const char *path) {
 	 * todo: patch the code
 	 * if(true) -> if true then end
 	 * ░ -> \127
-	 * "string" -> "STRING"
+	 * multiline strings
 	 * // -> --
 	 * a \ b -> flr(a / b)
-	 * remove all the comments (replace with whitespace)
-	 * != -> ~=
 	 * a += b -> a = a + b
 	 */
 
