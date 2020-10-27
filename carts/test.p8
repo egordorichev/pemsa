@@ -1,9 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-printh(#"\153")
+printh(#"hello\153")
 function _draw()
-	print("\97", 1, 1)
+	print("\97hello, world", 0x1, 0b00101)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

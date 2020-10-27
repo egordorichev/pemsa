@@ -19,7 +19,7 @@ add_library(pemsa STATIC src/pemsa/pemsa_emulator.cpp src/pemsa/pemsa_backend.cp
 	src/pemsa/cart/pemsa_cartridge_module.cpp src/pemsa/memory/pemsa_memory_module.cpp src/pemsa/graphics/pemsa_graphics_api.cpp
 	src/pemsa/util/pemsa_system_api.cpp src/pemsa/util/pemsa_math_api.cpp src/pemsa/util/pemsa_util.cpp src/pemsa/input/pemsa_input_api.cpp
 	src/pemsa/memory/pemsa_draw_state_module.cpp src/pemsa/memory/pemsa_draw_state_api.cpp src/pemsa/memory/pemsa_memory_api.cpp
-	src/pemsa/util/pemsa_font.cpp src/pemsa/cart/pemsa_scanner.cpp)
+	src/pemsa/util/pemsa_font.cpp src/pemsa/cart/pemsa_scanner.cpp src/pemsa/cart/pemsa_emitter.cpp)
 
 target_link_libraries(pemsa ${LUA_LIBRARIES})
 set_target_properties(pemsa PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist/)

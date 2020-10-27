@@ -43,7 +43,6 @@ PemsaToken PemsaScanner::parseNumber() {
 
 PemsaToken PemsaScanner::scan() {
 	if (this->skipWhitespace()) {
-		this->start = this->current;
 		return this->makeToken(TOKEN_NEW_LINE);
 	}
 
@@ -124,9 +123,15 @@ PemsaToken PemsaScanner::makeToken(PemsaTokenType type) {
 	PemsaToken token;
 
 	token.type = type;
-	token.start = this->start;
-	token.length = (int) (this->current - this->start);
 	token.line = this->line;
+
+	if (type == TOKEN_NEW_LINE) {
+		token.start = "\n";
+		token.length = 1;
+	} else {
+		token.start = this->start;
+		token.length = (int) (this->current - this->start);
+	}
 
 	return token;
 }
