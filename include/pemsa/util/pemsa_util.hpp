@@ -1,7 +1,7 @@
 #ifndef PEMSA_UTIL_HPP
 #define PEMSA_UTIL_HPP
 
-#include "lua.hpp"
+#include "lua5.2/lua.hpp"
 
 #define HEX_TO_INT(c) ((c >= 'a') ? (c - 'a' + 10) : (c - '0'))
 #define SET_HALF(b, v, r) (r ? ((b & 0xf0) | (v & 0x0f)) : ((b & 0x0f) | ((v & 0x0f) << 4)))

@@ -473,7 +473,13 @@ static int print(lua_State* state) {
 	bool transparent = false;
 
 	while (*text != '\0') {
-		const char** letter = pemsa_get_letter(*text++);
+		char c = *text++;
+		const char** letter = pemsa_get_letter(c);
+
+		if (letter == nullptr) {
+			// fixme: octal escape to int of it
+			letter = pemsa_get_letter(std::stoi(c, 0, 8))
+		}
 
 		if (letter != nullptr) {
 			for (int ly = 0; ly < 5; ly++) {
@@ -483,6 +489,9 @@ static int print(lua_State* state) {
 					}
 				}
 			}
+		} else {
+			char cc = text[-1];
+			std::cout << cc << "\n";
 		}
 
 		x += 4;

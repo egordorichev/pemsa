@@ -1,5 +1,7 @@
 #include "pemsa/cart/pemsa_emitter.hpp"
+
 #include <sstream>
+#include <iostream>
 
 std::string pemsa_emit(PemsaScanner* scanner) {
 	std::stringstream output;
@@ -30,7 +32,14 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				}
 
 				for (int i = start; i < end; i++) {
-					output << (char) toupper(token.start[i]);
+					const char* str = token.start + i;
+					if (i < end - 2) {
+#define CASE(a, b, c, u, d) if (str[0] == a && str[1] == b && str[2] == c) { output << "\\x" << std::hex << d << std::dec; i += 2; continue; }
+#include "pemsa/cart/pemsa_cases.hpp"
+#undef CASE
+					}
+
+					output << (char) toupper(*str);
 				}
 
 				output << (multiline ? "]]" : "\"");
@@ -81,6 +90,11 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				}
 
 				output << '\n';
+				break;
+			}
+
+			case TOKEN_COLON_COLON: {
+				output << std::string(token.start, token.length);
 				break;
 			}
 

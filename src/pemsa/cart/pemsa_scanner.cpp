@@ -1,5 +1,7 @@
 #include "pemsa/cart/pemsa_scanner.hpp"
+
 #include <cstring>
+#include <iostream>
 
 PemsaScanner::PemsaScanner(const char *source) {
 	this->current = source;
@@ -70,10 +72,10 @@ PemsaToken PemsaScanner::scan() {
 		case '}': return this->makeToken(TOKEN_RIGHT_BRACE);
 		case ']': return this->makeToken(TOKEN_RIGHT_BRACKET);
 		case ';': return this->makeToken(TOKEN_SEMICOLON);
-		case ':': return this->makeToken(TOKEN_COLON);
 		case '?': return this->makeToken(TOKEN_QUESTION);
 		case ',': return this->makeToken(TOKEN_COMMA);
 		case '\\': return this->makeToken(TOKEN_BACKWARDS_SLASH);
+		case ':': return this->makeToken(this->match(':') ? TOKEN_COLON_COLON : TOKEN_COLON);
 		case '+': return this->makeToken(this->match('=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
 		case '-': return this->makeToken(this->match('=') ? TOKEN_MINUS_EQUAL : TOKEN_MINUS);
 		case '/': return this->makeToken(this->match('=') ? TOKEN_SLASH_EQUAL : TOKEN_SLASH);
@@ -134,6 +136,24 @@ PemsaToken PemsaScanner::scan() {
 
 			return this->makeToken(TOKEN_LEFT_BRACKET);
 		}
+
+		case -30:
+		case -16:
+		case -53: {
+			int code[3];
+
+			code[0] = c;
+
+			for (int i = 0; i < 2; i++) {
+				code[i + 1] = advance();
+			}
+
+#define CASE(a, b, c, d, u) if (code[0] == a && code[1] == b && code[2] == c) { return this->makeAsciiToken(d); }
+#include "pemsa/cart/pemsa_cases.hpp"
+#undef CASE
+
+			break;
+		}
 	}
 
 	return this->makeErrorToken("Unexpected character");
@@ -166,6 +186,17 @@ PemsaToken PemsaScanner::makeErrorToken(const char* message) {
 	token.type = TOKEN_ERROR;
 	token.start = message;
 	token.length = strlen(message);
+	token.line = this->line;
+
+	return token;
+}
+
+PemsaToken PemsaScanner::makeAsciiToken(const char *type) {
+	PemsaToken token;
+
+	token.type = TOKEN_IDENTIFIER;
+	token.start = type;
+	token.length = strlen(type);
 	token.line = this->line;
 
 	return token;
@@ -273,6 +304,7 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 		case 'o': return this->checkKeyword(1, 1, "r", TOKEN_OR);
 		case 'u': return this->checkKeyword(1, 4, "ntil", TOKEN_UNTIL);
 		case 'w': return this->checkKeyword(1, 4, "hile", TOKEN_WHILE);
+		case 'g': return this->checkKeyword(1, 3, "oto", TOKEN_GOTO);
 
 		case 'e': {
 			if (this->current - this->start > 4) {

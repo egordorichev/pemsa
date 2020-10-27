@@ -1,7 +1,7 @@
 #ifndef PEMSA_CARTRIDGE_HPP
 #define PEMSA_CARTRIDGE_HPP
 
-#include "lua.hpp"
+#include "lua5.2/lua.hpp"
 #include <cstdint>
 
 #define PEMSA_ROM_GFX 0x0

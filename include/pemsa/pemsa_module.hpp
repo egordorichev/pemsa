@@ -2,7 +2,7 @@
 #define PEMSA_MODULE_HPP
 
 #include "pemsa/pemsa_predefines.hpp"
-#include "lua.hpp"
+#include "lua5.2/lua.hpp"
 
 class PemsaModule {
 	public:

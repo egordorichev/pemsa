@@ -4,7 +4,7 @@
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
 
-#include "lualib.h"
+#include "lua5.2/lualib.h"
 
 #include <iostream>
 #include <fstream>
