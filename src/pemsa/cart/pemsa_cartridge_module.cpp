@@ -1,3 +1,4 @@
+#include "pemsa/cart/pemsa_scanner.hpp"
 #include "pemsa/cart/pemsa_cartridge_module.hpp"
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
@@ -170,6 +171,14 @@ bool PemsaCartridgeModule::load(const char *path) {
 	this->cart->fullPath = path;
 
 	std::string codeString = code.str();
+
+	PemsaScanner scanner(codeString.c_str());
+	PemsaToken token;
+
+	do {
+		token = scanner.scan();
+		printf("%i %.*s\n", token.type, token.length, token.start);
+	} while (token.type != TOKEN_EOF);
 
 	/*
 	 * todo: patch the code
