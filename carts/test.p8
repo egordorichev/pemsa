@@ -1,11 +1,32 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-s = [[…∧░➡⧗▤⬆☉🅾◆
-█★⬇✽●♥웃⌂⬅
-▥❎🐱ˇ▒♪😐]]
+x,y=0,0
+
+function _update60()
+	if btn(⬅) then
+		x = x - 1
+	end
+
+	if btn(➡) then
+		x = x + 1
+	end
+
+	if btn(⬆) then
+		y = y - 1
+	end
+
+	if btn(⬇) then
+		y = y + 1
+	end
+
+	if btnp(🅾️) then printh("sup") end
+	if btnp(❎) then printh("hey") end
+end
+
 function _draw()
-	print(s, 10, 10)
+	cls()
+	print("★", x, y)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee
