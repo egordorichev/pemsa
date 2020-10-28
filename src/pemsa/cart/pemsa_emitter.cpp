@@ -23,23 +23,30 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	output << "S, D, G, M, I, U = 0, 1, 2, 3, 4, 5\n";
 
 	while (running) {
-		previous = token;
-		token = scanner->scan();
-
-		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE && outputBrace > 0) {
-			if (outputBrace == 1) {
-				output << ")";
-			}
-
-			outputBrace--;
+		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE) {
+			previous = token;
 		}
 
-		if (checkThen && token.type != TOKEN_THEN) {
-			emitEnd = true;
-			checkThen = false;
-			inIf = false;
+		token = scanner->scan();
 
-			output << " then ";
+		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE) {
+			if (outputBrace > 0) {
+				if (outputBrace == 1) {
+					output << ")";
+				}
+
+				outputBrace--;
+			}
+
+			if (checkThen) {
+				checkThen = false;
+				inIf = false;
+
+				if (token.type != TOKEN_THEN) {
+					emitEnd = true;
+					output << " then ";
+				}
+			}
 		}
 
 		switch (token.type) {

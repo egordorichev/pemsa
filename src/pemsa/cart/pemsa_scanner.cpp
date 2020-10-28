@@ -12,6 +12,10 @@ static bool isDigit(char c) {
 	return c >= '0' && c <= '9';
 }
 
+static bool isDigitOrHex(char c) {
+	return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
+}
+
 static bool isAlpha(char c) {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
@@ -25,17 +29,17 @@ PemsaToken PemsaScanner::parseIdentifier() {
 }
 
 PemsaToken PemsaScanner::parseNumber() {
-	while (isDigit(this->peek())) {
+	while (isDigitOrHex(this->peek())) {
 		this->advance();
 	}
 
 	char c = peek();
 
-	if ((c == '.' || c == 'x' || c == 'b') && isDigit(peekNext())) {
+	if ((c == '.' || c == 'x' || c == 'b') && isDigitOrHex(peekNext())) {
 		// Consume the "."
 		this->advance();
 
-		while (isDigit(this->peek())) {
+		while (isDigitOrHex(this->peek())) {
 			this->advance();
 		}
 	}
@@ -67,6 +71,7 @@ PemsaToken PemsaScanner::scan() {
 	}
 
 	switch (c) {
+		case '^': return this->makeToken(TOKEN_CAP);
 		case '%': return this->makeToken(TOKEN_MODULO);
 		case '#': return this->makeToken(TOKEN_SHARP);
 		case '(': return this->makeToken(TOKEN_LEFT_PAREN);
@@ -83,6 +88,7 @@ PemsaToken PemsaScanner::scan() {
 		case '-': return this->makeToken(this->match('=') ? TOKEN_MINUS_EQUAL : TOKEN_MINUS);
 		case '/': return this->makeToken(this->match('=') ? TOKEN_SLASH_EQUAL : TOKEN_SLASH);
 		case '*': return this->makeToken(this->match('=') ? TOKEN_STAR_EQUAL : TOKEN_STAR);
+		case '~': return this->makeToken(this->match('=') ? TOKEN_TILDA_EQUAL : TOKEN_TILDA);
 		case '!': return this->makeToken(this->match('=') ? TOKEN_TILDA_EQUAL : TOKEN_NOT);
 		case '=': return this->makeToken(this->match('=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
 		case '<': return this->makeToken(this->match('=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
@@ -165,7 +171,7 @@ PemsaToken PemsaScanner::scan() {
 		}
 	}
 
-	return this->makeErrorToken("Unexpected character");
+	return this->makeToken(TOKEN_UNKNOWN);
 }
 
 bool PemsaScanner::isAtEnd() {
