@@ -177,13 +177,6 @@ bool PemsaCartridgeModule::load(const char *path) {
 	codeString = pemsa_emit(&scanner);
 	std::cout << codeString << "\n";
 
-	/*
-	 * todo: patch the code
-	 * if(true) -> if true then end
-	 * whitespace token
-	 * a \ b -> flr(a / b)
-	 */
-
 	this->cart->code = take_string(codeString);
 	this->cart->codeLength = codeString.length();
 

@@ -6,10 +6,15 @@
 std::string pemsa_emit(PemsaScanner* scanner) {
 	std::stringstream output;
 	PemsaToken token;
+	PemsaToken previous;
 
 	bool running = true;
 	bool inQuestion = false;
+	bool inIf = false;
+	bool checkThen = false;
+	bool emitEnd = false;
 	int outputBrace = 0;
+	int parenCount = 0;
 
 	const char* expressionStart = scanner->getCurrent();
 	const char* start = expressionStart;
@@ -18,6 +23,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	output << "S, D, G, M, I, U = 0, 1, 2, 3, 4, 5\n";
 
 	while (running) {
+		previous = token;
 		token = scanner->scan();
 
 		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE && outputBrace > 0) {
@@ -26,6 +32,14 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 			}
 
 			outputBrace--;
+		}
+
+		if (checkThen && token.type != TOKEN_THEN) {
+			emitEnd = true;
+			checkThen = false;
+			inIf = false;
+
+			output << " then ";
 		}
 
 		switch (token.type) {
@@ -134,13 +148,34 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 					output << ')';
 				}
 
+				if (emitEnd) {
+					emitEnd = false;
+					output << " end";
+				}
+
 				output << '\n';
+				break;
+			}
+
+			case TOKEN_RIGHT_PAREN: {
+				parenCount--;
+				checkThen = parenCount == 0 && inIf;
+
+				output << std::string(token.start, token.length);
 				break;
 			}
 
 			case TOKEN_LEFT_BRACKET:
 			case TOKEN_LEFT_BRACE:
 			case TOKEN_LEFT_PAREN: {
+				if (token.type == TOKEN_LEFT_PAREN) {
+					parenCount++;
+
+					if (previous.type == TOKEN_IF) {
+						inIf = true;
+					}
+				}
+
 				expressionStart = token.start + token.length;
 				output << std::string(token.start, token.length);
 				break;

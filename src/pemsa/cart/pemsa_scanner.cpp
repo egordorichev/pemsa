@@ -323,7 +323,7 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 			}
 
 			if (this->current - this->start > 1) {
-				switch (this->current[1]) {
+				switch (this->start[1]) {
 					case 'n': return this->checkKeyword(2, 1, "d", TOKEN_END);
 					case 'l': return this->checkKeyword(2, 2, "se", TOKEN_ELSE);
 				}
@@ -334,7 +334,7 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 
 		case 'f': {
 			if (this->current - this->start > 1) {
-				switch (this->current[1]) {
+				switch (this->start[1]) {
 					case 'a': return this->checkKeyword(2, 3, "lse", TOKEN_FALSE);
 					case 'o': return this->checkKeyword(2, 1, "r", TOKEN_FOR);
 					case 'u': return this->checkKeyword(2, 6, "nction", TOKEN_FUNCTION);
@@ -345,10 +345,10 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 		}
 
 		case 'i': {
-			if (this->current - this->start > 1) {
-				switch (this->current[1]) {
-					case 'f': return this->checkKeyword(2, 0, "", TOKEN_IF);
-					case 'n': return this->checkKeyword(2, 0, "", TOKEN_IN);
+			if (this->current - this->start == 2) {
+				switch (this->start[1]) {
+					case 'f': return TOKEN_IF;
+					case 'n': return TOKEN_IN;
 				}
 			}
 
@@ -357,7 +357,7 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 
 		case 'n': {
 			if (this->current - this->start > 1) {
-				switch (this->current[1]) {
+				switch (this->start[1]) {
 					case 'i': return this->checkKeyword(2, 1, "l", TOKEN_NIL);
 					case 'o': return this->checkKeyword(2, 1, "t", TOKEN_NOT);
 				}
@@ -368,7 +368,7 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 
 		case 'r': {
 			if (this->current - this->start > 2) {
-				switch (this->current[2]) {
+				switch (this->start[2]) {
 					case 'p': return this->checkKeyword(3, 3, "eat", TOKEN_REPEAT);
 					case 't': return this->checkKeyword(3, 3, "urn", TOKEN_RETURN);
 				}
@@ -379,7 +379,7 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 
 		case 't': {
 			if (this->current - this->start > 1) {
-				switch (this->current[1]) {
+				switch (this->start[1]) {
 					case 'h': return this->checkKeyword(2, 2, "en", TOKEN_THEN);
 					case 'r': return this->checkKeyword(2, 2, "ue", TOKEN_TRUE);
 				}
