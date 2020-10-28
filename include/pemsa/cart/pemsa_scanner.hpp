@@ -35,6 +35,7 @@ class PemsaScanner {
 		PemsaScanner(const char* source);
 
 		PemsaToken scan();
+		const char* getCurrent();
 	private:
 		const char* start;
 		const char* current;

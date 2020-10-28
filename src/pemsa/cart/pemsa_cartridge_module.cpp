@@ -182,7 +182,6 @@ bool PemsaCartridgeModule::load(const char *path) {
 	 * if(true) -> if true then end
 	 * whitespace token
 	 * a \ b -> flr(a / b)
-	 * a += b -> a = a + b
 	 */
 
 	this->cart->code = take_string(codeString);

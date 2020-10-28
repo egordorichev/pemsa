@@ -391,3 +391,7 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 
 	return TOKEN_IDENTIFIER;
 }
+
+const char *PemsaScanner::getCurrent() {
+	return this->current;
+}

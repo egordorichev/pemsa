@@ -1,20 +1,11 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-cls(2)
-for y = 0, 127 do
-	pset(127,y,y%8+7)
-end
-
-cursor(0,96)
-z=0
-function _draw()
-	if btnp(5) then
-		z = z + 1
-		color(z%7+3)
-		print("Hello, world")
-	end
-end
+function get() return 2 end
+local a = {}
+a.z = 48
+a.z/=get()
+printh(a.z)
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee
 33333333eeeeeeeeeeeeeeeeeeeeeeeee00000000000000eee1100ee000000000000000000000000eeeeee0000eeeeee132d149d1d1eeeeeeeeeeeeeeeeeeeee

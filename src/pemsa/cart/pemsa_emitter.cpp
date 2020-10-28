@@ -12,10 +12,21 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	// Emoji button setup
 	output << "S, D, G, M, I, U = 0, 1, 2, 3, 4, 5\n";
 
+	const char* expressionStart = scanner->getCurrent();
+	const char* start = expressionStart;
+
 	while (running) {
 		token = scanner->scan();
 
 		switch (token.type) {
+			case TOKEN_MINUS_EQUAL:
+			case TOKEN_SLASH_EQUAL:
+			case TOKEN_STAR_EQUAL:
+			case TOKEN_PLUS_EQUAL: {
+				output << "=" << std::string(expressionStart, token.start - expressionStart) << std::string(token.start, 1);
+				break;
+			}
+
 			case TOKEN_ERROR: {
 				std::cerr << token.start << "\n";
 				break;
@@ -105,6 +116,27 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				}
 
 				output << '\n';
+				break;
+			}
+
+			case TOKEN_LEFT_BRACKET:
+			case TOKEN_LEFT_BRACE:
+			case TOKEN_LEFT_PAREN: {
+				expressionStart = token.start + token.length;
+				output << std::string(token.start, token.length);
+				break;
+			}
+
+			case TOKEN_IDENTIFIER: {
+				if (start != token.start) {
+					char c = token.start[-1];
+
+					if (c == ' ' || c == '\r' || c == '\n' || c == '\t') {
+						expressionStart = token.start;
+					}
+				}
+
+				output << std::string(token.start, token.length);
 				break;
 			}
 
