@@ -912,7 +912,7 @@ static const char* star[] = {
 	" x   x ",
 };
 
-static const char* hourclass[] = {
+static const char* hourglass[] = {
 	" xxxxx ",
 	"  xxx  ",
 	"   x   ",
@@ -968,7 +968,13 @@ static const char* verticallines[] = {
 	"x x x x",
 };
 
-
+static const char* dashline[] = {
+	"       ",
+	"x   x  ",
+	" x x x ",
+	"  x   x",
+	"       ",
+};
 
 static const char** pemsa_font[PEMSA_FONT_SIZE];
 static bool setup;
@@ -1075,32 +1081,33 @@ void pemsa_setup_font() {
 	pemsa_font['}'] = braceclose;
 	pemsa_font['~'] = tilde;
 	pemsa_font[127] = nubbin;
-	pemsa_font[128] = block;
-	pemsa_font[129] = semiblock;
-	pemsa_font[130] = alien;
-	pemsa_font[131] = downbutton;
-	pemsa_font[132] = quasiblock;
-	pemsa_font[133] = shuriken;
-	pemsa_font[134] = shinyball;
-	pemsa_font[135] = heart;
-	pemsa_font[136] = sauron;
-	pemsa_font[137] = human;
-	pemsa_font[138] = house;
-	pemsa_font[139] = leftbutton;
-	pemsa_font[140] = face;
-	pemsa_font[141] = note;
-	pemsa_font[142] = obutton;
-	pemsa_font[143] = diamond;
-	pemsa_font[144] = dotline;
-	pemsa_font[145] = rightbutton;
-	pemsa_font[146] = star;
-	pemsa_font[147] = hourclass;
-	pemsa_font[148] = upbutton;
-	pemsa_font[149] = downarrows;
+	pemsa_font[12] = block;
+	pemsa_font[25] = semiblock;
+	pemsa_font[23] = alien;
+	pemsa_font[14] = downbutton;
+	pemsa_font[3] = quasiblock;
+	pemsa_font[15] = shuriken;
+	pemsa_font[16] = shinyball;
+	pemsa_font[17] = heart;
+	pemsa_font[8] = sauron;
+	pemsa_font[18] = human;
+	pemsa_font[19] = house;
+	pemsa_font[20] = leftbutton;
+	pemsa_font[27] = face;
+	pemsa_font[26] = note;
+	pemsa_font[9] = obutton;
+	pemsa_font[11] = diamond;
+	pemsa_font[1] = dotline;
+	pemsa_font[4] = rightbutton;
+	pemsa_font[13] = star;
+	pemsa_font[5] = hourglass;
+	pemsa_font[7] = upbutton;
+	pemsa_font[24] = downarrows;
 	pemsa_font[150] = trianglewave;
-	pemsa_font[151] = xbutton;
-	pemsa_font[152] = horizontallines;
-	pemsa_font[153] = verticallines;
+	pemsa_font[22] = xbutton;
+	pemsa_font[6] = horizontallines;
+	pemsa_font[21] = verticallines;
+	pemsa_font[2] = dashline;
 }
 
 const char** pemsa_get_letter(int c) {

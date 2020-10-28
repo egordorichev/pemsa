@@ -21,7 +21,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 			case TOKEN_MULTILINE_STRING:
 			case TOKEN_STRING: {
 				bool multiline = token.type == TOKEN_MULTILINE_STRING;
-				output << (multiline ? "[[" : "\"");
+				output << "\"";
 
 				int start = 1;
 				int end = token.length - 1;
@@ -33,16 +33,23 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 				for (int i = start; i < end; i++) {
 					const char* str = token.start + i;
-					if (i < end - 2) {
-#define CASE(a, b, c, u, d) if (str[0] == a && str[1] == b && str[2] == c) { output << "\\x" << std::hex << d << std::dec; i += 2; continue; }
+					if (i < end - 1) {
+#define CASE(a, b, c, d, u, e) if (str[0] == a && str[1] == b && (str[0] == -53 || (str[2] == c && (str[0] != -16 || str[3] == d)))) { output << "\\" << e; i += (str[0] == -16 ? 3 : (str[0] == -53 ? 1 : 2)); continue; }
 #include "pemsa/cart/pemsa_cases.hpp"
 #undef CASE
 					}
 
-					output << (char) toupper(*str);
+					char c = *str;
+
+					if (c == '\n') {
+						output << "\\n";
+						continue;
+					}
+
+					output << (char) toupper(c);
 				}
 
-				output << (multiline ? "]]" : "\"");
+				output << "\"";
 				break;
 			}
 

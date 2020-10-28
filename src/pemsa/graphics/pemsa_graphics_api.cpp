@@ -471,30 +471,36 @@ static int print(lua_State* state) {
 	y -= drawStateModule->getCameraY();
 
 	bool transparent = false;
+	int offsetX = 0;
+	int offsetY = 0;
 
 	while (*text != '\0') {
-		char c = *text++;
-		const char** letter = pemsa_get_letter(c);
+		char cr = *text++;
 
-		if (letter == nullptr) {
-			// fixme: octal escape to int of it
-			letter = pemsa_get_letter(std::stoi(c, 0, 8))
+		if (cr == '\n') {
+			offsetX = 0;
+			offsetY += 6;
+			continue;
 		}
 
+		const char** letter = pemsa_get_letter(cr);
+
 		if (letter != nullptr) {
+			int w = cr < '!' ? 7 : 3;
+			offsetX += w + 1;
+
 			for (int ly = 0; ly < 5; ly++) {
-				for (int lx = 0; lx < 3; lx++) {
+				for (int lx = 0; lx < w; lx++) {
 					if (letter[ly][lx] == 'x') {
-						DRAW_PIXEL(x + lx, y + ly, c)
+						DRAW_PIXEL(offsetX + x + lx, offsetY + y + ly, c)
 					}
 				}
 			}
 		} else {
-			char cc = text[-1];
-			std::cout << cc << "\n";
+			offsetX += 4;
+			std::cout << cr << "\n";
 		}
 
-		x += 4;
 		index++;
 	}
 

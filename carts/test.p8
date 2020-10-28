@@ -1,11 +1,12 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-
+s = [[…∧░➡⧗▤⬆☉🅾◆
+█★⬇✽●♥웃⌂⬅
+▥❎🐱ˇ▒♪😐]]
 function _draw()
-	print("…", 10, 10)
+	print(s, 10, 10)
 end
-
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee
 33333333eeeeeeeeeeeeeeeeeeeeeeeee00000000000000eee1100ee000000000000000000000000eeeeee0000eeeeee132d149d1d1eeeeeeeeeeeeeeeeeeeee

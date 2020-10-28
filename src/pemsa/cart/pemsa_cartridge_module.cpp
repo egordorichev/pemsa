@@ -181,6 +181,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 	 * todo: patch the code
 	 * if(true) -> if true then end
 	 * ░ -> \127
+	 * whitespace token
 	 * a \ b -> flr(a / b)
 	 * a += b -> a = a + b
 	 */

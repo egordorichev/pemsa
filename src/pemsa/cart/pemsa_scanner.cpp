@@ -140,15 +140,21 @@ PemsaToken PemsaScanner::scan() {
 		case -30:
 		case -16:
 		case -53: {
-			int code[3];
-
+			int code[4];
 			code[0] = c;
+			int len = 2;
 
-			for (int i = 0; i < 2; i++) {
+			switch (c) {
+				case -16: len = 3; break;
+				case -53: len = 1; break;
+			}
+
+			for (int i = 0; i < len; i++) {
 				code[i + 1] = advance();
 			}
 
-#define CASE(a, b, c, d, u) if (code[0] == a && code[1] == b && code[2] == c) { return this->makeAsciiToken(d); }
+			// std::cout << len << ": " << code[0] << ", " << code[1] << ", " << code[2] << ", " << code[3] << "\n";
+#define CASE(a, b, c, d, e, u) if (code[0] == a && code[1] == b && (code[0] == -53 || (code[2] == c && (code[0] != -16 || code[3] == d)))) { return this->makeAsciiToken(e); }
 #include "pemsa/cart/pemsa_cases.hpp"
 #undef CASE
 
