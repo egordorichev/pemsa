@@ -1,10 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-if (ent.weight) then
-   local w=state_dependent(ent,"WEIGHT")
-   ent.vel=ent.vel+v(0,w)
-  end
+help()
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee
 33333333eeeeeeeeeeeeeeeeeeeeeeeee00000000000000eee1100ee000000000000000000000000eeeeee0000eeeeee132d149d1d1eeeeeeeeeeeeeeeeeeeee

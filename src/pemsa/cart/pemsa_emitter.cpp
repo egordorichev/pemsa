@@ -42,7 +42,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				checkThen = false;
 				inIf = false;
 
-				if (token.type != TOKEN_THEN) {
+				if (token.type != TOKEN_THEN && token.type != TOKEN_OR && token.type != TOKEN_AND) {
 					emitEnd = true;
 					output << " then ";
 				}
@@ -74,6 +74,11 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 			case TOKEN_EOF: {
 				running = false;
+				break;
+			}
+
+			case TOKEN_UNKNOWN: {
+				// Some utf8 escape codes, other stuff that is not supported by this parser
 				break;
 			}
 
