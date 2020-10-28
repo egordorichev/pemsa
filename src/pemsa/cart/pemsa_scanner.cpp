@@ -65,6 +65,7 @@ PemsaToken PemsaScanner::scan() {
 	}
 
 	switch (c) {
+		case '%': return this->makeToken(TOKEN_MODULO);
 		case '#': return this->makeToken(TOKEN_SHARP);
 		case '(': return this->makeToken(TOKEN_LEFT_PAREN);
 		case ')': return this->makeToken(TOKEN_RIGHT_PAREN);

@@ -7,8 +7,8 @@ static int scancode_to_button(SDL_Scancode code) {
 		case SDL_SCANCODE_RIGHT: case SDL_SCANCODE_D: return 1;
 		case SDL_SCANCODE_UP: case SDL_SCANCODE_W: return 2;
 		case SDL_SCANCODE_DOWN: case SDL_SCANCODE_S: return 3;
-		case SDL_SCANCODE_X: return 4;
-		case SDL_SCANCODE_C: case SDL_SCANCODE_Z: return 5;
+		case SDL_SCANCODE_C: case SDL_SCANCODE_Z: return 4;
+		case SDL_SCANCODE_X: return 5;
 	}
 
 	return -1;

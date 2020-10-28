@@ -34,6 +34,11 @@ class PemsaDrawStateModule : public PemsaModule {
 		void setCameraX(int x);
 		int getCameraY();
 		void setCameraY(int y);
+
+		int getCursorX();
+		void setCursorX(int x);
+		int getCursorY();
+		void setCursorY(int y);
 };
 
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state);

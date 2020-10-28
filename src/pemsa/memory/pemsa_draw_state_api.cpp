@@ -97,12 +97,24 @@ static int fillp(lua_State* state) {
 
 static int camera(lua_State* state) {
 	int x = round(luaL_checknumber(state, 1));
-	int y = round(luaL_checknumber(state, 1));
+	int y = round(luaL_checknumber(state, 2));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
 	drawStateModule->setCameraX(x);
 	drawStateModule->setCameraY(y);
+
+	return 0;
+}
+
+static int cursor(lua_State* state) {
+	int x = round(luaL_checknumber(state, 1));
+	int y = round(luaL_checknumber(state, 2));
+
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	drawStateModule->setCursorX(x);
+	drawStateModule->setCursorY(y);
 
 	return 0;
 }
@@ -116,4 +128,5 @@ void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "clip", clip);
 	lua_register(state, "fillp", fillp);
 	lua_register(state, "camera", camera);
+	lua_register(state, "cursor", cursor);
 }

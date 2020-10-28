@@ -10,6 +10,10 @@ void PemsaDrawStateModule::reset() {
 
 	ram[PEMSA_RAM_PALETTE0] = 0x10;
 	ram[PEMSA_RAM_PALETTE1] = 0x0;
+	ram[PEMSA_RAM_CURSOR_X] = 0;
+	ram[PEMSA_RAM_CURSOR_Y] = 0;
+	ram[PEMSA_RAM_CAMERA_X] = 0;
+	ram[PEMSA_RAM_CAMERA_Y] = 0;
 
 	for (int i = 1; i < 16; i++) {
 		ram[PEMSA_RAM_PALETTE0 + i] = (uint8_t) i;
@@ -105,4 +109,20 @@ int PemsaDrawStateModule::getCameraY() {
 
 void PemsaDrawStateModule::setCameraY(int y) {
 	((int16_t*) (emulator->getMemoryModule()->ram + PEMSA_RAM_CAMERA_Y))[0] = y;
+}
+
+int PemsaDrawStateModule::getCursorX() {
+	return emulator->getMemoryModule()->ram[PEMSA_RAM_CURSOR_X];
+}
+
+void PemsaDrawStateModule::setCursorX(int x) {
+	emulator->getMemoryModule()->ram[PEMSA_RAM_CURSOR_X] = x;
+}
+
+int PemsaDrawStateModule::getCursorY() {
+	return emulator->getMemoryModule()->ram[PEMSA_RAM_CURSOR_Y];
+}
+
+void PemsaDrawStateModule::setCursorY(int y) {
+	emulator->getMemoryModule()->ram[PEMSA_RAM_CURSOR_Y] = y;
 }

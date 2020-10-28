@@ -3,17 +3,17 @@
 * Lua code patching
 * print/printh should support printing any type, boolean should display true/false
 * fillp from emoji
+* input syncing is kinda weird
+* whitespace token impl
 
 # graphics
 
 * Oval + ovalfill
 * tline???
-* print
 
 # input
 
 * gamepad backend implementation
-* emoji support
 
 # audio
 
@@ -23,7 +23,6 @@
 # memory
 
 * stat
-* cursor
 * mouse/keyboard states
 
 # other

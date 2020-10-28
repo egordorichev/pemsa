@@ -10,7 +10,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	bool inQuestion = false;
 
 	// Emoji button setup
-	output << "S, D, G, M, U, I = 0, 1, 2, 3, 4, 5\n";
+	output << "S, D, G, M, I, U = 0, 1, 2, 3, 4, 5\n";
 
 	while (running) {
 		token = scanner->scan();

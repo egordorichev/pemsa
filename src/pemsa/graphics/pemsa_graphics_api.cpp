@@ -457,18 +457,34 @@ static int map(lua_State* state) {
 static int print(lua_State* state) {
 	const char* text = luaL_checkstring(state, 1);
 
-	// todo: default to cursor
-	int x = round(luaL_checknumber(state, 2));
-	int y = round(luaL_checknumber(state, 3));
-	int c = read_color(state, 4);
-
-	int index = 0;
-
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 
-	x -= drawStateModule->getCameraX();
-	y -= drawStateModule->getCameraY();
+	int x;
+	int y;
+	int c;
+	bool givenCoords = lua_gettop(state) > 1;
+
+	if (givenCoords) {
+		x = round(luaL_checknumber(state, 2)) - drawStateModule->getCameraX();
+		y = round(luaL_checknumber(state, 3)) - drawStateModule->getCameraY();
+		c = read_color(state, 4);
+	} else {
+		x = drawStateModule->getCursorX();
+		y = drawStateModule->getCursorY();
+		c = drawStateModule->getColor();
+
+		if (y + 18 >= 127) {
+			memcpy(memoryModule->ram + PEMSA_RAM_SCREEN, memoryModule->ram + PEMSA_RAM_SCREEN + 0x180, 0x2000 - 0x180);
+			memset(memoryModule->ram + PEMSA_RAM_SCREEN + 0x1e80, 0, 0x180);
+		} else {
+			y += 6;
+		}
+
+		drawStateModule->setCursorY(y);
+	}
+
+	int index = 0;
 
 	bool transparent = false;
 	int offsetX = 0;
@@ -487,7 +503,6 @@ static int print(lua_State* state) {
 
 		if (letter != nullptr) {
 			int w = cr < '!' ? 7 : 3;
-			offsetX += w + 1;
 
 			for (int ly = 0; ly < 5; ly++) {
 				for (int lx = 0; lx < w; lx++) {
@@ -496,15 +511,20 @@ static int print(lua_State* state) {
 					}
 				}
 			}
+
+			offsetX += w + 1;
 		} else {
 			offsetX += 4;
-			std::cout << cr << "\n";
 		}
 
 		index++;
 	}
 
-	// todo: update cursor pos, scrolling
+	if (givenCoords) {
+		drawStateModule->setCursorX(x);
+		drawStateModule->setCursorY(y);
+	}
+
 	return 0;
 }
 
