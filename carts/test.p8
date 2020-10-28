@@ -1,7 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-help()
+cartdata("help")
+print(dget(0))
+dset(0, 32)
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee
 33333333eeeeeeeeeeeeeeeeeeeeeeeee00000000000000eee1100ee000000000000000000000000eeeeee0000eeeeee132d149d1d1eeeeeeeeeeeeeeeeeeeee

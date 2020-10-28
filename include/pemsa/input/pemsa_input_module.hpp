@@ -28,4 +28,6 @@ class PemsaInputModule : public PemsaModule {
 		PemsaInputBackend* backend;
 };
 
+void pemsa_open_input_api(PemsaEmulator* machine, lua_State* state);
+
 #endif

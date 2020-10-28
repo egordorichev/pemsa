@@ -1,6 +1,5 @@
 # cart
 
-* error in error handling (i guess when parsing main script?)
 * print/printh should support printing any type, boolean should display true/false
 * fillp from emoji
 * input syncing is kinda weird

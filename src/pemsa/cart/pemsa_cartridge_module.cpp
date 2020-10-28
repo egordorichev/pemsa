@@ -175,7 +175,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 	PemsaScanner scanner(codeString.c_str());
 
 	codeString = pemsa_emit(&scanner);
-	std::cout << codeString << "\n";
+	// std::cout << codeString << "\n";
 
 	this->cart->code = take_string(codeString);
 	this->cart->codeLength = codeString.length();
@@ -189,6 +189,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 	pemsa_open_input_api(emulator, state);
 	pemsa_open_memory_api(emulator, state);
 	pemsa_open_draw_state_api(emulator, state);
+	pemsa_open_cartridge_api(emulator, state);
 
 	memcpy(emulator->getMemoryModule()->ram, rom, 0x4300);
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
@@ -212,7 +213,6 @@ void PemsaCartridgeModule::gameLoop() {
 	this->threadRunning = true;
 
 	lua_State* state = this->cart->state;
-	lua_pushcfunction(state, pemsa_trace_lua);
 
 	if (luaL_loadbuffer(state, this->cart->code, this->cart->codeLength, "=cart") != 0) {
 		this->reportLuaError();
@@ -286,4 +286,52 @@ void PemsaCartridgeModule::reportLuaError() {
 		std::cerr << lua_tostring(this->cart->state, -1) << "\n";
 		this->threadRunning = false;
 	}
+}
+
+void PemsaCartridgeModule::loadData(const char *path) {
+	if (this->cart == nullptr) {
+		return;
+	}
+
+	this->cart->cartDataId = path;
+	std::string fullPath = std::string(PEMSA_CART_DATA_PATH) + "/" + std::string(path);
+	std::ifstream file(fullPath);
+
+	double* data = this->cart->cartData;
+
+	if (file.good()) {
+		for (int i = 0; i < PEMSA_CART_DATA_SIZE; i++) {
+			file >> data[i];
+		}
+
+		file.close();
+	} else {
+		for (int i = 0; i < PEMSA_CART_DATA_SIZE; i++) {
+			data[i] = 0;
+		}
+
+		this->saveData();
+	}
+}
+
+void PemsaCartridgeModule::saveData() {
+	if (this->cart == nullptr) {
+		return;
+	}
+
+	std::filesystem::create_directory(PEMSA_CART_DATA_PATH);
+	std::string fullPath = std::string(PEMSA_CART_DATA_PATH) + "/" + std::string(this->cart->cartDataId);
+	std::ofstream file(fullPath);
+
+	if (file.bad()) {
+		return;
+	}
+
+	double* data = this->cart->cartData;
+
+	for (int i = 0; i < PEMSA_CART_DATA_SIZE; i++) {
+		file << data[i] << "\n";
+	}
+
+	file.close();
 }

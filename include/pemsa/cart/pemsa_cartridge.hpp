@@ -12,7 +12,7 @@
 #define PEMSA_ROM_SFX 0x3200
 #define PEMSA_ROM_META 0x8000
 
-#define PEMSA_CART_DATA_PATH "cartdata/"
+#define PEMSA_CART_DATA_PATH ".cartdata/"
 #define PEMSA_CART_DATA_SIZE 64
 #define PEMSA_CART_ROM_SIZE 0x8005
 
@@ -28,7 +28,7 @@ struct PemsaCartridge {
 	double time;
 
 	uint8_t rom[PEMSA_CART_ROM_SIZE];
-	uint8_t cartData[PEMSA_CART_DATA_SIZE];
+	double cartData[PEMSA_CART_DATA_SIZE];
 };
 
 #endif

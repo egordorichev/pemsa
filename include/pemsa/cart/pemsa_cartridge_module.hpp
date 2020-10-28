@@ -16,6 +16,9 @@ class PemsaCartridgeModule : public PemsaModule {
 		void update(double dt) override;
 		bool load(const char* path);
 
+		void loadData(const char* path);
+		void saveData();
+
 		PemsaCartridge* getCart();
 		std::condition_variable* getLock();
 		std::mutex* getMutex();
@@ -35,6 +38,6 @@ class PemsaCartridgeModule : public PemsaModule {
 		void reportLuaError();
 };
 
-void pemsa_open_input_api(PemsaEmulator* machine, lua_State* state);
+void pemsa_open_cartridge_api(PemsaEmulator* machine, lua_State* state);
 
 #endif
