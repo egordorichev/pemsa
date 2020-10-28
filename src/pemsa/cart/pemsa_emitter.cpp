@@ -6,19 +6,38 @@
 std::string pemsa_emit(PemsaScanner* scanner) {
 	std::stringstream output;
 	PemsaToken token;
+
 	bool running = true;
 	bool inQuestion = false;
-
-	// Emoji button setup
-	output << "S, D, G, M, I, U = 0, 1, 2, 3, 4, 5\n";
+	int outputBrace = 0;
 
 	const char* expressionStart = scanner->getCurrent();
 	const char* start = expressionStart;
 
+	// Emoji button setup
+	output << "S, D, G, M, I, U = 0, 1, 2, 3, 4, 5\n";
+
 	while (running) {
 		token = scanner->scan();
 
+		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE && outputBrace > 0) {
+			if (outputBrace == 1) {
+				output << ")";
+			}
+
+			outputBrace--;
+		}
+
 		switch (token.type) {
+			case TOKEN_BACKWARDS_SLASH: {
+				int expressionLength = token.start - expressionStart;
+				output.seekp(-expressionLength, output.cur);
+				output << "flr(" << std::string(expressionStart, expressionLength) << "/";
+				outputBrace = 2;
+
+				break;
+			}
+
 			case TOKEN_MINUS_EQUAL:
 			case TOKEN_SLASH_EQUAL:
 			case TOKEN_STAR_EQUAL:

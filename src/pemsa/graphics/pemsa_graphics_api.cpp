@@ -477,11 +477,11 @@ static int print(lua_State* state) {
 		if (y + 18 >= 127) {
 			memcpy(memoryModule->ram + PEMSA_RAM_SCREEN, memoryModule->ram + PEMSA_RAM_SCREEN + 0x180, 0x2000 - 0x180);
 			memset(memoryModule->ram + PEMSA_RAM_SCREEN + 0x1e80, 0, 0x180);
+			drawStateModule->setCursorY(y);
 		} else {
-			y += 6;
+			drawStateModule->setCursorY(y + 6);
 		}
 
-		drawStateModule->setCursorY(y);
 	}
 
 	int index = 0;
