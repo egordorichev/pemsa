@@ -44,8 +44,10 @@ PemsaToken PemsaScanner::parseNumber() {
 }
 
 PemsaToken PemsaScanner::scan() {
-	if (this->skipWhitespace()) {
-		return this->makeToken(TOKEN_NEW_LINE);
+	PemsaToken token = this->skipWhitespace();
+
+	if (token.type != TOKEN_EOF) {
+		return token;
 	}
 
 	this->start = this->current;
@@ -238,7 +240,9 @@ bool PemsaScanner::match(char c) {
 	return true;
 }
 
-bool PemsaScanner::skipWhitespace() {
+PemsaToken PemsaScanner::skipWhitespace() {
+	this->start = this->current;
+
 	while (true) {
 		char c = this->peek();
 
@@ -254,7 +258,7 @@ bool PemsaScanner::skipWhitespace() {
 				this->line++;
 				this->advance();
 
-				return true;
+				return this->makeToken(TOKEN_NEW_LINE);
 			}
 
 			case '-':
@@ -281,14 +285,14 @@ bool PemsaScanner::skipWhitespace() {
 						}
 					}
 				} else {
-					return false;
+					return this->makeToken(this->start == this->current ? TOKEN_EOF : TOKEN_WHITESPACE);
 				}
 
 				break;
 			}
 
 			default: {
-				return false;
+				return this->makeToken(this->start == this->current ? TOKEN_EOF : TOKEN_WHITESPACE);
 			}
 		}
 	}

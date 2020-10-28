@@ -75,7 +75,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 					}
 				}
 
-				output << std::string(token.start, token.length) << " ";
+				output << std::string(token.start, token.length);
 				break;
 			}
 
@@ -88,13 +88,13 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 			// Can have a different underlying c-string
 			case TOKEN_NOT: {
-				output << " not ";
+				output << "not";
 				break;
 			}
 
 			// Can have a different underlying c-string
 			case TOKEN_TILDA_EQUAL: {
-				output << " ~= ";
+				output << "~=";
 				break;
 			}
 
@@ -108,13 +108,8 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				break;
 			}
 
-			case TOKEN_COLON_COLON: {
-				output << std::string(token.start, token.length);
-				break;
-			}
-
 			default: {
-				output << std::string(token.start, token.length) << " ";
+				output << std::string(token.start, token.length);
 				break;
 			}
 		}

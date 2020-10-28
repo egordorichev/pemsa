@@ -54,7 +54,7 @@ class PemsaScanner {
 		char peek();
 		char peekNext();
 		bool match(char c);
-		bool skipWhitespace();
+		PemsaToken skipWhitespace();
 
 		PemsaTokenType checkKeyword(int start, int length, const char *rest, PemsaTokenType type);
 		PemsaTokenType decideIdentifierType();
