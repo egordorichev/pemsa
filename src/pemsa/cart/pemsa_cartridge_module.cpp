@@ -141,7 +141,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 			case STATE_MAP: {
 				for (int i = 0; i < line.length(); i += 2) {
-					rom[PEMSA_ROM_MAP + index] = (HEX_TO_INT(line.at(i)) << 4) + HEX_TO_INT(line.at(i + 1));
+					rom[(index >= 0x1000 ? PEMSA_ROM_GFX : PEMSA_ROM_MAP) + index] = (HEX_TO_INT(line.at(i)) << 4) + HEX_TO_INT(line.at(i + 1));
 					index++;
 				}
 
@@ -160,7 +160,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 			// todo: music & sfx states
 
 			default: {
-
+				break;
 			}
 		}
 	}
@@ -230,11 +230,11 @@ void PemsaCartridgeModule::gameLoop() {
 		return;
 	}
 
-	bool highFps = this->globalExists("_update60");
+	this->cart->highFps = this->globalExists("_update60");
 	this->callIfExists("_init");
 
 	while (this->threadRunning) {
-		if (highFps) {
+		if (this->cart->highFps) {
 			this->callIfExists("_update60");
 		} else {
 			this->callIfExists("_update");

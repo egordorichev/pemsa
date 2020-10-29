@@ -8,6 +8,10 @@ class PemsaInputBackend : public PemsaBackend {
 		virtual bool isButtonDown(int i, int p) = 0;
 		virtual bool isButtonPressed(int i, int p) = 0;
 		virtual void update() = 0;
+
+		virtual int getMouseX() = 0;
+		virtual int getMouseY() = 0;
+		virtual int getMouseMask() = 0;
 };
 
 #endif

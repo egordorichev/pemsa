@@ -35,6 +35,7 @@ static int intPalette[] = {
 
 SdlGraphicsBackend::SdlGraphicsBackend(SDL_Window *window) {
 	this->window = window;
+	this->resize();
 }
 
 SdlGraphicsBackend::~SdlGraphicsBackend() {
@@ -67,4 +68,32 @@ void SdlGraphicsBackend::flip() {
 
 SDL_Surface *SdlGraphicsBackend::getSurface() {
 	return this->surface;
+}
+
+float SdlGraphicsBackend::getScale() {
+	return this->scale;
+}
+
+int SdlGraphicsBackend::getOffsetX() {
+	return this->offsetX;
+}
+
+int SdlGraphicsBackend::getOffsetY() {
+	return this->offsetY;
+}
+
+void SdlGraphicsBackend::handleEvent(SDL_Event *event) {
+	if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_RESIZED) {
+		SDL_FillRect(SDL_GetWindowSurface(this->window), NULL, 0x000000);
+		this->resize();
+	}
+}
+
+void SdlGraphicsBackend::resize() {
+	int width, height;
+	SDL_GetWindowSize(this->window, &width, &height);
+
+	this->scale = floor(fmin(width / 128, height / 128));
+	this->offsetX = (width - this->scale * 128) / 2;
+	this->offsetY = (height - this->scale * 128) / 2;
 }

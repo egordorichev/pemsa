@@ -11,6 +11,7 @@ class PemsaGraphicsModule : public PemsaModule {
 		~PemsaGraphicsModule();
 
 		void update(double dt) override;
+		PemsaGraphicsBackend* getBackend();
 	private:
 		PemsaGraphicsBackend* backend;
 };

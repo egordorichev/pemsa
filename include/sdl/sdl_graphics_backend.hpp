@@ -13,9 +13,21 @@ class SdlGraphicsBackend : public PemsaGraphicsBackend {
 		void flip() override;
 
 		SDL_Surface* getSurface();
+
+		float getScale();
+		int getOffsetX();
+		int getOffsetY();
+
+		void handleEvent(SDL_Event* event);
 	private:
 		SDL_Window* window;
 		SDL_Surface* surface;
+
+		float scale;
+		int offsetX;
+		int offsetY;
+
+		void resize();
 };
 
 #endif

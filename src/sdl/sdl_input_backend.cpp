@@ -1,4 +1,9 @@
 #include "sdl/sdl_input_backend.hpp"
+#include "sdl/sdl_graphics_backend.hpp"
+
+#include "pemsa/util/pemsa_util.hpp"
+#include "pemsa/pemsa_emulator.hpp"
+
 #include <iostream>
 
 static int scancode_to_button(SDL_Scancode code) {
@@ -45,6 +50,22 @@ void SdlInputBackend::handleEvent(SDL_Event *event) {
 			// TODO
 			break;
 		}
+
+		case SDL_MOUSEBUTTONDOWN: {
+			if (event->button.button < 4) {
+				this->mouseState = SET_BIT(this->mouseState, event->button.button, true);
+			}
+
+			break;
+		}
+
+		case SDL_MOUSEBUTTONUP: {
+			if (event->button.button < 4) {
+				this->mouseState = SET_BIT(this->mouseState, event->button.button, false);
+			}
+
+			break;
+		}
 	}
 }
 
@@ -78,4 +99,24 @@ void SdlInputBackend::update() {
 			buttons[i] = (value) % 15 + 1;
 		}
 	}
+}
+
+int SdlInputBackend::getMouseX() {
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+
+	SdlGraphicsBackend* graphics = (SdlGraphicsBackend*) this->emulator->getGraphicsModule()->getBackend();
+	return (x - graphics->getOffsetX()) / graphics->getScale();
+}
+
+int SdlInputBackend::getMouseY() {
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+
+	SdlGraphicsBackend* graphics = (SdlGraphicsBackend*) this->emulator->getGraphicsModule()->getBackend();
+	return (y - graphics->getOffsetY()) / graphics->getScale();
+}
+
+int SdlInputBackend::getMouseMask() {
+	return this->mouseState;
 }

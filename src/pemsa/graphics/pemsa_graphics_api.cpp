@@ -427,7 +427,7 @@ static int map(lua_State* state) {
 
 	for (int cy = fmax(0, my); cy < fmin(64, my + mh); cy++) {
 		for (int cx = fmax(0, mx); cx < fmin(128, mx + mw); cx++) {
-			int tile = ram[PEMSA_RAM_MAP + cx + cy * 128];
+			int tile = ram[(cy > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + cx + cy * 128];
 
 			if (tile == 0) {
 				continue;
@@ -497,6 +497,12 @@ static int print(lua_State* state) {
 			offsetX = 0;
 			offsetY += 6;
 			continue;
+		} else if (cr >= 'A' && cr <= 'z') {
+			if (cr >= 'a') {
+				cr = toupper(cr);
+			} else {
+				cr = tolower(cr);
+			}
 		}
 
 		const char** letter = pemsa_get_letter(cr);

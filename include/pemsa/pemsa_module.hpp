@@ -14,6 +14,7 @@ class PemsaModule {
 		virtual void onCartridgeLoaded();
 	protected:
 		PemsaEmulator* emulator;
+		double time;
 };
 
 #endif

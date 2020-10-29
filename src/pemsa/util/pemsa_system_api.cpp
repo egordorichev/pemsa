@@ -7,14 +7,10 @@ static PemsaEmulator* emulator;
 
 /*
  * todo:
- * add(t, v)
- * all(t)
- * del(t, v)
  * cocreate(func)
  * coresume(cor)
  * costatus(cor)
  * yield()
- * sub(str, from, [to])
  * menuitem(index, [label, callback])
  * extcmd(cmd)
  * stat(n)
@@ -79,8 +75,34 @@ static int menuitem(lua_State* state) {
 }
 
 static int stat(lua_State* state) {
-	std::cerr << "Warning: stat() is not currently implemented\n";
-	return 0;
+	int id = luaL_checknumber(state, 1);
+	double result = 0;
+
+	switch (id) {
+		case 32: {
+			result = emulator->getInputModule()->getBackend()->getMouseX();
+			break;
+		}
+
+		case 33: {
+			result = emulator->getInputModule()->getBackend()->getMouseY();
+			break;
+		}
+
+		case 34: {
+			result = emulator->getInputModule()->getBackend()->getMouseMask();
+			break;
+		}
+
+		default: {
+			std::cerr << "Warning: stat() is not fully implemented\n";
+			break;
+		}
+	}
+
+	lua_pushnumber(state, result);
+
+	return 1;
 }
 
 void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {

@@ -24,6 +24,7 @@ class PemsaInputModule : public PemsaModule {
 		bool isPressed(int button, int player);
 
 		void update(double dt) override;
+		PemsaInputBackend* getBackend();
 	private:
 		PemsaInputBackend* backend;
 };

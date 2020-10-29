@@ -15,7 +15,7 @@ int main(int argc, const char** argv) {
 	}
 
 	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_Window* window = SDL_CreateWindow("pemsa", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 512,512, SDL_WINDOW_OPENGL);
+	SDL_Window* window = SDL_CreateWindow("pemsa", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 512,512, SDL_WINDOW_RESIZABLE);
 
 	if (window == NULL) {
 		std::cerr << "Failed to open a window\n";
@@ -38,18 +38,14 @@ int main(int argc, const char** argv) {
 		return 1;
 	}
 
-	SDL_Surface* screen_surface = SDL_GetWindowSurface(window);
-
 	SDL_Event event;
 	bool running = true;
 
 	Uint32 start_time = SDL_GetTicks();
 
-	double fps = 60.0;
+	double fps = 60;
 	double delta = 1 / fps;
 	Uint32 ticks_per_frame = 1000 / fps;
-
-	SDL_Rect target_size = { 0, 0, 512, 512 };
 
 	while (running) {
 		if (SDL_PollEvent(&event)) {
@@ -57,11 +53,14 @@ int main(int argc, const char** argv) {
 				running = false;
 			} else {
 				input->handleEvent(&event);
+				graphics->handleEvent(&event);
 			}
 		}
 
 		emulator.update(delta);
 
+		SDL_Surface* screen_surface = SDL_GetWindowSurface(window);
+		SDL_Rect target_size = { graphics->getOffsetX(), graphics->getOffsetY(), (int) (graphics->getScale() * 128), (int) (graphics->getScale() * 128) };
 		SDL_BlitScaled(graphics->getSurface(), NULL, screen_surface, &target_size);
 		SDL_UpdateWindowSurface(window);
 

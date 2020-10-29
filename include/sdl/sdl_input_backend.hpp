@@ -11,8 +11,13 @@ class SdlInputBackend : public PemsaInputBackend {
 		bool isButtonDown(int i, int p) override;
 		bool isButtonPressed(int i, int p) override;
 		void update() override;
+
+		int getMouseX() override;
+		int getMouseY() override;
+		int getMouseMask() override;
 	private:
 		uint8_t state[PEMSA_PLAYER_COUNT][PEMSA_BUTTON_COUNT];
+		uint8_t mouseState;
 };
 
 #endif

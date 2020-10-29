@@ -9,7 +9,7 @@ static int fget(lua_State* state) {
 	int tile = luaL_checknumber(state, 1);
 
 	if (tile < 0 || tile > 255) {
-		lua_pushnumber(state, 0);
+		lua_pushboolean(state, false);
 		return 1;
 	}
 
@@ -17,7 +17,7 @@ static int fget(lua_State* state) {
 
 	if (lua_gettop(state) == 2) {
 		int bit = luaL_checkinteger(state, 2);
-		lua_pushnumber(state, mask & (1 << bit));
+		lua_pushboolean(state, (mask & (1 << bit)) != 0);
 	} else {
 		lua_pushnumber(state, mask);
 	}
@@ -48,7 +48,7 @@ static int mget(lua_State* state) {
 	if (x < 0 || y < 0 || x > 127 || y > 63) {
 		lua_pushnumber(state, 0);
 	} else {
-		lua_pushnumber(state, emulator->getMemoryModule()->ram[PEMSA_RAM_MAP + x + y * 128]);
+		lua_pushnumber(state, emulator->getMemoryModule()->ram[(y > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + x + y * 128]);
 	}
 
 	return 1;
@@ -60,7 +60,7 @@ static int mset(lua_State* state) {
 	int tile = luaL_checknumber(state, 3);
 
 	if (!(x < 0 || y < 0 || x > 127 || y > 63)) {
-		emulator->getMemoryModule()->ram[PEMSA_RAM_MAP + x + y * 128] = tile % 256;
+		emulator->getMemoryModule()->ram[(y > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + x + y * 128] = tile % 256;
 	}
 
 	return 0;

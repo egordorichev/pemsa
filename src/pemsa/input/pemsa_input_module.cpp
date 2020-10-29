@@ -19,3 +19,7 @@ bool PemsaInputModule::isPressed(int button, int player) {
 void PemsaInputModule::update(double dt) {
 	this->backend->update();
 }
+
+PemsaInputBackend *PemsaInputModule::getBackend() {
+	return this->backend;
+}

@@ -2,6 +2,29 @@
 
 #include <sstream>
 #include <iostream>
+#include <cstring>
+#include <cmath>
+
+static float strtof(const char* ostr, char** endptr, int base) {
+	char* str = (char*) malloc(strlen(ostr) + 1);
+	strcpy(str, ostr);
+	const char* dot = ".";
+
+	char *beforeDot = strtok(str, dot);
+	char *afterDot = strtok(NULL, dot);
+
+	float f = (float) strtol(beforeDot, 0, base);
+	int sign = (str[0] == '-' ? -1 : 1);
+	char n[2] = { 0 };
+
+	for (int i = 0; afterDot[i] ; i++) {
+		n[0] = afterDot[i];
+		f += strtol(n, 0, base) * pow(base, -(i + 1)) * sign;
+	}
+
+	free(str);
+	return f;
+}
 
 std::string pemsa_emit(PemsaScanner* scanner) {
 	std::stringstream output;
@@ -165,11 +188,11 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 				if (token.length > 2) {
 					if (number[1] == 'x') {
-						output << (double) strtoll(number, NULL, 16);
+						output << (double) strtof(number, NULL, 16);
 
 						break;
 					}	else if (number[1] == 'b') {
-						output << (double) strtoll(number + 2, NULL, 2);
+						output << (double) strtof(number + 2, NULL, 2);
 						break;
 					}
 				}

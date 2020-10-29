@@ -1,6 +1,5 @@
 # cart
 
-* print/printh should support printing any type, boolean should display true/false
 * fillp from emoji
 * input syncing is kinda weird
 
@@ -21,7 +20,7 @@
 # memory
 
 * stat
-* mouse/keyboard states
+* keyboard states
 
 # other
 
