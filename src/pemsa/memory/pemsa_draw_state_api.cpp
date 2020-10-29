@@ -96,8 +96,8 @@ static int fillp(lua_State* state) {
 }
 
 static int camera(lua_State* state) {
-	int x = round(luaL_checknumber(state, 1));
-	int y = round(luaL_checknumber(state, 2));
+	int x = round(luaL_optnumber(state, 1, 0));
+	int y = round(luaL_optnumber(state, 2, 0));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
@@ -108,8 +108,8 @@ static int camera(lua_State* state) {
 }
 
 static int cursor(lua_State* state) {
-	int x = round(luaL_checknumber(state, 1));
-	int y = round(luaL_checknumber(state, 2));
+	int x = round(luaL_optnumber(state, 1, 0));
+	int y = round(luaL_optnumber(state, 2, 0));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 

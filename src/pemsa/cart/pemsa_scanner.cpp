@@ -152,7 +152,7 @@ PemsaToken PemsaScanner::scan() {
 			int code[4];
 			code[0] = c;
 			int len = 2;
-// if not g_won and not btn(🅾️)
+
 			switch (c) {
 				case -16: len = 3; break;
 				case -53: len = 1; break;
@@ -161,8 +161,6 @@ PemsaToken PemsaScanner::scan() {
 			for (int i = 0; i < len; i++) {
 				code[i + 1] = advance();
 			}
-
-			return this->makeAsciiToken("0");
 
 			// std::cout << len << ": " << code[0] << ", " << code[1] << ", " << code[2] << ", " << code[3] << "\n";
 #define CASE(a, b, c, d, e, u) if (code[0] == a && code[1] == b && (code[0] == -53 || (code[2] == c && (code[0] != -16 || code[3] == d)))) { return this->makeAsciiToken(e); }

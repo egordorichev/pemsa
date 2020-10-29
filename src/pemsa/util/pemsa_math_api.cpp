@@ -4,7 +4,7 @@
 static PemsaEmulator* emulator;
 
 static int rnd(lua_State* state) {
-	lua_pushnumber(state, fmod(rand(), luaL_optnumber(state, 1, 1)));
+	lua_pushnumber(state, (double) rand() / RAND_MAX * luaL_optnumber(state, 1, 1));
 	return 1;
 }
 
@@ -30,8 +30,8 @@ static int sgn(lua_State* state) {
 }
 
 static int atan2(lua_State* state) {
-	double angle = atan2(luaL_checknumber(state, 2), luaL_checknumber(state, 1));
-	lua_pushnumber(state, fmod((0.75 + angle) / (M_PI * 2), 1.0));
+	double angle = atan2(luaL_checknumber(state, 1), luaL_checknumber(state, 2));
+	lua_pushnumber(state, fmod((angle) / (M_PI * 2) - 0.25, 2.0));
 
 	return 1;
 }

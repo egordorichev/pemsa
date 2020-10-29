@@ -1,6 +1,8 @@
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
 
+#include <iostream>
+
 static PemsaEmulator* emulator;
 
 static int fget(lua_State* state) {
@@ -64,6 +66,88 @@ static int mset(lua_State* state) {
 	return 0;
 }
 
+static int cstore(lua_State* state) {
+	std::cerr << "Warning: menuitem() is not currently implemented\n";
+	return 0;
+}
+
+static int memcpy(lua_State* state) {
+	int to = luaL_checknumber(state, 1);
+	int from = luaL_checknumber(state, 2);
+	int amount = luaL_checknumber(state, 3);
+
+	if (to < 0 || from < 0 || to + amount > PEMSA_RAM_END || from + amount > PEMSA_RAM_END) {
+		return 0;
+	}
+
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+
+	for (int i = 0; i < amount; i++) {
+		ram[to + i] = ram[from + i];
+	}
+
+	return 0;
+}
+
+static int memset(lua_State* state) {
+	int to = luaL_checknumber(state, 1);
+	int value = luaL_checknumber(state, 2);
+	int amount = luaL_checknumber(state, 3);
+
+	if (to < 0 || to + amount >= PEMSA_RAM_END) {
+		return 0;
+	}
+
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+
+	for (int i = 0; i < amount; i++) {
+		ram[to + i] = value;
+	}
+
+	return 0;
+}
+
+static int peek(lua_State* state) {
+	int index = luaL_checknumber(state, 1);
+
+	if (index >= 0 && index < PEMSA_RAM_END) {
+		lua_pushnumber(state, emulator->getMemoryModule()->ram[index]);
+	} else {
+		lua_pushnumber(state, 0);
+	}
+
+	return 1;
+}
+
+static int poke(lua_State* state) {
+	int index = luaL_checknumber(state, 1);
+
+	if (index >= 0 && index < PEMSA_RAM_END) {
+		emulator->getMemoryModule()->ram[index] = luaL_checknumber(state, 2);
+	}
+
+	return 0;
+}
+
+static int reload(lua_State* state) {
+	int to = luaL_checknumber(state, 1);
+	int from = luaL_checknumber(state, 2);
+	int amount = luaL_checknumber(state, 3);
+
+	if (to < 0 || from < 0 || to + amount > PEMSA_RAM_END || from + amount > PEMSA_ROM_END) {
+		return 0;
+	}
+
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+	uint8_t* rom = emulator->getCartridgeModule()->getCart()->rom;
+
+	for (int i = 0; i < amount; i++) {
+		ram[to + i] = rom[from + i];
+	}
+
+	return 0;
+}
+
 void pemsa_open_memory_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -71,4 +155,11 @@ void pemsa_open_memory_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "fset", fset);
 	lua_register(state, "mget", mget);
 	lua_register(state, "mset", mset);
+
+	lua_register(state, "cstore", cstore);
+	lua_register(state, "memcpy", memcpy);
+	lua_register(state, "memset", memset);
+	lua_register(state, "peek", peek);
+	lua_register(state, "poke", poke);
+	lua_register(state, "reload", reload);
 }

@@ -20,7 +20,47 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	const char* start = expressionStart;
 
 	// Emoji button setup
-	output << "S, D, G, M, I, U = 0, 1, 2, 3, 4, 5\n";
+	output << "S, D, G, M, I, U, sub = 0, 1, 2, 3, 4, 5, string.sub\n";
+
+	output << "local function arraylen(t)\n";
+	output << "\tlocal len = 0\n";
+	output << "\tfor i, _ in pairs(t) do\n";
+	output << "\t\tif type(i) == \"number\" then\n";
+	output << "\t\t\tlen = i\n";
+	output << "\t\tend\n";
+	output << "\tend\n";
+	output << "\treturn len\n";
+	output << "end\n";
+	output << "function all(a)\n";
+	output << "\tif a == nil then\n";
+	output << "\t\treturn function() end\n";
+	output << "\tend\n";
+	output << "\tlocal i = 0\n";
+	output << "\tlocal n = arraylen(a)\n";
+	output << "\treturn function()\n";
+	output << "\t\ti = i + 1\n";
+	output << "\t\twhile (a[i] == nil and i <= n) do\n";
+	output << "\t\t\ti = i + 1\n";
+	output << "\t\tend\n";
+	output << "\t\treturn a[i]\n";
+	output << "\tend\n";
+	output << "end\n";
+
+	output << "function add(a, v)\n";
+	output << "	if a == nil then return end\n";
+	output << "	table.insert(a, v)\n";
+	output << "	return v\n";
+	output << "end\n";
+	output << "function del(a, dv)\n";
+	output << "	if a == nil then return end\n";
+	output << "	for i, v in ipairs(a) do\n";
+	output << "		if v == dv then\n";
+	output << "			table.remove(a, i)\n";
+	output << "		return dv\n";
+	output << "		end\n";
+	output << "	end\n";
+	output << "end\n";
+
 
 	while (running) {
 		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE) {
@@ -42,7 +82,9 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				checkThen = false;
 				inIf = false;
 
-				if (token.type != TOKEN_THEN && token.type != TOKEN_OR && token.type != TOKEN_AND) {
+				PemsaTokenType t= token.type;
+
+				if (t != TOKEN_THEN && t != TOKEN_OR && t != TOKEN_AND && t != TOKEN_COLON && t != TOKEN_DOT) {
 					emitEnd = true;
 					output << " then ";
 				}
@@ -97,6 +139,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 				for (int i = start; i < end; i++) {
 					const char* str = token.start + i;
+
 					if (i < end - 1) {
 #define CASE(a, b, c, d, u, e) if (str[0] == a && str[1] == b && (str[0] == -53 || (str[2] == c && (str[0] != -16 || str[3] == d)))) { output << "\\" << e; i += (str[0] == -16 ? 3 : (str[0] == -53 ? 1 : 2)); continue; }
 #include "pemsa/cart/pemsa_cases.hpp"
@@ -110,7 +153,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 						continue;
 					}
 
-					output << (char) toupper(c);
+					output << c;
 				}
 
 				output << "\"";

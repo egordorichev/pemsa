@@ -1,6 +1,7 @@
 #include "pemsa/pemsa_emulator.hpp"
 
 #include <cmath>
+#include <iostream>
 
 static PemsaEmulator* emulator;
 
@@ -24,7 +25,23 @@ static int printh(lua_State* state) {
 
 	for (int i = 1; i <= top; i++) {
 		lua_pushvalue(state, i);
-		const char *str = lua_tostring(state, -1);
+		const char *str;
+
+		if (lua_istable(state, i)) {
+			str = "table";
+			lua_pop(state, 1);
+		} else if (lua_isfunction(state, i)) {
+			str = "function";
+			lua_pop(state, 1);
+		} else if (lua_isnil(state, i)) {
+			str = "nil";
+			lua_pop(state, 1);
+		} else if (lua_isboolean(state, i)) {
+			str = lua_toboolean(state, i) ? "true" : "false";
+			lua_pop(state, 1);
+		} else {
+			str = lua_tostring(state, -1);
+		}
 
 		if (str) {
 			printf("%s\t", str);
@@ -56,6 +73,16 @@ static int tostr(lua_State* state) {
 	return 1;
 }
 
+static int menuitem(lua_State* state) {
+	std::cerr << "Warning: menuitem() is not currently implemented\n";
+	return 0;
+}
+
+static int stat(lua_State* state) {
+	std::cerr << "Warning: stat() is not currently implemented\n";
+	return 0;
+}
+
 void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -65,4 +92,7 @@ void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
 
 	lua_register(state, "tonum", tonum);
 	lua_register(state, "tostr", tostr);
+
+	lua_register(state, "menuitem", menuitem);
+	lua_register(state, "stat", stat);
 }

@@ -8,6 +8,8 @@
 #include <thread>
 #include <future>
 
+// #define PEMSA_SAVE_CODE
+
 class PemsaCartridgeModule : public PemsaModule {
 	public:
 		PemsaCartridgeModule(PemsaEmulator* emulator);

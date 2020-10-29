@@ -13,4 +13,6 @@ class PemsaAudioModule : public PemsaModule {
 		PemsaAudioBackend* backend;
 };
 
+void pemsa_open_audio_api(PemsaEmulator* machine, lua_State* state);
+
 #endif

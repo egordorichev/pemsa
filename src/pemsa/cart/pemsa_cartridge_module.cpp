@@ -175,7 +175,12 @@ bool PemsaCartridgeModule::load(const char *path) {
 	PemsaScanner scanner(codeString.c_str());
 
 	codeString = pemsa_emit(&scanner);
-	// std::cout << codeString << "\n";
+
+#ifdef PEMSA_SAVE_CODE
+	std::ofstream codeFile("code.lua", std::ios::trunc);
+	codeFile << codeString;
+	codeFile.close();
+#endif
 
 	this->cart->code = take_string(codeString);
 	this->cart->codeLength = codeString.length();
@@ -190,6 +195,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 	pemsa_open_memory_api(emulator, state);
 	pemsa_open_draw_state_api(emulator, state);
 	pemsa_open_cartridge_api(emulator, state);
+	pemsa_open_audio_api(emulator, state);
 
 	memcpy(emulator->getMemoryModule()->ram, rom, 0x4300);
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
@@ -258,12 +264,10 @@ void PemsaCartridgeModule::cleanupCart() {
 
 void PemsaCartridgeModule::callIfExists(const char *method_name) {
 	lua_State* state = this->cart->state;
-
-	lua_pushcfunction(state, pemsa_trace_lua);
 	lua_getglobal(state, method_name);
 
 	if (lua_isnil(state, -1)) {
-		lua_pop(state, 2);
+		lua_pop(state, 1);
 	} else {
 		if (lua_pcall(state, 0, 0, lua_gettop(state) - 1) != 0) {
 			this->reportLuaError();

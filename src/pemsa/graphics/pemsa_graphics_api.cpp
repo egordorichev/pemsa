@@ -447,7 +447,7 @@ static int map(lua_State* state) {
 				}
 			}
 
-			plot_sprite(tile, cx * 8 + x, cy * 8 + y, 1, 1, false, false);
+			plot_sprite(tile, (cx - mx) * 8 + x, (cy - my) * 8 + y, 1, 1, false, false);
 		}
 	}
 
