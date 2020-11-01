@@ -16,7 +16,6 @@ function music(...)
  end
 end
 
-
 cartdata("ldjam439")
 
 palettes={
@@ -1762,7 +1761,7 @@ function ingame.draw()
  --oprint(pli,3,3,7)
 end
 
-m()
+--m()
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee
 33333333eeeeeeeeeeeeeeeeeeeeeeeee00000000000000eee1100ee000000000000000000000000eeeeee0000eeeeee132d149d1d1eeeeeeeeeeeeeeeeeeeee

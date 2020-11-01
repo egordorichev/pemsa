@@ -84,8 +84,8 @@ bool PemsaCartridgeModule::load(const char *path) {
 				case 'l': {
 					if (memcmp(cline, "ua__", 4) == 0) {
 						cart_state = STATE_LUA;
-					} else if (memcmp(cline, "usic__", 6) == 0) {
-						cart_state = STATE_MUSIC;
+					} else if (memcmp(cline, "abel__", 6) == 0) {
+						cart_state = STATE_LABEL;
 					}
 
 					break;
@@ -104,6 +104,8 @@ bool PemsaCartridgeModule::load(const char *path) {
 				case 'm': {
 					if (memcmp(cline, "ap__", 4) == 0) {
 						cart_state = STATE_MAP;
+					} else if (memcmp(cline, "usic__", 6) == 0) {
+						cart_state = STATE_MUSIC;
 					}
 
 					break;
@@ -157,7 +159,65 @@ bool PemsaCartridgeModule::load(const char *path) {
 				break;
 			}
 
-			// todo: music & sfx states
+			case STATE_SFX: {
+				uint8_t editor = (HEX_TO_INT(line.at(0)) << 4) + HEX_TO_INT(line.at(1));
+				uint8_t speed = (HEX_TO_INT(line.at(2)) << 4) + HEX_TO_INT(line.at(3));
+				uint8_t startLoop = (HEX_TO_INT(line.at(4)) << 4) + HEX_TO_INT(line.at(5));
+				uint8_t endLoop = (HEX_TO_INT(line.at(6)) << 4) + HEX_TO_INT(line.at(7));
+
+				rom[PEMSA_ROM_SFX + index * 68 + 64] = editor;
+				rom[PEMSA_ROM_SFX + index * 68 + 65] = speed;
+				rom[PEMSA_ROM_SFX + index * 68 + 66] = startLoop;
+				rom[PEMSA_ROM_SFX + index * 68 + 67] = endLoop;
+
+				int off = 0;
+
+				for (int i = 0; i < line.size() - 8; i += 5) {
+					uint8_t pitch = (HEX_TO_INT(line.at(i + 8)) << 4) + HEX_TO_INT(line.at(i + 9));
+					uint8_t waveform = HEX_TO_INT(line.at(i + 10));
+					uint8_t volume = HEX_TO_INT(line.at(i + 11));
+					uint8_t effect = HEX_TO_INT(line.at(i + 12));
+
+					uint8_t lo = (pitch | (waveform << 6));
+					uint8_t hi = ((waveform >> 2) | (volume << 1) | (effect << 4));
+
+					rom[PEMSA_ROM_SFX + index * 68 + off] = lo;
+					rom[PEMSA_ROM_SFX + index * 68 + off + 1] = hi;
+					off += 2;
+				}
+
+				index++;
+				break;
+			}
+
+			case STATE_MUSIC: {
+				uint8_t flag = (HEX_TO_INT(line.at(0)) << 4) + HEX_TO_INT(line.at(1));
+				uint8_t val1 = (HEX_TO_INT(line.at(3)) << 4) + HEX_TO_INT(line.at(4));
+				uint8_t val2 = (HEX_TO_INT(line.at(5)) << 4) + HEX_TO_INT(line.at(6));
+				uint8_t val3 = (HEX_TO_INT(line.at(7)) << 4) + HEX_TO_INT(line.at(8));
+				uint8_t val4 = (HEX_TO_INT(line.at(9)) << 4) + HEX_TO_INT(line.at(10));
+
+				// 4th byte never has 7th bit set because it's corresponding flag value is never used.
+				if ((flag & 0x1) != 0) {
+					val1 |= 0x80;
+				}
+
+				if ((flag & 0x2) != 0) {
+					val2 |= 0x80;
+				}
+
+				if ((flag & 0x4) != 0) {
+					val3 |= 0x80;
+				}
+
+				rom[PEMSA_ROM_SONG + index + 0] = val1;
+				rom[PEMSA_ROM_SONG + index + 1] = val2;
+				rom[PEMSA_ROM_SONG + index + 2] = val3;
+				rom[PEMSA_ROM_SONG + index + 3] = val4;
+
+				index += 4;
+				break;
+			}
 
 			default: {
 				break;

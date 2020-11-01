@@ -28,6 +28,7 @@ int main(int argc, const char** argv) {
 	SdlInputBackend* input = new SdlInputBackend();
 
 	PemsaEmulator emulator(graphics, new SdlAudioBackend(), input);
+	SDL_ShowCursor(0);
 
 	if (!emulator.getCartridgeModule()->load(cart)) {
 		std::cerr << "Failed to load the cart " << cart << "\n";

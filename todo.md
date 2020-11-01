@@ -6,7 +6,7 @@
 # graphics
 
 * Oval + ovalfill
-* tline???
+* tline
 
 # input
 
