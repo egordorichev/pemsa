@@ -1,4 +1,6 @@
 #include "pemsa/audio/pemsa_audio_module.hpp"
+#include "pemsa/audio/pemsa_wave_functions.hpp"
+
 #include <cmath>
 
 PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* backend) : PemsaModule(emulator) {
@@ -10,6 +12,8 @@ PemsaAudioModule::~PemsaAudioModule() {
 }
 
 double PemsaAudioModule::sample() {
-	this->time += PEMSA_SAMPLE_OFFSET;
-	return sin(this->time * (cos(this->time * 10) * 0.5 + 0.5));
+	double frequency = 220 + fmod(this->time, 1000);
+
+	this->time += frequency / PEMSA_SAMPLE_RATE;
+	return pemsa_noise(this->time);
 }

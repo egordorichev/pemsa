@@ -10,7 +10,6 @@
 #define PEMSA_SAMPLE_SIZE 1024
 #define PEMSA_SAMPLE_RATE 44100
 #define PEMSA_MIN_BYTES_IN_AUDIO PEMSA_SAMPLE_SIZE * 3
-#define PEMSA_SAMPLE_OFFSET 1.0 / PEMSA_SAMPLE_SIZE
 
 class PemsaAudioModule : public PemsaModule {
 	public:
