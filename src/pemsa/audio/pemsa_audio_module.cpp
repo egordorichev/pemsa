@@ -9,15 +9,7 @@ PemsaAudioModule::~PemsaAudioModule() {
 	delete this->backend;
 }
 
-int16_t* PemsaAudioModule::getBuffer() {
-	for (int i = 0; i < PEMSA_SAMPLE_SIZE; i++) {
-		this->buffer[i] = sin(this->time * 220);
-		this->time += (double) i / PEMSA_SAMPLE_SIZE;
-	}
-
-	return this->buffer;
-}
-
-void PemsaAudioModule::update(double dt) {
-	this->backend->update();
+double PemsaAudioModule::sample() {
+	this->time += PEMSA_SAMPLE_OFFSET;
+	return sin(this->time * (cos(this->time * 10) * 0.5 + 0.5));
 }

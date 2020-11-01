@@ -4,22 +4,46 @@
 #include "sdl/sdl_audio_backend.hpp"
 #include <iostream>
 
-SdlAudioBackend::SdlAudioBackend() {
-	this->stream = SDL_NewAudioStream(AUDIO_S16, 1, PEMSA_SAMPLE_SIZE / 2, AUDIO_F32, 2, PEMSA_SAMPLE_RATE);
+static void fillBuffer(void* emulator, Uint8* byteStream, int byteStreamLength) {
+	uint16_t* buffer = (uint16_t*) byteStream;
+
+	PemsaAudioModule* audioModule = ((PemsaEmulator*) emulator)->getAudioModule();
+
+	for (int i = 0; i < byteStreamLength / 2; i++) {
+		buffer[i] = audioModule->sample() * INT16_MAX;
+	}
 }
 
 SdlAudioBackend::~SdlAudioBackend() {
-	SDL_FreeAudioStream(this->stream);
+	if (this->stream != 0) {
+		SDL_CloseAudioDevice(this->stream);
+	}
 }
 
-void SdlAudioBackend::update() {
-	int available = SDL_AudioStreamAvailable(this->stream);
+void SdlAudioBackend::setEmulator(PemsaEmulator *emulator) {
+	PemsaBackend::setEmulator(emulator);
+	this->setup();
+}
 
-	while (available < PEMSA_MIN_BYTES_IN_AUDIO) {
-		available += PEMSA_SAMPLE_SIZE;
+void SdlAudioBackend::setup() {
+	SDL_AudioSpec want;
+	SDL_AudioSpec audioSpec;
 
-		if (SDL_AudioStreamPut(stream, this->emulator->getAudioModule()->getBuffer(), PEMSA_SAMPLE_SIZE * sizeof(int16_t)) == -1) {
-			std::cerr << "Failed to submit audio buffer: " << SDL_GetError() << "\n";
-		}
+	SDL_zero(want);
+	SDL_zero(audioSpec);
+
+	want.freq = PEMSA_SAMPLE_RATE;
+	want.format = AUDIO_S16LSB;
+	want.channels = 1;
+	want.samples = PEMSA_MIN_BYTES_IN_AUDIO;
+	want.userdata = this->emulator;
+	want.callback = fillBuffer;
+
+	this->stream = SDL_OpenAudioDevice(NULL, 0, &want, &audioSpec, 0);
+
+	if (this->stream == 0) {
+		std::cerr << "Failed to open audio: " << SDL_GetError() << "\n";
+	} else {
+		SDL_PauseAudioDevice(this->stream, false);
 	}
 }

@@ -6,12 +6,12 @@
 
 class SdlAudioBackend : public PemsaAudioBackend {
 	public:
-		SdlAudioBackend();
 		~SdlAudioBackend();
 
-		void update() override;
+		void setEmulator(PemsaEmulator* emulator) override;
 	private:
-		SDL_AudioStream *stream;
+		SDL_AudioDeviceID stream;
+		void setup();
 };
 
 #endif

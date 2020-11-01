@@ -5,7 +5,7 @@
 
 class PemsaBackend {
 	public:
-		void setEmulator(PemsaEmulator* emulator);
+		virtual void setEmulator(PemsaEmulator* emulator);
 	protected:
 		PemsaEmulator* emulator;
 };
