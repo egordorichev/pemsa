@@ -278,6 +278,9 @@ PemsaCartridge *PemsaCartridgeModule::getCart() {
 void PemsaCartridgeModule::gameLoop() {
 	this->threadRunning = true;
 
+	// tmp:
+	this->emulator->getAudioModule()->play(4);
+
 	lua_State* state = this->cart->state;
 
 	if (luaL_loadbuffer(state, this->cart->code, this->cart->codeLength, "=cart") != 0) {

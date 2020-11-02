@@ -4,12 +4,13 @@
 #include "pemsa/pemsa_predefines.hpp"
 #include "pemsa/pemsa_module.hpp"
 #include "pemsa/audio/pemsa_audio_backend.hpp"
+#include "pemsa/audio/pemsa_audio_channel.hpp"
 
 #include <cstdint>
 
-#define PEMSA_SAMPLE_SIZE 1024
+#define PEMSA_SAMPLE_SIZE 4096
 #define PEMSA_SAMPLE_RATE 44100
-#define PEMSA_MIN_BYTES_IN_AUDIO PEMSA_SAMPLE_SIZE * 3
+#define PEMSA_CHANNEL_COUNT 4
 
 class PemsaAudioModule : public PemsaModule {
 	public:
@@ -17,8 +18,11 @@ class PemsaAudioModule : public PemsaModule {
 		~PemsaAudioModule();
 
 		double sample();
+		void play(int sfx);
 	private:
 		PemsaAudioBackend* backend;
+		PemsaAudioChannel* channels[PEMSA_CHANNEL_COUNT];
+
 		double time;
 };
 

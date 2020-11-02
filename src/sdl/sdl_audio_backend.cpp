@@ -5,12 +5,11 @@
 #include <iostream>
 
 static void fillBuffer(void* emulator, Uint8* byteStream, int byteStreamLength) {
-	uint16_t* buffer = (uint16_t*) byteStream;
-
+	int16_t* buffer = (int16_t*) byteStream;
 	PemsaAudioModule* audioModule = ((PemsaEmulator*) emulator)->getAudioModule();
 
 	for (int i = 0; i < byteStreamLength / 2; i++) {
-		buffer[i] = audioModule->sample() * INT16_MAX;
+		buffer[i] = (int16_t) (audioModule->sample() * INT16_MAX);
 	}
 }
 
@@ -33,9 +32,9 @@ void SdlAudioBackend::setup() {
 	SDL_zero(audioSpec);
 
 	want.freq = PEMSA_SAMPLE_RATE;
-	want.format = AUDIO_S16LSB;
+	want.format = AUDIO_S16SYS;
 	want.channels = 1;
-	want.samples = PEMSA_MIN_BYTES_IN_AUDIO;
+	want.samples = PEMSA_SAMPLE_SIZE;
 	want.userdata = this->emulator;
 	want.callback = fillBuffer;
 

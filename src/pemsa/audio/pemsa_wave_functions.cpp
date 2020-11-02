@@ -7,7 +7,7 @@
 #include <random>
 
 double pemsa_sine(double t) {
-	return sin(M_PI_2 * t);
+	return sin(M_PI_2 * t * 4);
 }
 
 double pemsa_square(double t) {
@@ -50,4 +50,19 @@ double pemsa_noise(double t) {
 	lastT = t;
 
 	return fmin(fmax((lastSample + sample) * 4.0 / 3.0 * (1.75 - scale), -1), 1) * 0.7f;
+}
+
+static PemsaWaveFn wave_functions[] = {
+	pemsa_sine, pemsa_tilted_saw,
+	pemsa_saw_tooth, pemsa_square,
+	pemsa_pulse, pemsa_organ,
+	pemsa_noise, pemsa_phaser
+};
+
+double pemsa_sample(int function, double t) {
+	if (function < 0 || function > 7) {
+		return 0;
+	}
+
+	return wave_functions[function](t);
 }
