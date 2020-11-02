@@ -258,6 +258,10 @@ bool PemsaCartridgeModule::load(const char *path) {
 	pemsa_open_audio_api(emulator, state);
 
 	memcpy(emulator->getMemoryModule()->ram, rom, 0x4300);
+
+	// tmp:
+	this->emulator->getAudioModule()->play(8);
+
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
 
 	return true;
@@ -277,9 +281,6 @@ PemsaCartridge *PemsaCartridgeModule::getCart() {
 
 void PemsaCartridgeModule::gameLoop() {
 	this->threadRunning = true;
-
-	// tmp:
-	this->emulator->getAudioModule()->play(4);
 
 	lua_State* state = this->cart->state;
 

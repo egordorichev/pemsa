@@ -22,6 +22,7 @@ class PemsaAudioChannel {
 		double lastStep;
 		double waveOffset;
 		double frequency;
+		double time;
 
 		uint8_t speed;
 		uint8_t instrument;
