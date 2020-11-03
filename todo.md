@@ -3,7 +3,6 @@
 * input syncing is kinda weird
 
 # graphics
-* Oval + ovalfill
 * tline
 
 # input
@@ -17,5 +16,4 @@
 * keyboard states
 
 # other
-* display modes (64x64 etc)
 * second palette

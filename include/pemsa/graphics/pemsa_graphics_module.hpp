@@ -5,6 +5,23 @@
 #include "pemsa/pemsa_module.hpp"
 #include "pemsa/graphics/pemsa_graphics_backend.hpp"
 
+enum PemsaDrawMode {
+	SCREEN_NORMAL,
+	SCREEN_HORIZONTAL_STRETCH,
+	SCREEN_VERTICAL_STRETCH,
+	SCREEN_STRETCH,
+	SCREEN_UNUSED,
+	SCREEN_HORIZONTAL_MIRROR,
+	SCREEN_VERTICAL_MIRROR,
+	SCREEN_MIRROR,
+
+	SCREEN_HORIZONTAL_FLIP,
+	SCREEN_VERTICAL_FLIP,
+	SCREEN_90_ROTATION,
+	SCREEN_180_ROTATION,
+	SCREEN_270_ROTATION
+};
+
 class PemsaGraphicsModule : public PemsaModule {
 	public:
 		PemsaGraphicsModule(PemsaEmulator* emulator, PemsaGraphicsBackend* backend);
@@ -12,6 +29,8 @@ class PemsaGraphicsModule : public PemsaModule {
 
 		void update(double dt) override;
 		PemsaGraphicsBackend* getBackend();
+
+		PemsaDrawMode getDrawMode();
 	private:
 		PemsaGraphicsBackend* backend;
 };

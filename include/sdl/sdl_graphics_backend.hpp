@@ -19,8 +19,10 @@ class SdlGraphicsBackend : public PemsaGraphicsBackend {
 		int getOffsetY();
 
 		void handleEvent(SDL_Event* event);
+		void render();
 	private:
 		SDL_Window* window;
+		SDL_Renderer* renderer;
 		SDL_Surface* surface;
 
 		float scale;

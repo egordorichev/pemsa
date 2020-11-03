@@ -3,6 +3,8 @@
 
 #include "sdl/sdl_graphics_backend.hpp"
 
+#include <iostream>
+
 static SDL_Color palette[] = {
 	{ 0, 0, 0, 255 },
 	{ 29, 43, 83, 255 },
@@ -35,11 +37,18 @@ static int intPalette[] = {
 
 SdlGraphicsBackend::SdlGraphicsBackend(SDL_Window *window) {
 	this->window = window;
+	this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+	if (this->renderer == nullptr) {
+		std::cerr << "Failed to create renderer: " << SDL_GetError() << "\n";
+	}
+
 	this->resize();
 }
 
 SdlGraphicsBackend::~SdlGraphicsBackend() {
 	SDL_FreeSurface(this->surface);
+	SDL_DestroyRenderer(this->renderer);
 }
 
 void SdlGraphicsBackend::createSurface() {
@@ -64,6 +73,8 @@ void SdlGraphicsBackend::flip() {
 		pixels[i * 2] = intPalette[screenPalette[val & 0x0f]];
 		pixels[i * 2 + 1] = intPalette[screenPalette[val >> 4]];
 	}
+
+	this->emulator->getInputModule()->updateInput();
 }
 
 SDL_Surface *SdlGraphicsBackend::getSurface() {
@@ -84,7 +95,6 @@ int SdlGraphicsBackend::getOffsetY() {
 
 void SdlGraphicsBackend::handleEvent(SDL_Event *event) {
 	if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_RESIZED) {
-		SDL_FillRect(SDL_GetWindowSurface(this->window), NULL, 0x000000);
 		this->resize();
 	}
 }
@@ -96,4 +106,112 @@ void SdlGraphicsBackend::resize() {
 	this->scale = floor(fmin(width / 128, height / 128));
 	this->offsetX = (width - this->scale * 128) / 2;
 	this->offsetY = (height - this->scale * 128) / 2;
+}
+
+void SdlGraphicsBackend::render() {
+	SDL_Rect src = { 0, 0, 128, 128 };
+	SDL_Rect dst = { this->getOffsetX(), this->getOffsetY(), (int) (this->getScale() * 128), (int) (this->getScale() * 128) };
+
+	int angle = 0;
+	SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(this->renderer, this->surface);
+	SDL_RenderClear(this->renderer);
+
+	PemsaDrawMode drawMode = this->emulator->getGraphicsModule()->getDrawMode();
+
+	if (drawMode != SCREEN_NORMAL) {
+		switch (drawMode) {
+			case SCREEN_HORIZONTAL_STRETCH: {
+				src.w = 64;
+				break;
+			}
+
+			case SCREEN_VERTICAL_STRETCH: {
+				src.h = 64;
+				break;
+			}
+
+			case SCREEN_STRETCH: {
+				src.w = 64;
+				src.h = 64;
+				break;
+			}
+
+			case SCREEN_HORIZONTAL_MIRROR: {
+				src.w = 64;
+
+				dst.w /= 2;
+				dst.x += dst.w;
+
+				SDL_RenderCopyEx(this->renderer, texture, &src, &dst, 0, NULL, SDL_FLIP_HORIZONTAL);
+
+				dst.x -= dst.w;
+				break;
+			}
+
+			case SCREEN_VERTICAL_MIRROR: {
+				src.h = 64;
+
+				dst.h /= 2;
+				dst.y += dst.h;
+
+				SDL_RenderCopyEx(this->renderer, texture, &src, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+
+				dst.y -= dst.h;
+				break;
+			}
+
+			case SCREEN_MIRROR: {
+				src.w = 64;
+				src.h = 64;
+
+				dst.w /= 2;
+				dst.h /= 2;
+				dst.x += dst.w;
+
+				SDL_RenderCopyEx(this->renderer, texture, &src, &dst, 0, NULL, SDL_FLIP_HORIZONTAL);
+				dst.y += dst.h;
+
+				SDL_RenderCopyEx(this->renderer, texture, &src, &dst, 0, NULL,
+				                 (SDL_RendererFlip) (SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
+				dst.x -= dst.w;
+
+				SDL_RenderCopyEx(this->renderer, texture, &src, &dst, 0, NULL, SDL_FLIP_VERTICAL);
+				dst.y -= dst.h;
+
+				break;
+			}
+
+			case SCREEN_HORIZONTAL_FLIP: {
+				flip = SDL_FLIP_HORIZONTAL;
+				break;
+			}
+
+			case SCREEN_VERTICAL_FLIP: {
+				flip = SDL_FLIP_VERTICAL;
+				break;
+			}
+
+			case SCREEN_90_ROTATION: {
+				angle = 90;
+				break;
+			}
+
+			case SCREEN_180_ROTATION: {
+				angle = 180;
+				break;
+			}
+
+			case SCREEN_270_ROTATION: {
+				angle = 270;
+				break;
+			}
+		}
+	}
+
+	SDL_RenderCopyEx(this->renderer, texture, &src, &dst, angle, NULL, flip);
+
+	SDL_RenderPresent(this->renderer);
+	SDL_DestroyTexture(texture);
 }

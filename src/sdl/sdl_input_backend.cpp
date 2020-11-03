@@ -82,7 +82,7 @@ bool SdlInputBackend::isButtonPressed(int i, int p) {
 		return false;
 	}
 
-	return this->state[p][i] == 2;
+	return this->state[p][i] == 1;
 }
 
 void SdlInputBackend::update() {

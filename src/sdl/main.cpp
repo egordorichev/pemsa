@@ -24,6 +24,8 @@ int main(int argc, const char** argv) {
 		return 1;
 	}
 
+	SDL_SetWindowMinimumSize(window, 128, 128);
+
 	SdlGraphicsBackend* graphics = new SdlGraphicsBackend(window);
 	SdlInputBackend* input = new SdlInputBackend();
 
@@ -59,11 +61,7 @@ int main(int argc, const char** argv) {
 		}
 
 		emulator.update(delta);
-
-		SDL_Surface* screen_surface = SDL_GetWindowSurface(window);
-		SDL_Rect target_size = { graphics->getOffsetX(), graphics->getOffsetY(), (int) (graphics->getScale() * 128), (int) (graphics->getScale() * 128) };
-		SDL_BlitScaled(graphics->getSurface(), NULL, screen_surface, &target_size);
-		SDL_UpdateWindowSurface(window);
+		graphics->render();
 
 		Uint32 end_time = SDL_GetTicks();
 		Uint32 difference = end_time - start_time;

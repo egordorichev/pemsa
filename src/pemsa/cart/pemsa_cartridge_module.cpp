@@ -58,6 +58,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 	}
 
 	this->cart = new PemsaCartridge();
+	this->cart->time = 0;
 
 	if (!std::getline(file, line) || memcmp(line.c_str(), "version", 7) != 0) {
 		// TODO: read version from the line and put it in cart rom

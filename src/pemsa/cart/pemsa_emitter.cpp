@@ -17,9 +17,11 @@ static float strtof(const char* ostr, char** endptr, int base) {
 	int sign = (str[0] == '-' ? -1 : 1);
 	char n[2] = { 0 };
 
-	for (int i = 0; afterDot[i] ; i++) {
-		n[0] = afterDot[i];
-		f += strtol(n, 0, base) * pow(base, -(i + 1)) * sign;
+	if (afterDot != nullptr) {
+		for (int i = 0; afterDot[i]; i++) {
+			n[0] = afterDot[i];
+			f += strtol(n, 0, base) * pow(base, -(i + 1)) * sign;
+		}
 	}
 
 	free(str);
