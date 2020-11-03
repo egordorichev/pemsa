@@ -202,6 +202,70 @@ static int rectfill(lua_State* state) {
 	return 0;
 }
 
+static int oval(lua_State* state) {
+	int x0 = round(luaL_checknumber(state, 1));
+	int y0 = round(luaL_checknumber(state, 2));
+	int x1 = round(luaL_checknumber(state, 3));
+	int y1 = round(luaL_checknumber(state, 4));
+
+	int c = read_color(state, 5);
+
+	plot_line(x0, y0, x1, y0, c);
+	plot_line(x0, y1, x1, y1, c);
+	plot_line(x0, y0, x0, y1, c);
+	plot_line(x1, y0, x1, y1, c);
+
+	return 0;
+}
+
+static int ovalfill(lua_State* state) {
+	double x0 = luaL_checknumber(state, 1);
+	double y0 = luaL_checknumber(state, 2);
+	double x1 = luaL_checknumber(state, 3);
+	double y1 = luaL_checknumber(state, 4);
+	int c = read_color(state, 5);
+
+	int width = abs(round((x0 - x1) / 2));
+	int height = abs(round((y0 - y1) / 2));
+	int ox = round(fmin(x0, x1) + width);
+	int oy = round(fmin(y0, y1) + height);
+
+	PemsaDrawStateModule *drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule *memoryModule = emulator->getMemoryModule();
+
+	bool transparent = drawStateModule->isFillPatternTransparent();
+
+	int hh = height * height;
+	int ww = width * width;
+	int hhww = (hh + 1) * (ww + 1);
+	x0 = width;
+	int dx = 0;
+
+	for (int x = -width; x <= width; x++) {
+		DRAW_PIXEL(ox + x, oy, c)
+	}
+
+	for (int y = 1; y <= height; y++) {
+		x1 = x0 - (dx - 1);
+
+		for (; x1 > 0; x1--) {
+			if (x1 * x1 * hh + y * y * ww <= hhww) {
+				break;
+			}
+		}
+
+		dx = x0 - x1;
+		x0 = x1;
+
+		for (int x = -x0; x <= x0; x++) {
+			DRAW_PIXEL(ox + x, oy - y, c)
+			DRAW_PIXEL(ox + x, oy + y, c)
+		}
+	}
+
+	return 0;
+}
+
 static int circ(lua_State* state) {
 	int ox = round(luaL_checknumber(state, 1));
 	int oy = round(luaL_checknumber(state, 2));
@@ -548,6 +612,8 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "rectfill", rectfill);
 	lua_register(state, "circ", circ);
 	lua_register(state, "circfill", circfill);
+	lua_register(state, "oval", oval);
+	lua_register(state, "ovalfill", ovalfill);
 	lua_register(state, "spr", spr);
 	lua_register(state, "sspr", sspr);
 	lua_register(state, "map", map);
