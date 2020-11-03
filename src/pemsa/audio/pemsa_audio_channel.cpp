@@ -143,3 +143,7 @@ bool PemsaAudioChannel::isActive() {
 void PemsaAudioChannel::stop() {
 	this->active = false;
 }
+
+int PemsaAudioChannel::getSfx() {
+	return this->sfx;
+}

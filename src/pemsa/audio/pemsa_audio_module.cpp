@@ -54,47 +54,79 @@ double PemsaAudioModule::sample() {
 	}
 
 	double result = 0;
-	int count = 0;
 
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
-		PemsaAudioChannel* channel = this->channels[i];
-
-		if (channel->isActive()) {
-			result += channel->sample();
-			count++;
-		}
+		result += this->channels[i]->sample();
 	}
 
-	return result / count;
+	return result / PEMSA_CHANNEL_COUNT;
 }
 
-void PemsaAudioModule::playSfx(int sfx, int channel) {
-	if (channel > -1 && channel < PEMSA_CHANNEL_COUNT) {
-		this->channels[channel]->play(sfx);
+void PemsaAudioModule::playSfx(int sfx, int ch) {
+	if (ch > -1 && ch < PEMSA_CHANNEL_COUNT) {
+		if (ch == -1) {
+			for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+				if (this->channels[i]->getSfx() == sfx) {
+					this->channels[i]->stop();
+				}
+			}
+		} else {
+			if (sfx == -1) {
+				this->channels[ch]->stop();
+			} else {
+				this->channels[ch]->play(sfx);
+			}
+		}
+
+		return;
+	}
+
+	if (sfx == -1) {
 		return;
 	}
 
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
-		if (!this->channels[i]->isActive()) {
-			this->channels[i]->play(sfx);
+		PemsaAudioChannel* channel = this->channels[i];
+
+		if (!channel->isActive()) {
+			channel->play(sfx);
 			return;
 		}
 	}
 
-	this->channels[0]->play(sfx);
+	if (this->currentMusic == -1) {
+		return;
+	}
+
+	uint8_t* ram = emulator->getMemoryModule()->ram;
+
+	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+		PemsaAudioChannel* channel = this->channels[i];
+
+		if (channel->getSfx() != ram[PEMSA_RAM_SONG + this->currentMusic * 4 + i]) {
+			channel->play(sfx);
+			return;
+		}
+	}
 }
 
 void PemsaAudioModule::playMusic(int music) {
 	uint8_t* ram = emulator->getMemoryModule()->ram;
 
+	if (this->currentMusic != -1) {
+		for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+			PemsaAudioChannel *channel = this->channels[i];
+
+			if (channel->getSfx() == ram[PEMSA_RAM_SONG + this->currentMusic * 4 + i]) {
+				channel->stop();
+			}
+		}
+	}
+
 	if (music == -1) {
 		if (this->currentMusic != -1) {
-			uint8_t* songRam = ram + this->currentMusic * 4 + PEMSA_RAM_SONG;
-
-			for (int i = 0; i < 4; i++) {
-				if (songRam[i] < 64) {
-					this->channels[i]->stop();
-				}
+			for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+				this->channels[i]->stop();
 			}
 
 			this->currentMusic = -1;
@@ -109,7 +141,7 @@ void PemsaAudioModule::playMusic(int music) {
 
 	uint8_t* songRam = ram + this->currentMusic * 4 + PEMSA_RAM_SONG;
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
 		int sfxData = songRam[i];
 
 		if (!IS_BIT_SET(sfxData, 6)) {

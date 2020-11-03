@@ -5,7 +5,7 @@ static PemsaEmulator* emulator;
 static int music(lua_State* state) {
 	int n = luaL_checknumber(state, 1);
 
-	if (n >= 0 && n < 64) {
+	if (n >= -1 && n < 64) {
 		emulator->getAudioModule()->playMusic(n);
 	}
 
