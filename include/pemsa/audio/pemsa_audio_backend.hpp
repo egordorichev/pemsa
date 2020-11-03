@@ -4,7 +4,8 @@
 #include "pemsa/pemsa_backend.hpp"
 
 class PemsaAudioBackend : public PemsaBackend {
-
+	public:
+		virtual void setupBuffer() = 0;
 };
 
 #endif

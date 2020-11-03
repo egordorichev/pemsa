@@ -1,8 +1,5 @@
 #include "pemsa/audio/pemsa_audio_module.hpp"
-#include "pemsa/audio/pemsa_wave_functions.hpp"
 #include "pemsa/pemsa_emulator.hpp"
-
-#include <cmath>
 
 PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* backend) : PemsaModule(emulator) {
 	this->backend = backend;
@@ -10,6 +7,8 @@ PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* b
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
 		this->channels[i] = new PemsaAudioChannel(emulator, i);
 	}
+
+	this->backend->setupBuffer();
 }
 
 PemsaAudioModule::~PemsaAudioModule() {
@@ -59,7 +58,6 @@ double PemsaAudioModule::sample() {
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
 		PemsaAudioChannel* channel = this->channels[i];
 
-		// fixme: segfault sometimes
 		if (channel->isActive()) {
 			result += channel->sample();
 			count++;

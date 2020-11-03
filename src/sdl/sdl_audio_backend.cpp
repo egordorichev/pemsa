@@ -19,12 +19,7 @@ SdlAudioBackend::~SdlAudioBackend() {
 	}
 }
 
-void SdlAudioBackend::setEmulator(PemsaEmulator *emulator) {
-	PemsaBackend::setEmulator(emulator);
-	this->setup();
-}
-
-void SdlAudioBackend::setup() {
+void SdlAudioBackend::setupBuffer() {
 	SDL_AudioSpec want;
 	SDL_AudioSpec audioSpec;
 

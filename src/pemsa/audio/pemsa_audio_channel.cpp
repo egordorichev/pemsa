@@ -18,7 +18,6 @@ void PemsaAudioChannel::play(int sfx) {
 	this->sfx = sfx;
 	this->offset = 0;
 	this->lastStep = -1;
-	this->loop = false;
 	this->active = true;
 	this->speed = this->emulator->getMemoryModule()->ram[sfx * 68 + PEMSA_RAM_SFX + 65];
 }
@@ -50,6 +49,8 @@ double PemsaAudioChannel::sample() {
 			if (this->offset >= loopEnd) {
 				this->offset = ram[sfx * 68 + PEMSA_RAM_SFX + 66];
 				this->lastStep = -1;
+			} else {
+				this->lastStep = (int) this->offset;
 			}
 		} else if (this->offset >= 32) {
 			this->active = false;
@@ -83,7 +84,7 @@ double PemsaAudioChannel::sample() {
 		}
 
 		case 2: {
-			this->frequency = lerp(NOTE_TO_FREQUENCY(this->note), NOTE_TO_FREQUENCY(this->note + 0.5), osc(this->time * 8));
+			this->frequency = lerp(NOTE_TO_FREQUENCY(this->note), NOTE_TO_FREQUENCY(this->note + 0.5), osc(this->offset));
 			break;
 		}
 
@@ -104,7 +105,7 @@ double PemsaAudioChannel::sample() {
 
 		case 6: {
 			int off = ((int) this->offset) & 0xfc;
-			int lfo = (int) (sawOsc(this->time * 8) * 4);
+			int lfo = (int) (sawOsc(this->offset) * 4);
 
 			int i = this->sfx * 68 + PEMSA_RAM_SFX + (int) (off + lfo) * 2;
 			int note = (*(this->emulator->getMemoryModule()->ram + i) & 0b00111111);
@@ -115,7 +116,7 @@ double PemsaAudioChannel::sample() {
 
 		case 7: {
 			int off = ((int) this->offset) & 0xfc;
-			int lfo = (int) (sawOsc(this->time * 4) * 4);
+			int lfo = (int) (sawOsc(this->offset * 0.5) * 4);
 
 			int i = this->sfx * 68 + PEMSA_RAM_SFX + (int) (off + lfo) * 2;
 			int note = (*(this->emulator->getMemoryModule()->ram + i) & 0b00111111);
@@ -129,7 +130,6 @@ double PemsaAudioChannel::sample() {
 
 	this->offset += 7350.0 / (61 * this->speed * PEMSA_SAMPLE_RATE);
 	this->waveOffset += (int) this->frequency / (double) PEMSA_SAMPLE_RATE;
-	this->time += 1.0 / PEMSA_SAMPLE_RATE;
 
 	if (this->volume == 0) {
 		return 0;

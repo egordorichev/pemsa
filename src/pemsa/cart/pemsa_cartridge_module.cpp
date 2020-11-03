@@ -178,11 +178,17 @@ bool PemsaCartridgeModule::load(const char *path) {
 					uint8_t volume = HEX_TO_INT(line.at(i + 11));
 					uint8_t effect = HEX_TO_INT(line.at(i + 12));
 
+					bool custom = waveform > 7;
+					waveform = waveform % 8;
+
 					uint8_t lo = (pitch | (waveform << 6));
 					uint8_t hi = ((waveform >> 2) | (volume << 1) | (effect << 4));
 
+					SET_BIT(hi, 7, custom)
+
 					rom[PEMSA_ROM_SFX + index * 68 + off] = lo;
 					rom[PEMSA_ROM_SFX + index * 68 + off + 1] = hi;
+
 					off += 2;
 				}
 
