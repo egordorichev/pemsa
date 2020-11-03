@@ -14,8 +14,13 @@
 
 # audio
 
-* sfx
-* music
+* fix pereodic segfault in isActive()
+* sfx looping
+* music looop
+
+* custom instruments
+* quee sfx
+* queue music
 
 # memory
 

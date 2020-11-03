@@ -1,15 +1,24 @@
 #include "pemsa/pemsa_emulator.hpp"
-#include <iostream>
 
 static PemsaEmulator* emulator;
 
 static int music(lua_State* state) {
-	std::cerr << "Warning: music() is not currently implemented\n";
+	int n = luaL_checknumber(state, 1);
+
+	if (n >= 0 && n < 64) {
+		emulator->getAudioModule()->playMusic(n);
+	}
+
 	return 0;
 }
 
 static int sfx(lua_State* state) {
-	std::cerr << "Warning: sfx() is not currently implemented\n";
+	int n = luaL_checknumber(state, 1);
+
+	if (n >= -1 && n < 64) {
+		emulator->getAudioModule()->playSfx(n, luaL_optnumber(state, 2, -1));
+	}
+
 	return 0;
 }
 

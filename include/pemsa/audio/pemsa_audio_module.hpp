@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-#define PEMSA_SAMPLE_SIZE 4096
+#define PEMSA_SAMPLE_SIZE 2048
 #define PEMSA_SAMPLE_RATE 44100
 #define PEMSA_CHANNEL_COUNT 4
 
@@ -18,12 +18,16 @@ class PemsaAudioModule : public PemsaModule {
 		~PemsaAudioModule();
 
 		double sample();
-		void play(int sfx);
+		void playSfx(int sfx, int channel = -1);
+		void playMusic(int music);
 	private:
 		PemsaAudioBackend* backend;
 		PemsaAudioChannel* channels[PEMSA_CHANNEL_COUNT];
 
 		double time;
+		double musicOffset;
+		int currentMusic = -1;
+		int musicSpeed;
 };
 
 void pemsa_open_audio_api(PemsaEmulator* machine, lua_State* state);

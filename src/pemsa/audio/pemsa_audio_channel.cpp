@@ -44,9 +44,18 @@ double PemsaAudioChannel::sample() {
 		uint8_t* ram = this->emulator->getMemoryModule()->ram;
 		this->lastNote = this->note;
 
-		if (this->offset > 32) {
+		int loopEnd = ram[sfx * 68 + PEMSA_RAM_SFX + 67];
+
+		if (loopEnd != 0) {
+			if (this->offset >= loopEnd) {
+				this->offset = ram[sfx * 68 + PEMSA_RAM_SFX + 66];
+				this->lastStep = -1;
+			}
+		} else if (this->offset >= 32) {
+			this->active = false;
 			this->offset = 0;
 			this->lastStep = -1;
+			return 0;
 		} else {
 			this->lastStep = (int) this->offset;
 		}
@@ -131,4 +140,8 @@ double PemsaAudioChannel::sample() {
 
 bool PemsaAudioChannel::isActive() {
 	return this->active;
+}
+
+void PemsaAudioChannel::stop() {
+	this->active = false;
 }
