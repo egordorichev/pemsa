@@ -6,7 +6,7 @@ function _draw()
  z=t()
  a=cos(z*0.3)*16+32
  b=sin(z*0.5)*16+32
- oval64-a,64-b,64+a,64+b,8)
+ oval(64-a,64-b,64+a,64+b,8)
  oval(0, 0, 32, 64, 10)
 end
 __gfx__

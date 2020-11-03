@@ -207,13 +207,56 @@ static int oval(lua_State* state) {
 	int y0 = round(luaL_checknumber(state, 2));
 	int x1 = round(luaL_checknumber(state, 3));
 	int y1 = round(luaL_checknumber(state, 4));
-
 	int c = read_color(state, 5);
 
-	plot_line(x0, y0, x1, y0, c);
-	plot_line(x0, y1, x1, y1, c);
-	plot_line(x0, y0, x0, y1, c);
-	plot_line(x1, y0, x1, y1, c);
+	int width = abs(round((x0 - x1) / 2));
+	int height = abs(round((y0 - y1) / 2));
+	int ox = round(fmin(x0, x1) + width);
+	int oy = round(fmin(y0, y1) + height);
+
+	PemsaDrawStateModule *drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule *memoryModule = emulator->getMemoryModule();
+
+	bool transparent = drawStateModule->isFillPatternTransparent();
+
+#define incx() x++, dxt += d2xt, t += dxt
+#define incy() y--, dyt += d2yt, t += dyt
+
+	int x = 0;
+	int y = height;
+	long a2 = (long) width * width;
+	long b2 = (long) height * height;
+	long crit1 = -(a2 / 4 + width % 2 + b2);
+	long crit2 = -(b2 / 4 + height % 2 + a2);
+	long crit3 = -(b2 / 4 + height % 2);
+	long t = -a2 * y;
+	long dxt = 2 * b2 * x, dyt = -2 * a2 * y;
+	long d2xt = 2 * b2, d2yt = 2 * a2;
+
+	while (y >= 0 && x <= width) {
+		DRAW_PIXEL(ox + x, oy + y, c)
+
+		if (x != 0 || y != 0) {
+			DRAW_PIXEL(ox - x, oy - y, c)
+
+			if (x != 0 && y != 0) {
+				DRAW_PIXEL(ox + x, oy - y, c)
+				DRAW_PIXEL(ox - x, oy + y, c)
+			}
+		}
+
+		if (t + b2 * x <= crit1 || t + a2 * y <= crit3) {
+			incx();
+		} else if (t - a2 * y > crit2) {
+			incy();
+		} else {
+			incx();
+			incy();
+		}
+	}
+
+#undef incx
+#undef incy
 
 	return 0;
 }
