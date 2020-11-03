@@ -11,16 +11,16 @@ double pemsa_sine(double t) {
 }
 
 double pemsa_square(double t) {
-	return (pemsa_sine(t) >= 0 ? 1.0 : -1.0) * 0.5;
+	return pemsa_sine(t) >= 0 ? 1.0 : -1.0;
 }
 
 double pemsa_pulse(double t) {
-	return (fmod(t, 1) < 0.3125 ? 1 : -1) * 1.0 / 3.0;
+	return (fmod(t, 1) < 0.3125 ? 1 : -1) * 1.0;
 }
 
 double pemsa_tilted_saw(double t) {
 	t = fmod(t, 1);
-	return (((t < 0.875) ? (t * 16 / 7) : ((1 - t) * 16)) - 1);
+	return (((t < 0.875) ? (t * 16 / 7) : ((1 - t) * 16)) - 1) * 0.7;
 }
 
 double pemsa_saw_tooth(double t) {
@@ -29,7 +29,7 @@ double pemsa_saw_tooth(double t) {
 
 double pemsa_organ(double t) {
 	t *= 4;
-	return (fabs(fmod(t, 2) - 1) - 0.5 + (fabs(fmod(t * 0.5, 2) - 1) - 0.5) / 2.0 - 0.1);
+	return (fabs(fmod(t, 2) - 1) - 0.5 + (fabs(fmod(t * 0.5, 2) - 1) - 0.5) / 2.0 - 0.1) * 0.7;
 }
 
 double pemsa_phaser(double t) {

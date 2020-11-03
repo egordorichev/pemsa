@@ -6,7 +6,7 @@
 
 class PemsaAudioChannel {
 	public:
-		PemsaAudioChannel(PemsaEmulator* emulator, int id);
+		PemsaAudioChannel(PemsaEmulator* emulator);
 
 		void play(int sfx);
 		double sample();
@@ -16,7 +16,6 @@ class PemsaAudioChannel {
 		PemsaEmulator* emulator;
 		bool active;
 
-		int id;
 		int sfx;
 
 		double offset;
@@ -28,6 +27,7 @@ class PemsaAudioChannel {
 		uint8_t instrument;
 		uint8_t volume;
 		uint8_t fx;
+
 		int note;
 		int lastNote;
 		bool isCustom;

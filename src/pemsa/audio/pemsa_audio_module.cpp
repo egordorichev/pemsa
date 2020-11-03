@@ -5,9 +5,10 @@ PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* b
 	this->backend = backend;
 
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
-		this->channels[i] = new PemsaAudioChannel(emulator, i);
+		this->channels[i] = new PemsaAudioChannel(emulator);
 	}
 
+	this->backend->setEmulator(emulator);
 	this->backend->setupBuffer();
 }
 
@@ -68,7 +69,7 @@ double PemsaAudioModule::sample() {
 }
 
 void PemsaAudioModule::playSfx(int sfx, int channel) {
-	if (channel > -1 && channel < 4) {
+	if (channel > -1 && channel < PEMSA_CHANNEL_COUNT) {
 		this->channels[channel]->play(sfx);
 		return;
 	}

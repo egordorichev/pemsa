@@ -12,6 +12,7 @@
 # audio
 * fix pereodic segfault in isActive()
 * custom instruments
+* repeat of sfx()
 
 # memory
 * stat

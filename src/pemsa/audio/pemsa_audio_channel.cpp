@@ -4,12 +4,22 @@
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
 
-#include <iostream>
+static inline double lerp(double a, double b, double t) {
+	return (b - a) * t + a;
+}
 
-PemsaAudioChannel::PemsaAudioChannel(PemsaEmulator* emulator, int id) {
+static inline double osc(double x) {
+	return (fabs(fmod(x, 1) * 2 - 1) * 2 - 1) * 0.7;
+}
+
+static inline double sawOsc(double x) {
+	return fmod(x, 1);
+}
+
+PemsaAudioChannel::PemsaAudioChannel(PemsaEmulator* emulator) {
 	this->emulator = emulator;
-	this->id = id;
 	this->active = false;
+	this->waveOffset = 0;
 }
 
 void PemsaAudioChannel::play(int sfx) {
@@ -20,18 +30,6 @@ void PemsaAudioChannel::play(int sfx) {
 	this->lastStep = -1;
 	this->active = true;
 	this->speed = this->emulator->getMemoryModule()->ram[sfx * 68 + PEMSA_RAM_SFX + 65];
-}
-
-static double lerp(double a, double b, double t) {
-	return (b - a) * t + a;
-}
-
-static double osc(double x) {
-	return (fabs(fmod(x, 1) * 2 - 1) * 2 - 1) * 0.7;
-}
-
-static double sawOsc(double x) {
-	return fmod(x, 1);
 }
 
 double PemsaAudioChannel::sample() {
@@ -89,7 +87,7 @@ double PemsaAudioChannel::sample() {
 		}
 
 		case 3: {
-			this->frequency = lerp(NOTE_TO_FREQUENCY(this->lastNote), 0, fmod(this->offset, 1.0));
+			this->frequency = lerp(NOTE_TO_FREQUENCY(this->note), 0, fmod(this->offset, 1.0));
 			break;
 		}
 
@@ -129,7 +127,7 @@ double PemsaAudioChannel::sample() {
 	}
 
 	this->offset += 7350.0 / (61 * this->speed * PEMSA_SAMPLE_RATE);
-	this->waveOffset += (int) this->frequency / (double) PEMSA_SAMPLE_RATE;
+	this->waveOffset += (double) this->frequency / (double) PEMSA_SAMPLE_RATE;
 
 	if (this->volume == 0) {
 		return 0;
