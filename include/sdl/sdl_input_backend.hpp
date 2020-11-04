@@ -5,8 +5,13 @@
 #include "pemsa/input/pemsa_input_module.hpp"
 #include "SDL2/SDL.h"
 
+#include <vector>
+
 class SdlInputBackend : public PemsaInputBackend {
 	public:
+		SdlInputBackend();
+		~SdlInputBackend();
+
 		void handleEvent(SDL_Event* event);
 		bool isButtonDown(int i, int p) override;
 		bool isButtonPressed(int i, int p) override;
@@ -18,6 +23,8 @@ class SdlInputBackend : public PemsaInputBackend {
 	private:
 		uint8_t state[PEMSA_PLAYER_COUNT][PEMSA_BUTTON_COUNT];
 		uint8_t mouseState;
+
+		std::vector<SDL_GameController*> controllers;
 };
 
 #endif

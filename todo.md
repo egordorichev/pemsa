@@ -1,6 +1,6 @@
 # cart
 * fillp from emoji
-* input syncing is kinda weird
+* input is kinda cached and lagging behind
 
 # graphics
 * tline

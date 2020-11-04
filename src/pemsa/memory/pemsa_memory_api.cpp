@@ -130,9 +130,17 @@ static int poke(lua_State* state) {
 }
 
 static int reload(lua_State* state) {
-	int to = luaL_checknumber(state, 1);
-	int from = luaL_checknumber(state, 2);
-	int amount = luaL_checknumber(state, 3);
+	int to = 0;
+	int from = 0;
+	int amount;
+
+	if (lua_gettop(state) == 0) {
+		amount = 0x4300;
+	} else {
+		to = luaL_checknumber(state, 1);
+		from = luaL_checknumber(state, 2);
+		amount = luaL_checknumber(state, 3);
+	}
 
 	if (to < 0 || from < 0 || to + amount > PEMSA_RAM_END || from + amount > PEMSA_ROM_END) {
 		return 0;

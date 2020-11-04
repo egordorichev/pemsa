@@ -6,14 +6,49 @@
 
 #include <iostream>
 
-static int scancode_to_button(SDL_Scancode code) {
+const char* controller_db =
+#include "sdl/sdl_controller_db.hpp"
+
+SdlInputBackend::SdlInputBackend() {
+	SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem((void *) controller_db, sizeof(controller_db)), 1);
+}
+
+SdlInputBackend::~SdlInputBackend() {
+	for (auto & controller : this->controllers) {
+		SDL_GameControllerClose(controller);
+	}
+}
+
+static int scancode_to_button(SDL_Scancode code, int* player) {
+	*player = 0;
+
 	switch (code) {
-		case SDL_SCANCODE_LEFT: case SDL_SCANCODE_A: return 0;
-		case SDL_SCANCODE_RIGHT: case SDL_SCANCODE_D: return 1;
-		case SDL_SCANCODE_UP: case SDL_SCANCODE_W: return 2;
-		case SDL_SCANCODE_DOWN: case SDL_SCANCODE_S: return 3;
+		case SDL_SCANCODE_LEFT: return 0;
+		case SDL_SCANCODE_RIGHT: return 1;
+		case SDL_SCANCODE_UP: return 2;
+		case SDL_SCANCODE_DOWN: return 3;
 		case SDL_SCANCODE_C: case SDL_SCANCODE_Z: return 4;
 		case SDL_SCANCODE_X: return 5;
+
+		case SDL_SCANCODE_S: *player = 1; return 0;
+		case SDL_SCANCODE_F: *player = 1; return 1;
+		case SDL_SCANCODE_E: *player = 1; return 2;
+		case SDL_SCANCODE_D: *player = 1; return 3;
+		case SDL_SCANCODE_LSHIFT: case SDL_SCANCODE_TAB: *player = 1; return 4;
+		case SDL_SCANCODE_A: *player = 1; case SDL_SCANCODE_Q: return 5;
+	}
+
+	return -1;
+}
+
+static int gamepadbutton_to_button(Uint8 button) {
+	switch (button) {
+		case SDL_CONTROLLER_BUTTON_DPAD_LEFT: return 0;
+		case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: return 1;
+		case SDL_CONTROLLER_BUTTON_DPAD_UP: return 2;
+		case SDL_CONTROLLER_BUTTON_DPAD_DOWN: return 3;
+		case SDL_CONTROLLER_BUTTON_B: return 4;
+		case SDL_CONTROLLER_BUTTON_A: return 5;
 	}
 
 	return -1;
@@ -22,32 +57,109 @@ static int scancode_to_button(SDL_Scancode code) {
 void SdlInputBackend::handleEvent(SDL_Event *event) {
 	switch (event->type) {
 		case SDL_KEYDOWN: {
-			int button = scancode_to_button(event->key.keysym.scancode);
+			int player;
+			int button = scancode_to_button(event->key.keysym.scancode, &player);
 
-			if (button != -1 && this->state[0][button] == 0) {
-				this->state[0][button] = 1;
+			if (button != -1 && this->state[player][button] == 0) {
+				this->state[player][button] = 1;
 			}
 
 			break;
 		}
 
 		case SDL_KEYUP: {
-			int button = scancode_to_button(event->key.keysym.scancode);
+			int player;
+			int button = scancode_to_button(event->key.keysym.scancode, &player);
 
 			if (button != -1) {
-				this->state[0][button] = 0;
+				this->state[player][button] = 0;
+			}
+
+			break;
+		}
+
+		case SDL_CONTROLLERDEVICEADDED: {
+			SDL_GameController* controller = SDL_GameControllerOpen(event->cdevice.which);
+			std::cout << "Controller (id " << event->cdevice.which << ") " << SDL_GameControllerName(controller) << " added\n";
+			this->controllers.push_back(controller);
+
+			break;
+		}
+
+		case SDL_CONTROLLERDEVICEREMOVED: {
+			std::cout << "Controller " << event->cdevice.which << " removed\n";
+			break;
+		}
+
+		case SDL_CONTROLLERAXISMOTION: {
+			int player = event->caxis.which;
+
+			if (player >= 0 && player < PEMSA_PLAYER_COUNT) {
+				float value = event->caxis.value / (float) SDL_MAX_SINT16;
+				float absValue = fabs(value);
+
+				if (absValue < 0.25) {
+					value = 0;
+					absValue = 0;
+				}
+
+				switch (event->caxis.axis) {
+					case SDL_CONTROLLER_AXIS_LEFTX: {
+						if (absValue > 0) {
+							this->state[player][value > 0 ? 1 : 0] = 1;
+							this->state[player][value > 0 ? 0 : 1] = 0;
+						} else {
+							this->state[player][1] = 0;
+							this->state[player][0] = 0;
+						}
+
+						break;
+					}
+
+					case SDL_CONTROLLER_AXIS_LEFTY: {
+						if (absValue > 0) {
+							this->state[player][value > 0 ? 3 : 2] = 1;
+							this->state[player][value > 0 ? 2 : 3] = 0;
+						} else {
+							this->state[player][2] = 0;
+							this->state[player][3] = 0;
+						}
+
+						break;
+					}
+
+					// TODO: mouse emulation with right stick?
+				}
 			}
 
 			break;
 		}
 
 		case SDL_CONTROLLERBUTTONDOWN: {
-			// TODO
+			int player = event->cbutton.which;
+
+			if (player >= 0 && player < PEMSA_PLAYER_COUNT) {
+				int button = gamepadbutton_to_button(event->cbutton.button);
+
+				if (button != -1) {
+					this->state[player][button] = 1;
+				}
+			}
+
 			break;
 		}
 
 		case SDL_CONTROLLERBUTTONUP: {
-			// TODO
+			int player = event->cbutton.which;
+
+			if (player >= 0 && player < PEMSA_PLAYER_COUNT) {
+				int button = gamepadbutton_to_button(event->cbutton.button);
+
+				if (button != -1) {
+					this->state[player][button] = 0;
+				}
+			}
+
 			break;
 		}
 

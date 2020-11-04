@@ -10,6 +10,10 @@ PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* b
 
 	this->backend->setEmulator(emulator);
 	this->backend->setupBuffer();
+
+	this->time = 0;
+	this->musicOffset = 0;
+	this->currentMusic = -1;
 }
 
 PemsaAudioModule::~PemsaAudioModule() {
@@ -137,6 +141,7 @@ void PemsaAudioModule::playMusic(int music) {
 
 	this->currentMusic = music;
 	this->musicSpeed = 1;
+	this->time = 0;
 	this->musicOffset = 0;
 
 	uint8_t* songRam = ram + this->currentMusic * 4 + PEMSA_RAM_SONG;

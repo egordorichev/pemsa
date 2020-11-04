@@ -36,7 +36,9 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	bool running = true;
 	bool inQuestion = false;
 	bool inIf = false;
+	bool inWhile = false;
 	bool checkThen = false;
+	bool checkDo = false;
 	bool emitEnd = false;
 	int outputBrace = 0;
 	int parenCount = 0;
@@ -45,11 +47,11 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	const char* start = expressionStart;
 
 	// Emoji button setup
-	output << "S, D, G, M, I, U, sub = 0, 1, 2, 3, 4, 5, string.sub\n";
+	output << "S, D, G, M, I, U, sub, _pairs = 0, 1, 2, 3, 4, 5, string.sub, pairs\n";
 
-	output << "local function arraylen(t)\n";
+	output << "function arraylen(t)\n";
 	output << "\tlocal len = 0\n";
-	output << "\tfor i, _ in pairs(t) do\n";
+	output << "\tfor i, _ in _pairs(t) do\n";
 	output << "\t\tif type(i) == \"number\" then\n";
 	output << "\t\t\tlen = i\n";
 	output << "\t\tend\n";
@@ -70,7 +72,10 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	output << "\t\treturn a[i]\n";
 	output << "\tend\n";
 	output << "end\n";
-
+	output << "function pairs(a)\n";
+	output << "	if a == nil then return end\n";
+	output << "	return _pairs(a)\n";
+	output << "end\n";
 	output << "function add(a, v)\n";
 	output << "	if a == nil then return end\n";
 	output << "	table.insert(a, v)\n";
@@ -103,15 +108,19 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				outputBrace--;
 			}
 
-			if (checkThen) {
+			if (checkThen || checkDo) {
+				bool wasCheckDo = checkDo;
+
 				checkThen = false;
+				checkDo = false;
 				inIf = false;
+				inWhile = false;
 
-				PemsaTokenType t= token.type;
+				PemsaTokenType t = token.type;
 
-				if (t != TOKEN_THEN && t != TOKEN_OR && t != TOKEN_AND && t != TOKEN_COLON && t != TOKEN_DOT) {
+				if (t != (wasCheckDo ? TOKEN_DO : TOKEN_THEN) && t != TOKEN_OR && t != TOKEN_AND && t != TOKEN_COLON && t != TOKEN_DOT) {
 					emitEnd = true;
-					output << " then ";
+					output << (wasCheckDo ? " do " : " then ");
 				}
 			}
 		}
@@ -126,6 +135,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				break;
 			}
 
+			case TOKEN_MODULO_EQUAL:
 			case TOKEN_MINUS_EQUAL:
 			case TOKEN_SLASH_EQUAL:
 			case TOKEN_STAR_EQUAL:
@@ -239,7 +249,10 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 			case TOKEN_RIGHT_PAREN: {
 				parenCount--;
+				expressionStart = token.start + token.length;
+
 				checkThen = parenCount == 0 && inIf;
+				checkDo = parenCount == 0 && inWhile;
 
 				output << std::string(token.start, token.length);
 				break;
@@ -247,12 +260,16 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 			case TOKEN_LEFT_BRACKET:
 			case TOKEN_LEFT_BRACE:
+			case TOKEN_RIGHT_BRACKET:
+			case TOKEN_RIGHT_BRACE:
 			case TOKEN_LEFT_PAREN: {
 				if (token.type == TOKEN_LEFT_PAREN) {
 					parenCount++;
 
 					if (previous.type == TOKEN_IF) {
 						inIf = true;
+					} else if (previous.type == TOKEN_WHILE) {
+						inWhile = true;
 					}
 				}
 
