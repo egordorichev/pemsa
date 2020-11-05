@@ -1,15 +1,10 @@
 pico-8 cartridge // http://www.pico-8.com
 version 29
 __lua__
-cls(13)
-palt(14,true)
-palt(11,true)
-palt(0,false)
-s=4
 function _draw()
- for y=0,127 do
-  tline(0,y,127,y,0,y/s,1/s,0)
- end
+ cls(1)
+ fillp(♥)
+ circfill(64,64,btn(❎) and 32 or 16,10)
 end
 __gfx__
 33333333eeeeeeeeeeeeeeeeeeeeeeee0000000000000000e110000e000000000000000000000000eeeeeee00eeeeeee0115024511eeeeeeeeeeeeeeeeeeeeee

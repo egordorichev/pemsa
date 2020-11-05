@@ -47,7 +47,8 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	const char* start = expressionStart;
 
 	// Emoji button setup
-	output << "S, D, G, M, I, U, sub, _pairs = 0, 1, 2, 3, 4, 5, string.sub, pairs\n";
+	output << "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = 62975.5, 31455.5, 32125.5, 1.5, 6943.5, 3855.5, 2.5, 46527.5, 4.5, 45503.5, 0.5, 45407.5, 3.5, 47133.5, 63903.5, 20927.5, 39327.5, 45343.5, 0.5, 21845.5, 5.5, 20767.5, 62911.5, 23130.5, 39743.5, 41184.5\n";
+	output << "sub, _pairs = string.sub, pairs\n";
 
 	output << "function arraylen(t)\n";
 	output << "\tlocal len = 0\n";
