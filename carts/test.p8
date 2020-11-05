@@ -23,7 +23,7 @@ end
 function _draw()
  cls(bgcol)
  sspr(8,0,24,6,2,0)
- --sspr(8,8,28,6,2,8)
+ sspr(8,8,28,6,2,8)
 
  -- local time
  print("local time: "..stat(93)..":"..stat(94)..":"..stat(95),2,21,7)
