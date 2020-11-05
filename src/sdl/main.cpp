@@ -51,7 +51,7 @@ int main(int argc, const char** argv) {
 	Uint32 ticks_per_frame = 1000 / fps;
 
 	while (running) {
-		if (SDL_PollEvent(&event)) {
+		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				running = false;
 			} else {

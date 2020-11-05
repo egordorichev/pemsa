@@ -69,7 +69,6 @@ void SdlGraphicsBackend::flip() {
 	for (int i = 0; i < 0x2000; i++) {
 		uint8_t val = ram[i + PEMSA_RAM_SCREEN];
 
-		// TODO: screen colors
 		pixels[i * 2] = intPalette[screenPalette[val & 0x0f]];
 		pixels[i * 2 + 1] = intPalette[screenPalette[val >> 4]];
 	}

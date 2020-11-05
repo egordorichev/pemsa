@@ -1,6 +1,5 @@
 # cart
 * fillp from emoji
-* input is kinda cached and lagging behind
 
 # graphics
 * tline
