@@ -1,6 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 19
 __lua__
+pal(10, 128 + 10, 1)
+pal(8, 128 + 8, 1)
+
 x, y = 64, 64
 u, v = 32, 32
 function _update60()

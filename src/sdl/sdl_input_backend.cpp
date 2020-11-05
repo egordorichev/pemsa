@@ -11,6 +11,12 @@ const char* controller_db =
 
 SdlInputBackend::SdlInputBackend() {
 	SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem((void *) controller_db, sizeof(controller_db)), 1);
+
+	for (int p = 0; p < PEMSA_PLAYER_COUNT; p++) {
+		for (int i = 0; i < PEMSA_BUTTON_COUNT; i++) {
+			this->state[p][i] = 0;
+		}
+	}
 }
 
 SdlInputBackend::~SdlInputBackend() {

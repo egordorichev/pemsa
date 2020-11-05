@@ -49,7 +49,11 @@ int PemsaDrawStateModule::getScreenColor(int color) {
 }
 
 void PemsaDrawStateModule::setScreenColor(int color, int replacement) {
-	this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE1 + (color & 0x0f)] = replacement & 0x0f;
+	if (replacement < 0 || replacement > 143 || (replacement > 15 && replacement < 128)) {
+		return;
+	}
+
+	this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE1 + (color & 0x0f)] = replacement;
 }
 
 int PemsaDrawStateModule::getDrawColor(int color) {

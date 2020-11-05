@@ -21,7 +21,24 @@ static SDL_Color palette[] = {
 	{ 41, 173, 255, 255 },
 	{ 131, 118, 156, 255 },
 	{ 255, 119, 168, 255 },
-	{ 255, 204, 170, 255 }
+	{ 255, 204, 170, 255 },
+
+	{ 41, 24, 2 },
+	{ 17, 29, 53 },
+	{ 66, 33, 54 },
+	{ 18, 83, 89 },
+	{ 116, 47, 41 },
+	{ 73, 51, 59 },
+	{ 162, 136, 121 },
+	{ 243, 239, 125 },
+	{ 190, 18, 80 },
+	{ 255, 108, 36 },
+	{ 168, 231, 46 },
+	{ 0, 181, 67 },
+	{ 6, 90, 181 },
+	{ 117, 70, 101 },
+	{ 255, 110, 89 },
+	{ 255, 157, 129 }
 };
 
 #define UNPACK_COLOR(i)	(palette[i].r << 24) + (palette[i].g << 16) + (palette[i].b << 8) + 255
@@ -30,7 +47,12 @@ static int intPalette[] = {
 	UNPACK_COLOR(0), UNPACK_COLOR(1), UNPACK_COLOR(2), UNPACK_COLOR(3),
 	UNPACK_COLOR(4), UNPACK_COLOR(5), UNPACK_COLOR(6), UNPACK_COLOR(7),
 	UNPACK_COLOR(8), UNPACK_COLOR(9), UNPACK_COLOR(10), UNPACK_COLOR(11),
-	UNPACK_COLOR(12), UNPACK_COLOR(13), UNPACK_COLOR(14), UNPACK_COLOR(15)
+	UNPACK_COLOR(12), UNPACK_COLOR(13), UNPACK_COLOR(14), UNPACK_COLOR(15),
+
+	UNPACK_COLOR(16), UNPACK_COLOR(17), UNPACK_COLOR(18), UNPACK_COLOR(19),
+	UNPACK_COLOR(20), UNPACK_COLOR(21), UNPACK_COLOR(22), UNPACK_COLOR(23),
+	UNPACK_COLOR(24), UNPACK_COLOR(25), UNPACK_COLOR(26), UNPACK_COLOR(27),
+	UNPACK_COLOR(28), UNPACK_COLOR(29), UNPACK_COLOR(30), UNPACK_COLOR(31)
 };
 
 #undef UNPACK_COLOR
@@ -63,7 +85,13 @@ void SdlGraphicsBackend::flip() {
 	int screenPalette[16];
 
 	for (int i = 0; i < 16; i++) {
-		screenPalette[i] = drawStateModule->getScreenColor(i);
+		int c = drawStateModule->getScreenColor(i);
+
+		if (c > 128) {
+			c -= 128 - 16;
+		}
+
+		screenPalette[i] = c;
 	}
 
 	for (int i = 0; i < 0x2000; i++) {
