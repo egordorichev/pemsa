@@ -13,44 +13,40 @@ static PemsaEmulator* emulator;
  * yield()
  * menuitem(index, [label, callback])
  * extcmd(cmd)
- * stat(n)
  */
+
+const char* pemsa_to_string(lua_State* state, int i) {
+	lua_pushvalue(state, i);
+	const char *str = nullptr;
+
+	if (lua_istable(state, -1)) {
+		str = "table";
+	} else if (lua_isfunction(state, -1)) {
+		str = "function";
+	} else if (lua_isnil(state, -1)) {
+		str = "nil";
+	} else if (lua_isboolean(state, -1)) {
+		str = lua_toboolean(state, -1) ? "true" : "false";
+	} else {
+		str = lua_tostring(state, -1);
+	}
+
+	if (!str) {
+		str = lua_typename(state, -1);
+	}
+
+	lua_pop(state, 1);
+	return str;
+}
 
 static int printh(lua_State* state) {
 	int top = lua_gettop(state);
 
 	for (int i = 1; i <= top; i++) {
-		lua_pushvalue(state, i);
-		const char *str;
-
-		if (lua_istable(state, i)) {
-			str = "table";
-			lua_pop(state, 1);
-		} else if (lua_isfunction(state, i)) {
-			str = "function";
-			lua_pop(state, 1);
-		} else if (lua_isnil(state, i)) {
-			str = "nil";
-			lua_pop(state, 1);
-		} else if (lua_isboolean(state, i)) {
-			str = lua_toboolean(state, i) ? "true" : "false";
-			lua_pop(state, 1);
-		} else {
-			str = lua_tostring(state, -1);
-		}
-
-		if (str) {
-			printf("%s\t", str);
-		} else {
-			printf("%s\t", lua_typename(state, i));
-		}
-
-		lua_pop(state, 1);
+		printf("%s\t", pemsa_to_string(state, i));
 	}
 
-	lua_pop(state, 1);
 	printf("\n");
-
 	return 0;
 }
 
@@ -79,6 +75,23 @@ static int stat(lua_State* state) {
 	double result = 0;
 
 	switch (id) {
+		case 30: {
+			lua_pushboolean(state, emulator->getInputModule()->getBackend()->hasKey());
+			return 1;
+		}
+
+		case 31: {
+			const char* key = emulator->getInputModule()->getBackend()->readKey();
+
+			if (key == nullptr) {
+				lua_pushnil(state);
+			} else {
+				lua_pushstring(state, key);
+			}
+
+			return 1;
+		}
+
 		case 32: {
 			result = emulator->getInputModule()->getBackend()->getMouseX();
 			break;
@@ -101,7 +114,6 @@ static int stat(lua_State* state) {
 	}
 
 	lua_pushnumber(state, result);
-
 	return 1;
 }
 

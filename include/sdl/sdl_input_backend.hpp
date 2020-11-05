@@ -20,11 +20,16 @@ class SdlInputBackend : public PemsaInputBackend {
 		int getMouseX() override;
 		int getMouseY() override;
 		int getMouseMask() override;
+
+		const char* readKey() override;
+		bool hasKey() override;
 	private:
 		uint8_t state[PEMSA_PLAYER_COUNT][PEMSA_BUTTON_COUNT];
 		uint8_t mouseState;
 
 		std::vector<SDL_GameController*> controllers;
+		SDL_Scancode lastKey;
+		bool isDown;
 };
 
 #endif

@@ -12,6 +12,9 @@ class PemsaInputBackend : public PemsaBackend {
 		virtual int getMouseX() = 0;
 		virtual int getMouseY() = 0;
 		virtual int getMouseMask() = 0;
+
+		virtual const char* readKey() = 0;
+		virtual bool hasKey() = 0;
 };
 
 #endif

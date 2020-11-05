@@ -63,6 +63,9 @@ static int gamepadbutton_to_button(Uint8 button) {
 void SdlInputBackend::handleEvent(SDL_Event *event) {
 	switch (event->type) {
 		case SDL_KEYDOWN: {
+			this->lastKey = event->key.keysym.scancode;
+			this->isDown = true;
+
 			int player;
 			int button = scancode_to_button(event->key.keysym.scancode, &player);
 
@@ -74,6 +77,10 @@ void SdlInputBackend::handleEvent(SDL_Event *event) {
 		}
 
 		case SDL_KEYUP: {
+			if (event->key.keysym.scancode == this->lastKey) {
+				this->isDown = false;
+			}
+
 			int player;
 			int button = scancode_to_button(event->key.keysym.scancode, &player);
 
@@ -237,4 +244,17 @@ int SdlInputBackend::getMouseY() {
 
 int SdlInputBackend::getMouseMask() {
 	return this->mouseState;
+}
+
+const char *SdlInputBackend::readKey() {
+	if (this->isDown) {
+		return SDL_GetScancodeName(this->lastKey);
+		this->isDown = false;
+	}
+
+	return nullptr;
+}
+
+bool SdlInputBackend::hasKey() {
+	return this->isDown;
 }

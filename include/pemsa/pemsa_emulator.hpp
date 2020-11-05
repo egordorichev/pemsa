@@ -9,6 +9,7 @@
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/memory/pemsa_draw_state_module.hpp"
 #include "pemsa/util/pemsa_util.hpp"
+#include "lua5.2/lua.h"
 
 #define PEMSA_MODULE_COUNT 6
 
@@ -36,6 +37,7 @@ class PemsaEmulator {
 		PemsaDrawStateModule* drawStateModule;
 };
 
+const char* pemsa_to_string(lua_State* state, int n);
 void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state);
 void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state);
 

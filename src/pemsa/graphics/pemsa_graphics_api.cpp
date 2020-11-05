@@ -562,7 +562,15 @@ static int map(lua_State* state) {
 }
 
 static int print(lua_State* state) {
-	const char* text = luaL_checkstring(state, 1);
+	if (lua_gettop(state) == 0) {
+		return 0;
+	}
+
+	if (lua_isnil(state, 1)) {
+		return 0;
+	}
+
+	const char* text = pemsa_to_string(state, 1);
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
