@@ -105,7 +105,6 @@ static void plot_line(int x0, int y0, int x1, int y1, int c) {
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 
 	bool transparent = drawStateModule->isFillPatternTransparent();
-	
 	bool steep = false;
 
 	if (abs(x1 - x0) < abs(y1 - y0)) {
@@ -121,7 +120,7 @@ static void plot_line(int x0, int y0, int x1, int y1, int c) {
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	int d_err = 2 * abs(dy);
+	int dError = 2 * abs(dy);
 	int err = 0;
 	int y = y0;
 
@@ -135,7 +134,7 @@ static void plot_line(int x0, int y0, int x1, int y1, int c) {
 			DRAW_PIXEL(x - cx, y - cy, c)
 		}
 
-		err += d_err;
+		err += dError;
 
 		if (err > dx) {
 			y += y1 > y0 ? 1 : -1;
@@ -610,6 +609,7 @@ static int print(lua_State* state) {
 		if (cr == '\n') {
 			offsetX = 0;
 			offsetY += 6;
+
 			continue;
 		} else if (cr >= 'A' && cr <= 'z') {
 			if (cr >= 'a') {
@@ -648,6 +648,81 @@ static int print(lua_State* state) {
 	return 0;
 }
 
+static int tline(lua_State* state) {
+	int x0 = round(luaL_checknumber(state, 1));
+	int y0 = round(luaL_checknumber(state, 2));
+	int x1 = round(luaL_checknumber(state, 3));
+	int y1 = round(luaL_checknumber(state, 4));
+
+	double mx = luaL_optnumber(state, 5, 0);
+	double my = luaL_optnumber(state, 6, 0);
+	double mdx = luaL_optnumber(state, 7, 0.125);
+	double mdy = luaL_optnumber(state, 8, 0);
+
+	bool steep = false;
+
+	if (abs(x1 - x0) < abs(y1 - y0)) {
+		swap(&x0, &y0);
+		swap(&x1, &y1);
+		steep = true;
+	}
+
+	if (x0 > x1) {
+		swap(&x0, &x1);
+		swap(&y0, &y1);
+	}
+
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int dError = 2 * abs(dy);
+	int err = 0;
+	int y = y0;
+
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+
+	int cx = drawStateModule->getCameraX();
+	int cy = drawStateModule->getCameraY();
+
+	for (int x = x0; x <= x1; x++) {
+		int c = 0;
+
+		int imx = floor(mx);
+		int imy = floor(my);
+
+		if (imx >= 0 && imy >= 0 && imx < 128 && imy < 64) {
+			int tile = memoryModule->ram[(imy > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + imx + imy * 128];
+
+			int sx = ((tile & 0x0f) << 3) + (fmod(mx, 1) * 8);
+			int sy = ((tile >> 4) << 3) + (fmod(my, 1) * 8);
+
+			if (sx >= 0 && sy >= 0 && sx < 128 && sy < 128) {
+				c = memoryModule->getPixel(sx, sy, PEMSA_RAM_GFX);
+			}
+		}
+
+		if (!drawStateModule->isTransparent(c)) {
+			if (steep) {
+				memoryModule->setPixel(y - cx, x - cy, c, PEMSA_RAM_SCREEN);
+			} else {
+				memoryModule->setPixel(x - cx, y - cy, c, PEMSA_RAM_SCREEN);
+			}
+		}
+
+		err += dError;
+
+		if (err > dx) {
+			y += y1 > y0 ? 1 : -1;
+			err -= dx * 2;
+		}
+
+		mx += mdx;
+		my += mdy;
+	}
+
+	return 0;
+}
+
 void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -668,4 +743,5 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "sspr", sspr);
 	lua_register(state, "map", map);
 	lua_register(state, "print", print);
+	lua_register(state, "tline", tline);
 }
