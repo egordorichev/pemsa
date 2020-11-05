@@ -147,3 +147,7 @@ void PemsaAudioChannel::stop() {
 int PemsaAudioChannel::getSfx() {
 	return this->sfx;
 }
+
+int PemsaAudioChannel::getNote() {
+	return this->note;
+}

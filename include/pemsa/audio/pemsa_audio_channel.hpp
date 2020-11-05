@@ -14,6 +14,7 @@ class PemsaAudioChannel {
 		void stop();
 
 		int getSfx();
+		int getNote();
 	private:
 		PemsaEmulator* emulator;
 		bool active;

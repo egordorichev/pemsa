@@ -161,3 +161,15 @@ void PemsaAudioModule::playMusic(int music) {
 		}
 	}
 }
+
+PemsaAudioChannel *PemsaAudioModule::getChannel(int i) {
+	return this->channels[i];
+}
+
+int PemsaAudioModule::getMusic() {
+	return this->currentMusic;
+}
+
+int PemsaAudioModule::getOffset() {
+	return this->musicOffset;
+}

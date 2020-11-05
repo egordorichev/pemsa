@@ -20,6 +20,11 @@ class PemsaAudioModule : public PemsaModule {
 		double sample();
 		void playSfx(int sfx, int channel = -1);
 		void playMusic(int music);
+
+		PemsaAudioChannel* getChannel(int i);
+
+		int getMusic();
+		int getOffset();
 	private:
 		PemsaAudioBackend* backend;
 		PemsaAudioChannel* channels[PEMSA_CHANNEL_COUNT];

@@ -207,7 +207,7 @@ bool SdlInputBackend::isButtonPressed(int i, int p) {
 		return false;
 	}
 
-	return this->state[p][i] == 1;
+	return this->state[p][i] == 2;
 }
 
 void SdlInputBackend::update() {
@@ -248,8 +248,8 @@ int SdlInputBackend::getMouseMask() {
 
 const char *SdlInputBackend::readKey() {
 	if (this->isDown) {
-		return SDL_GetScancodeName(this->lastKey);
 		this->isDown = false;
+		return SDL_GetScancodeName(this->lastKey);
 	}
 
 	return nullptr;

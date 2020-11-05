@@ -1,6 +1,9 @@
 #include "pemsa/pemsa_emulator.hpp"
 
+#include "SDL2/SDL.h"
+
 #include <cmath>
+#include <ctime>
 #include <iostream>
 
 static PemsaEmulator* emulator;
@@ -50,7 +53,7 @@ static int printh(lua_State* state) {
 	return 0;
 }
 
-static int time(lua_State* state) {
+static int pemsa_time(lua_State* state) {
 	lua_pushnumber(state, emulator->getCartridgeModule()->getCart()->time);
 	return 1;
 }
@@ -75,6 +78,53 @@ static int stat(lua_State* state) {
 	double result = 0;
 
 	switch (id) {
+		case 0: {
+			result = (uint64_t) (((lua_gc(state, LUA_GCCOUNT, 0) << 10) + lua_gc(state, LUA_GCCOUNTB, 0)) / 1024);
+			break;
+		}
+
+		case 4: {
+			const char* clipboard = SDL_GetClipboardText();
+
+			if (clipboard == nullptr) {
+				lua_pushnil(state);
+			} else {
+				lua_pushstring(state, clipboard);
+			}
+
+			return 1;
+		}
+
+		case 16:
+		case 17:
+		case 18:
+		case 19: {
+			PemsaAudioChannel* channel = emulator->getAudioModule()->getChannel(id - 16);
+			result = channel->isActive() ? channel->getSfx() : -1;
+
+			break;
+		}
+
+		case 20:
+		case 21:
+		case 22:
+		case 23: {
+			PemsaAudioChannel* channel = emulator->getAudioModule()->getChannel(id - 20);
+			result = channel->isActive() ? channel->getNote() : -1;
+
+			break;
+		}
+
+		case 24: {
+			result = emulator->getAudioModule()->getMusic();
+			break;
+		}
+
+		case 26: {
+			result = emulator->getAudioModule()->getOffset();
+			break;
+		}
+
 		case 30: {
 			lua_pushboolean(state, emulator->getInputModule()->getBackend()->hasKey());
 			return 1;
@@ -107,8 +157,92 @@ static int stat(lua_State* state) {
 			break;
 		}
 
+		case 80: {
+			time_t t = time(NULL);
+			result = gmtime(&t)->tm_year;
+
+			break;
+		}
+
+		case 81: {
+			time_t t = time(NULL);
+			result = gmtime(&t)->tm_mon;
+
+			break;
+		}
+
+		case 82: {
+			time_t t = time(NULL);
+			result = gmtime(&t)->tm_mday;
+
+			break;
+		}
+
+		case 83: {
+			time_t t = time(NULL);
+			result = gmtime(&t)->tm_hour;
+
+			break;
+		}
+
+		case 84: {
+			time_t t = time(NULL);
+			result = gmtime(&t)->tm_min;
+
+			break;
+		}
+
+		case 85: {
+			time_t t = time(NULL);
+			result = gmtime(&t)->tm_sec;
+
+			break;
+		}
+
+		case 90: {
+			time_t t = time(NULL);
+			result = localtime(&t)->tm_year;
+
+			break;
+		}
+
+		case 91: {
+			time_t t = time(NULL);
+			result = localtime(&t)->tm_mon;
+
+			break;
+		}
+
+		case 92: {
+			time_t t = time(NULL);
+			result = localtime(&t)->tm_mday;
+
+			break;
+		}
+
+		case 93: {
+			time_t t = time(NULL);
+			result = localtime(&t)->tm_hour;
+
+			break;
+		}
+
+		case 94: {
+			time_t t = time(NULL);
+			result = localtime(&t)->tm_min;
+
+			break;
+		}
+
+		case 95: {
+			time_t t = time(NULL);
+			result = localtime(&t)->tm_sec;
+
+			break;
+		}
+
 		default: {
-			std::cerr << "Warning: stat() is not fully implemented\n";
+			std::cerr << "Warning: stat() is not fully implemented, state " << id << " is not implemented.";
 			break;
 		}
 	}
@@ -121,8 +255,8 @@ void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
 	lua_register(state, "printh", printh);
-	lua_register(state, "time", time);
-	lua_register(state, "t", time);
+	lua_register(state, "time", pemsa_time);
+	lua_register(state, "t", pemsa_time);
 
 	lua_register(state, "tonum", tonum);
 	lua_register(state, "tostr", tostr);
