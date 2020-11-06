@@ -10,10 +10,6 @@ static PemsaEmulator* emulator;
 
 /*
  * todo:
- * cocreate(func)
- * coresume(cor)
- * costatus(cor)
- * yield()
  * menuitem(index, [label, callback])
  * extcmd(cmd)
  */

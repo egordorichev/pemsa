@@ -190,6 +190,11 @@ static int rectfill(lua_State* state) {
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 
+	x0 -= drawStateModule->getCameraX();
+	y0 -= drawStateModule->getCameraY();
+	x1 -= drawStateModule->getCameraX();
+	y1 -= drawStateModule->getCameraY();
+
 	bool transparent = drawStateModule->isFillPatternTransparent();
 
 	for (int y = y0; y <= y1; y++) {
@@ -215,6 +220,9 @@ static int oval(lua_State* state) {
 
 	PemsaDrawStateModule *drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule *memoryModule = emulator->getMemoryModule();
+
+	ox -= drawStateModule->getCameraX();
+	oy -= drawStateModule->getCameraY();
 
 	bool transparent = drawStateModule->isFillPatternTransparent();
 
@@ -275,6 +283,9 @@ static int ovalfill(lua_State* state) {
 	PemsaDrawStateModule *drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule *memoryModule = emulator->getMemoryModule();
 
+	ox -= drawStateModule->getCameraX();
+	oy -= drawStateModule->getCameraY();
+
 	bool transparent = drawStateModule->isFillPatternTransparent();
 
 	int hh = height * height;
@@ -323,6 +334,9 @@ static int circ(lua_State* state) {
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 
 	bool transparent = drawStateModule->isFillPatternTransparent();
+
+	ox -= drawStateModule->getCameraX();
+	oy -= drawStateModule->getCameraY();
 
 	while (y <= x) {
 		DRAW_PIXEL(ox + x, oy + y, c)
@@ -541,7 +555,7 @@ static int map(lua_State* state) {
 				bool found = false;
 
 				for (int i = 0; i < 8; i++) {
-					if ((layer & (1 << i)) == 1 && (flagMask & (1 << i)) == 0) {
+					if ((layer & (1 << i)) != 0 && (flagMask & (1 << i)) == 0) {
 						found = true;
 						break;
 					}
