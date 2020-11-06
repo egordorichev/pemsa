@@ -153,7 +153,7 @@ void PemsaAudioModule::playMusic(int music) {
 			int sfx = sfxData % 64;
 
 			this->channels[i]->play(sfx);
-			int speed = ram[PEMSA_RAM_SFX + sfx * 68 + 65];
+			int speed = fmax(1, ram[PEMSA_RAM_SFX + sfx * 68 + 65]);
 
 			if (speed > this->musicSpeed) {
 				this->musicSpeed = speed;

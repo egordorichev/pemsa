@@ -20,7 +20,7 @@ static int pal(lua_State* state) {
 	}
 
 	int color = luaL_checknumber(state, 1);
-	int replacement = luaL_checknumber(state, 2);
+	int replacement = luaL_optnumber(state, 2, 0);
 	int p = luaL_optnumber(state, 3, 0);
 
 	if (p == 0) {

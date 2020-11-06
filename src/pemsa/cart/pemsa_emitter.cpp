@@ -48,7 +48,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 	// Emoji button setup
 	output << "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = 62975.5, 31455.5, 32125.5, 1.5, 6943.5, 3855.5, 2.5, 46527.5, 4.5, 45503.5, 0.5, 45407.5, 3.5, 47133.5, 63903.5, 20927.5, 39327.5, 45343.5, 0.5, 21845.5, 5.5, 20767.5, 62911.5, 23130.5, 39743.5, 41184.5\n";
-	output << "sub, _pair, cocreate, coresume, yield, costatus = string.sub, pairs, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status\n";
+	output << "sub, cocreate, coresume, yield, costatus = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status\n";
 
 	output << "function foreach(a, f)\n";
 	output << " if not a then return end\n";
@@ -57,7 +57,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	output << "function count(a) if not a then return 0 end return #a end\n";
 	output << "function arraylen(t)\n";
 	output << "\tlocal len = 0\n";
-	output << "\tfor i, _ in _pairs(t) do\n";
+	output << "\tfor i, _ in pairs(t) do\n";
 	output << "\t\tif type(i) == \"number\" then\n";
 	output << "\t\t\tlen = i\n";
 	output << "\t\tend\n";
@@ -77,10 +77,6 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	output << "\t\tend\n";
 	output << "\t\treturn a[i]\n";
 	output << "\tend\n";
-	output << "end\n";
-	output << "function pairs(a)\n";
-	output << "	if a == nil then return end\n";
-	output << "	return _pairs(a)\n";
 	output << "end\n";
 	output << "function add(a, v)\n";
 	output << "	if a == nil then return end\n";
@@ -168,7 +164,8 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 			case TOKEN_MULTILINE_STRING:
 			case TOKEN_STRING: {
 				bool multiline = token.type == TOKEN_MULTILINE_STRING;
-				output << "\"";
+				char cc = multiline ? '\"' : *token.start;
+				output << cc;
 
 				int start = 1;
 				int end = token.length - 1;
@@ -197,7 +194,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 					output << c;
 				}
 
-				output << "\"";
+				output << cc;
 				break;
 			}
 
@@ -249,6 +246,8 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 					output << " end";
 				}
 
+				inIf = false;
+				inWhile = false;
 				output << '\n';
 				break;
 			}

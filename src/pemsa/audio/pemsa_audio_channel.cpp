@@ -29,7 +29,7 @@ void PemsaAudioChannel::play(int sfx) {
 	this->offset = 0;
 	this->lastStep = -1;
 	this->active = true;
-	this->speed = this->emulator->getMemoryModule()->ram[sfx * 68 + PEMSA_RAM_SFX + 65];
+	this->speed = fmax(1, this->emulator->getMemoryModule()->ram[sfx * 68 + PEMSA_RAM_SFX + 65]);
 }
 
 double PemsaAudioChannel::sample() {

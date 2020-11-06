@@ -172,10 +172,10 @@ static int rect(lua_State* state) {
 }
 
 static int rectfill(lua_State* state) {
-	int x0 = round(luaL_checknumber(state, 1));
-	int y0 = round(luaL_checknumber(state, 2));
-	int x1 = round(luaL_checknumber(state, 3));
-	int y1 = round(luaL_checknumber(state, 4));
+	int x0 = (luaL_checknumber(state, 1));
+	int y0 = (luaL_checknumber(state, 2));
+	int x1 = (luaL_checknumber(state, 3));
+	int y1 = (luaL_checknumber(state, 4));
 
 	if (x0 > x1) {
 		swap(&x0, &x1);

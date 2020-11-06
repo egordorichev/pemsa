@@ -1,2 +1,2 @@
 * custom instruments
-* pairs nil in jelpi
+* separate noise functions for each channel

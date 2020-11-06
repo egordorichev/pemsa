@@ -24,6 +24,11 @@ static int flr(lua_State* state) {
 	return 1;
 }
 
+static int ceil(lua_State* state) {
+	lua_pushnumber(state, ceil(luaL_checknumber(state, 1)));
+	return 1;
+}
+
 static int sgn(lua_State* state) {
 	lua_pushnumber(state, luaL_checknumber(state, 1) < 0 ? -1 : 1);
 	return 1;
@@ -113,6 +118,7 @@ void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "srand", srand);
 	lua_register(state, "abs", abs);
 	lua_register(state, "flr", flr);
+	lua_register(state, "ceil", ceil);
 	lua_register(state, "sgn", sgn);
 	lua_register(state, "atan2", atan2);
 	lua_register(state, "band", band);

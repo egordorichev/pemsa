@@ -69,6 +69,11 @@ static int menuitem(lua_State* state) {
 	return 0;
 }
 
+static int extcmd(lua_State* state) {
+	std::cerr << "Warning: extcmd() is not currently implemented\n";
+	return 0;
+}
+
 static int stat(lua_State* state) {
 	int id = luaL_checknumber(state, 1);
 	double result = 0;
@@ -238,13 +243,46 @@ static int stat(lua_State* state) {
 		}
 
 		default: {
-			std::cerr << "Warning: stat() is not fully implemented, state " << id << " is not implemented.";
+			std::cerr << "Warning: stat() is not fully implemented, state " << id << " is not implemented\n";
 			break;
 		}
 	}
 
 	lua_pushnumber(state, result);
 	return 1;
+}
+
+static int next(lua_State *state) {
+	if (lua_isnil(state, 1)) {
+		lua_pushnil(state);
+		return 1;
+	}
+
+	luaL_checktype(state, 1, LUA_TTABLE);
+	lua_settop(state, 2);
+
+	if (lua_next(state, 1)) {
+		return 2;
+	} else {
+		lua_pushnil(state);
+		return 1;
+	}
+}
+
+
+static int pairs(lua_State *state) {
+	luaL_checkany(state, 1);
+
+	if (luaL_getmetafield(state, 1, "__pairs") == LUA_TNIL) {
+		lua_pushcfunction(state, next);
+		lua_pushvalue(state, 1);
+		lua_pushnil(state);
+	} else {
+		lua_pushvalue(state, 1);
+		lua_call(state, 1, 3);
+	}
+
+	return 3;
 }
 
 void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
@@ -258,5 +296,7 @@ void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "tostr", tostr);
 
 	lua_register(state, "menuitem", menuitem);
+	lua_register(state, "extcmd", extcmd);
 	lua_register(state, "stat", stat);
+	lua_register(state, "pairs", pairs);
 }
