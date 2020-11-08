@@ -12,8 +12,6 @@
 #include <cstring>
 #include <filesystem>
 
-#include <sstream>
-
 #define STATE_LUA 0
 #define STATE_GFX 1
 #define STATE_GFF 2
@@ -163,6 +161,10 @@ bool PemsaCartridgeModule::load(const char *path) {
 			}
 
 			case STATE_SFX: {
+				if (line.size() < 8) {
+					break;
+				}
+
 				uint8_t editor = (HEX_TO_INT(line.at(0)) << 4) + HEX_TO_INT(line.at(1));
 				uint8_t speed = (HEX_TO_INT(line.at(2)) << 4) + HEX_TO_INT(line.at(3));
 				uint8_t startLoop = (HEX_TO_INT(line.at(4)) << 4) + HEX_TO_INT(line.at(5));
