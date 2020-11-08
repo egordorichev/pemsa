@@ -12,6 +12,8 @@
 #include <cstring>
 #include <filesystem>
 
+#include <sstream>
+
 #define STATE_LUA 0
 #define STATE_GFX 1
 #define STATE_GFF 2
@@ -198,6 +200,10 @@ bool PemsaCartridgeModule::load(const char *path) {
 			}
 
 			case STATE_MUSIC: {
+				if (line.size() < 11) {
+					break;
+				}
+
 				uint8_t flag = (HEX_TO_INT(line.at(0)) << 4) + HEX_TO_INT(line.at(1));
 				uint8_t val1 = (HEX_TO_INT(line.at(3)) << 4) + HEX_TO_INT(line.at(4));
 				uint8_t val2 = (HEX_TO_INT(line.at(5)) << 4) + HEX_TO_INT(line.at(6));
