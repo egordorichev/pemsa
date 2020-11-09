@@ -1,6 +1,11 @@
 #include "pemsa/pemsa_emulator.hpp"
 #include <cmath>
 
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+
 static PemsaEmulator* emulator;
 
 static int rnd(lua_State* state) {

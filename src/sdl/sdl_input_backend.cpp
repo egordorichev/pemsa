@@ -6,11 +6,28 @@
 
 #include <iostream>
 
-const char* controller_db =
-#include "sdl/sdl_controller_db.hpp"
+// Split the controller DB to bypass ANSI compatibility string character limit.
+
+const std::string controller_db_windows =
+#include "sdl/sdl_controller_db_windows.hpp";
+const std::string controller_db_linux =
+#include "sdl/sdl_controller_db_linux.hpp";
+const std::string controller_db_mac =
+#include "sdl/sdl_controller_db_mac.hpp";
+const std::string controller_db_ios =
+#include "sdl/sdl_controller_db_ios.hpp";
+const std::string controller_db_andriod =
+#include "sdl/sdl_controller_db_android.hpp";
 
 SdlInputBackend::SdlInputBackend() {
-	SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem((void *) controller_db, sizeof(controller_db)), 1);
+	const std::string controller_db = 
+		controller_db_windows + 
+		controller_db_linux + 
+		controller_db_mac + 
+		controller_db_andriod + 
+		controller_db_ios;
+
+	SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem((void *)controller_db.c_str(), sizeof(controller_db.c_str())), 1);
 
 	for (int p = 0; p < PEMSA_PLAYER_COUNT; p++) {
 		for (int i = 0; i < PEMSA_BUTTON_COUNT; i++) {

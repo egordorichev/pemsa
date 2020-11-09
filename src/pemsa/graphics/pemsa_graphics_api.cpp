@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#define LUA_COMPAT_APIINTCASTS
+#endif
+
 #include "pemsa/graphics/pemsa_graphics_module.hpp"
 #include "pemsa/util/pemsa_font.hpp"
 #include "pemsa/pemsa_emulator.hpp"
@@ -582,7 +586,7 @@ static int print(lua_State* state) {
 		return 0;
 	}
 
-	const char* text = pemsa_to_string(state, 1);
+	std::string text = std::string(pemsa_to_string(state, 1));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
@@ -611,14 +615,18 @@ static int print(lua_State* state) {
 
 	}
 
+	// Remove .0 if the string is an integer number
+	if (text.size() >= 2 && text[text.size() - 1] == '0' && text[text.size() - 2] == '.') {
+		text = text.substr(0, text.size() - 2);
+	}
+
 	int index = 0;
 
 	bool transparent = false;
 	int offsetX = 0;
 	int offsetY = 0;
 
-	while (*text != '\0') {
-		char cr = *text++;
+	for(char cr : text) {
 
 		if (cr == '\n') {
 			offsetX = 0;
