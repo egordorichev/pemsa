@@ -12,6 +12,10 @@
 #include <cstring>
 #include <filesystem>
 
+#ifdef _WIN32
+#include <sstream>
+#endif
+
 #define STATE_LUA 0
 #define STATE_GFX 1
 #define STATE_GFF 2
@@ -235,7 +239,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 	lua_State* state = luaL_newstate();
 
 	this->cart->state = state;
-	this->cart->cartDataId = take_string(std::filesystem::path(path).stem());
+	this->cart->cartDataId = take_string(std::filesystem::path(path).stem().string());
 	this->cart->fullPath = path;
 
 	std::string codeString = code.str();
