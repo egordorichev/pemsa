@@ -42,6 +42,8 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	bool emitEnd = false;
 	int outputBrace = 0;
 	int parenCount = 0;
+	int ifParenStart = 0;
+	int whileParenStart = 0;
 
 	const char* expressionStart = scanner->getCurrent();
 	const char* start = expressionStart;
@@ -175,6 +177,8 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 					end--;
 				}
 
+				char prev = '\0';
+
 				for (int i = start; i < end; i++) {
 					const char* str = token.start + i;
 
@@ -191,6 +195,11 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 						continue;
 					}
 
+					if (prev != '\\' && multiline && c == '"') {
+						output << '\\';
+					}
+
+					prev = c;
 					output << c;
 				}
 
@@ -256,8 +265,8 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				parenCount--;
 				expressionStart = token.start + token.length;
 
-				checkThen = parenCount == 0 && inIf;
-				checkDo = parenCount == 0 && inWhile;
+				checkThen = parenCount == ifParenStart && inIf;
+				checkDo = parenCount == whileParenStart && inWhile;
 
 				output << std::string(token.start, token.length);
 				break;
@@ -273,8 +282,10 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 					if (previous.type == TOKEN_IF) {
 						inIf = true;
+						ifParenStart = parenCount - 1;
 					} else if (previous.type == TOKEN_WHILE) {
 						inWhile = true;
+						whileParenStart = parenCount - 1;
 					}
 				}
 

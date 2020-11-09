@@ -57,7 +57,7 @@ static int mget(lua_State* state) {
 static int mset(lua_State* state) {
 	int x = luaL_checknumber(state, 1);
 	int y = luaL_checknumber(state, 2);
-	int tile = luaL_checknumber(state, 3);
+	int tile = luaL_optnumber(state, 3, 0);
 
 	if (!(x < 0 || y < 0 || x > 127 || y > 63)) {
 		emulator->getMemoryModule()->ram[(y > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + x + y * 128] = tile % 256;

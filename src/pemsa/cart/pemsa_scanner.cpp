@@ -114,13 +114,14 @@ PemsaToken PemsaScanner::scan() {
 		case '\'':
 		case '"': {
 			char stringStart = c;
+			char prev = c;
 
-			while (this->peek() != stringStart && !this->isAtEnd()) {
+			while (!(this->peek() == stringStart && prev != '\\') && !this->isAtEnd()) {
 				if (this->peek() == '\n') {
 					this->line++;
 				}
 
-				this->advance();
+				prev = this->advance();
 			}
 
 			if (this->isAtEnd()) {

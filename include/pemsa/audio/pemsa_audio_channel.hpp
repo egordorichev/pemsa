@@ -4,6 +4,29 @@
 #include "pemsa/pemsa_predefines.hpp"
 #include <cstdint>
 
+class PemsaChannelInfo {
+	public:
+		PemsaChannelInfo();
+
+		bool active;
+
+		int sfx;
+		int lastStep;
+
+		double offset;
+		double waveOffset;
+		double frequency;
+
+		uint8_t speed;
+		uint8_t instrument;
+		uint8_t volume;
+		uint8_t fx;
+
+		int note;
+		int lastNote;
+		bool isCustom;
+};
+
 class PemsaAudioChannel {
 	public:
 		PemsaAudioChannel(PemsaEmulator* emulator);
@@ -17,23 +40,12 @@ class PemsaAudioChannel {
 		int getNote();
 	private:
 		PemsaEmulator* emulator;
-		bool active;
+		PemsaChannelInfo infos[2];
 
-		int sfx;
+		double prepareSample(int id);
+		double sampleAt(int id);
 
-		double offset;
-		double lastStep;
-		double waveOffset;
-		double frequency;
-
-		uint8_t speed;
-		uint8_t instrument;
-		uint8_t volume;
-		uint8_t fx;
-
-		int note;
-		int lastNote;
-		bool isCustom;
+		double applyFx(int id, int fx);
 };
 
 #endif

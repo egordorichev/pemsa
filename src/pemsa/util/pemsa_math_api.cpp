@@ -20,17 +20,17 @@ static int abs(lua_State* state) {
 }
 
 static int flr(lua_State* state) {
-	lua_pushnumber(state, (int) luaL_checknumber(state, 1));
+	lua_pushnumber(state, luaL_optnumber(state, 1, 0));
 	return 1;
 }
 
 static int ceil(lua_State* state) {
-	lua_pushnumber(state, ceil(luaL_checknumber(state, 1)));
+	lua_pushnumber(state, ceil(luaL_optnumber(state, 1, 0)));
 	return 1;
 }
 
 static int sgn(lua_State* state) {
-	lua_pushnumber(state, luaL_checknumber(state, 1) < 0 ? -1 : 1);
+	lua_pushnumber(state, luaL_optnumber(state, 1, 1) < 0 ? -1 : 1);
 	return 1;
 }
 
@@ -41,33 +41,41 @@ static int atan2(lua_State* state) {
 	return 1;
 }
 
+static int check_number_or_bool(lua_State* state, int n) {
+	if (lua_isboolean(state, n)) {
+		return lua_toboolean(state, n);
+	}
+	
+	return luaL_checknumber(state, n);
+}
+
 static int band(lua_State* state) {
-	lua_pushnumber(state, (int) luaL_checknumber(state, 1) & (int) luaL_checknumber(state, 2));
+	lua_pushnumber(state, check_number_or_bool(state, 1) & check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int bnot(lua_State* state) {
-	lua_pushnumber(state, ~((int) luaL_checknumber(state, 1)));
+	lua_pushnumber(state, ~(check_number_or_bool(state, 1)));
 	return 1;
 }
 
 static int bor(lua_State* state) {
-	lua_pushnumber(state, (int) luaL_checknumber(state, 1) | (int) luaL_checknumber(state, 2));
+	lua_pushnumber(state, check_number_or_bool(state, 1) | check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int bxor(lua_State* state) {
-	lua_pushnumber(state, (int) luaL_checknumber(state, 1) ^ (int) luaL_checknumber(state, 2));
+	lua_pushnumber(state, check_number_or_bool(state, 1) ^ check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int shl(lua_State* state) {
-	lua_pushnumber(state, (int) luaL_checknumber(state, 1) << (int) luaL_checknumber(state, 2));
+	lua_pushnumber(state, check_number_or_bool(state, 1) << check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int shr(lua_State* state) {
-	lua_pushnumber(state, (int) luaL_checknumber(state, 1) >> (int) luaL_checknumber(state, 2));
+	lua_pushnumber(state, check_number_or_bool(state, 1) >> check_number_or_bool(state, 2));
 	return 1;
 }
 
