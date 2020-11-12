@@ -477,6 +477,11 @@ static int sspr(lua_State* state) {
 	bool flipX = pemsa_optional_bool(state, 9, false);
 	bool flipY = pemsa_optional_bool(state, 10, false);
 
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	dx -= drawStateModule->getCameraX();
+	dy -= drawStateModule->getCameraY();
+
 	if (sw < 0) {
 		sw *= -1;
 		sx -= sw;
@@ -508,11 +513,7 @@ static int sspr(lua_State* state) {
 	float y;
 	double screenY;
 
-	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
-	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
-	dx -= drawStateModule->getCameraX();
-	dy -= drawStateModule->getCameraY();
 
 	while (x < sx + sw && screenX < dx + dw) {
 		y = sy;
@@ -522,7 +523,7 @@ static int sspr(lua_State* state) {
 			int color = memoryModule->getPixel(x, y, PEMSA_RAM_GFX) & 0x0f;
 
 			if (!drawStateModule->isTransparent(color)) {
-				memoryModule->setPixel((int) (flipX ? dx + dw - ((int) screenX - dx) : (int) screenX), (int) (flipY ? dy + dh - ((int) screenY - dy) : (int) screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
+				memoryModule->setPixel((int) (flipX ? dx + dw - 1 - ((int) screenX - dx) : (int) screenX), (int) (flipY ? dy + dh - 1 - ((int) screenY - dy) : (int) screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
 			}
 
 			y += ratioY;
