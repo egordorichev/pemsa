@@ -50,37 +50,43 @@ static int check_number_or_bool(lua_State* state, int n) {
 	if (lua_isboolean(state, n)) {
 		return lua_toboolean(state, n);
 	}
+
+	float value = (float) luaL_checknumber(state, n);
 	
-	return luaL_checknumber(state, n);
+	return *((int*) &value);
+}
+
+static void push_number_as_double(lua_State* state, int n) {
+	lua_pushnumber(state, *((float*) &n));
 }
 
 static int band(lua_State* state) {
-	lua_pushnumber(state, check_number_or_bool(state, 1) & check_number_or_bool(state, 2));
+	push_number_as_double(state, check_number_or_bool(state, 1) & check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int bnot(lua_State* state) {
-	lua_pushnumber(state, ~(check_number_or_bool(state, 1)));
+	push_number_as_double(state, ~(check_number_or_bool(state, 1)));
 	return 1;
 }
 
 static int bor(lua_State* state) {
-	lua_pushnumber(state, check_number_or_bool(state, 1) | check_number_or_bool(state, 2));
+	push_number_as_double(state, check_number_or_bool(state, 1) | check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int bxor(lua_State* state) {
-	lua_pushnumber(state, check_number_or_bool(state, 1) ^ check_number_or_bool(state, 2));
+	push_number_as_double(state, check_number_or_bool(state, 1) ^ check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int shl(lua_State* state) {
-	lua_pushnumber(state, check_number_or_bool(state, 1) << check_number_or_bool(state, 2));
+	push_number_as_double(state, check_number_or_bool(state, 1) << check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int shr(lua_State* state) {
-	lua_pushnumber(state, check_number_or_bool(state, 1) >> check_number_or_bool(state, 2));
+	push_number_as_double(state, check_number_or_bool(state, 1) >> check_number_or_bool(state, 2));
 	return 1;
 }
 

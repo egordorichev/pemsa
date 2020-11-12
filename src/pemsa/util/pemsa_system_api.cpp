@@ -84,6 +84,11 @@ static int stat(lua_State* state) {
 			break;
 		}
 
+		case 1: {
+			result = 42;
+			break;
+		}
+
 		case 4: {
 			const char* clipboard = SDL_GetClipboardText();
 

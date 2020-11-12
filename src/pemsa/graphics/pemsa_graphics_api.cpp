@@ -50,6 +50,11 @@ static int cls(lua_State* state) {
 	int color = luaL_optnumber(state, 1, 0);
 
 	memset(emulator->getMemoryModule()->ram + PEMSA_RAM_SCREEN, (color << 4) + color, 0x2000);
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
+	drawStateModule->setCursorX(0);
+	drawStateModule->setCursorY(0);
+
 	return 0;
 }
 

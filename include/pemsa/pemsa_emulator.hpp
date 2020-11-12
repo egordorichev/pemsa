@@ -9,7 +9,7 @@
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/memory/pemsa_draw_state_module.hpp"
 #include "pemsa/util/pemsa_util.hpp"
-#include "lua5.2/lua.h"
+#include "lua.h"
 
 #define PEMSA_MODULE_COUNT 6
 
