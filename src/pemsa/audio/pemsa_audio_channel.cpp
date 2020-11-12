@@ -116,7 +116,7 @@ double PemsaAudioChannel::applyFx(int id, int fx) {
 
 double PemsaAudioChannel::sampleAt(int id) {
 	PemsaChannelInfo* info = &this->infos[id];
-	return pemsa_sample(info->instrument, info->waveOffset) * (applyFx(id, info->fx) / 7.0);
+	return this->adjustVolume(id, pemsa_sample(info->instrument, info->waveOffset), applyFx(id, info->fx) / 7.0);
 }
 
 double PemsaAudioChannel::prepareSample(int id) {
@@ -195,7 +195,7 @@ double PemsaAudioChannel::prepareSample(int id) {
 		PemsaChannelInfo* secondInfo = &this->infos[0];
 		double vol = applyFx(0, secondInfo->fx);
 
-		return pemsa_sample(info->instrument, info->waveOffset) * (vol / 7.0) * (applyFx(id, info->fx) / 7.0);
+		return this->adjustVolume(id, pemsa_sample(info->instrument, info->waveOffset), (vol / 7.0) * (applyFx(id, info->fx) / 7.0));
 	} else if (id == 0 && info->isCustom) {
 		return this->prepareSample(1);
 	}
@@ -203,9 +203,17 @@ double PemsaAudioChannel::prepareSample(int id) {
 	return this->sampleAt(id);
 }
 
+double PemsaAudioChannel::adjustVolume(int id, double wave, double volume) {
+	PemsaChannelInfo* info = &this->infos[id];
+
+	info->lastVolume += (volume - info->lastVolume) * 0.05;
+	return wave * info->lastVolume;
+}
+
 PemsaChannelInfo::PemsaChannelInfo() {
 	this->active = false;
 	this->lastStep = -1;
 	this->waveOffset = 0;
 	this->offset = 0;
+	this->lastVolume = 0;
 }

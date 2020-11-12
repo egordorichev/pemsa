@@ -16,6 +16,7 @@ class PemsaChannelInfo {
 		double offset;
 		double waveOffset;
 		double frequency;
+		double lastVolume;
 
 		uint8_t speed;
 		uint8_t instrument;
@@ -46,6 +47,7 @@ class PemsaAudioChannel {
 		double sampleAt(int id);
 
 		double applyFx(int id, int fx);
+		double adjustVolume(int id, double wave, double volume);
 };
 
 #endif
