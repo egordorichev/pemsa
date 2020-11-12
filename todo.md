@@ -1,1 +1,1 @@
-* separate noise functions for each channel
+* fix milt custom instrument audio

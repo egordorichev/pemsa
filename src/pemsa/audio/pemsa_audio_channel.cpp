@@ -16,8 +16,9 @@ static inline double sawOsc(double x) {
 	return fmod(x, 1);
 }
 
-PemsaAudioChannel::PemsaAudioChannel(PemsaEmulator* emulator) {
+PemsaAudioChannel::PemsaAudioChannel(PemsaEmulator* emulator, int channelId) {
 	this->emulator = emulator;
+	this->channelId = channelId;
 }
 
 void PemsaAudioChannel::play(int sfx) {
@@ -116,7 +117,7 @@ double PemsaAudioChannel::applyFx(int id, int fx) {
 
 double PemsaAudioChannel::sampleAt(int id) {
 	PemsaChannelInfo* info = &this->infos[id];
-	return this->adjustVolume(id, pemsa_sample(info->instrument, info->waveOffset), applyFx(id, info->fx) / 7.0);
+	return this->adjustVolume(id, pemsa_sample(this->channelId, info->instrument, info->waveOffset), applyFx(id, info->fx) / 7.0);
 }
 
 double PemsaAudioChannel::prepareSample(int id) {
@@ -195,7 +196,7 @@ double PemsaAudioChannel::prepareSample(int id) {
 		PemsaChannelInfo* secondInfo = &this->infos[0];
 		double vol = applyFx(0, secondInfo->fx);
 
-		return this->adjustVolume(id, pemsa_sample(info->instrument, info->waveOffset), (vol / 7.0) * (applyFx(id, info->fx) / 7.0));
+		return this->adjustVolume(id, pemsa_sample(this->channelId, info->instrument, info->waveOffset), (vol / 7.0) * (applyFx(id, info->fx) / 7.0));
 	} else if (id == 0 && info->isCustom) {
 		return this->prepareSample(1);
 	}

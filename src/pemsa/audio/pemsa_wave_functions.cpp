@@ -3,8 +3,6 @@
 #include "pemsa/util/pemsa_util.hpp"
 
 #include <cmath>
-#include <chrono>
-#include <random>
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
@@ -43,19 +41,10 @@ double pemsa_phaser(double t) {
 	return (fabs(fmod(t, 2) - 1) - 0.5f + (fabs(fmod((t * 127 / 128), 2) - 1) - 0.5) / 2) - 0.25;
 }
 
-static std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
-static double lastT = 0;
-static double sample = 0;
-static double tScale = NOTE_TO_FREQUENCY(63) / PEMSA_SAMPLE_RATE;
+static PemsaNoiseInfo noiseInfos[4];
 
 double pemsa_noise(double t) {
-	double scale = (t - lastT) / tScale;
-	double lastSample = sample;
-
-	sample = (lastSample + scale * ((rng() / (double) rng.max()) * 2 - 1)) / (1.0 + scale);
-	lastT = t;
-
-	return fmin(fmax((lastSample + sample) * 4.0 / 3.0 * (1.75 - scale), -1), 1) * 0.7f;
+	return 0;
 }
 
 static PemsaWaveFn wave_functions[] = {
@@ -65,10 +54,39 @@ static PemsaWaveFn wave_functions[] = {
 	pemsa_noise, pemsa_phaser
 };
 
-double pemsa_sample(int function, double t) {
+double pemsa_sample(int channel, int function, double t) {
 	if (function < 0 || function > 7) {
 		return 0;
 	}
 
+	if (function == 6) {
+		if (channel < 0 || channel > 3) {
+			return 0;
+		}
+
+		return noiseInfos[channel].getSample(t);
+	}
+
 	return wave_functions[function](t);
+}
+
+PemsaNoiseInfo::PemsaNoiseInfo() {
+	this->sample = 0;
+	this->lastT = 0;
+	this->tScale = NOTE_TO_FREQUENCY(63) / PEMSA_SAMPLE_RATE;
+	this->rng = new std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
+}
+
+PemsaNoiseInfo::~PemsaNoiseInfo() {
+	delete this->rng;
+}
+
+double PemsaNoiseInfo::getSample(double t) {
+	double scale = (t - this->lastT) / this->tScale;
+	double lastSample = this->sample;
+
+	this->sample = (lastSample + scale * ((this->rng->operator()() / (double) this->rng->max()) * 2 - 1)) / (1.0 + scale);
+	this->lastT = t;
+
+	return fmin(fmax((lastSample + this->sample) * 4.0 / 3.0 * (1.75 - scale), -1), 1) * 0.7f;
 }

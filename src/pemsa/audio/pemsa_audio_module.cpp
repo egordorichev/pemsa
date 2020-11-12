@@ -5,7 +5,7 @@ PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* b
 	this->backend = backend;
 
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
-		this->channels[i] = new PemsaAudioChannel(emulator);
+		this->channels[i] = new PemsaAudioChannel(emulator, i);
 	}
 
 	this->backend->setEmulator(emulator);
