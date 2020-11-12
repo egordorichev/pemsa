@@ -137,7 +137,7 @@ double PemsaAudioChannel::prepareSample(int id) {
 					PemsaChannelInfo* secondInfo = &this->infos[1];
 
 					secondInfo->offset = 0;
-					secondInfo->lastStep = 0;
+					secondInfo->lastStep = -1;
 				}
 			} else {
 				info->lastStep = (int) info->offset;
@@ -181,9 +181,6 @@ double PemsaAudioChannel::prepareSample(int id) {
 			PemsaChannelInfo* secondInfo = &this->infos[1];
 
 			secondInfo->sfx = info->instrument;
-			//secondInfo->lastNote = 0;
-			//secondInfo->offset = 0;
-			//secondInfo->lastStep = -1;
 			secondInfo->active = true;
 			secondInfo->speed = fmax(1, this->emulator->getMemoryModule()->ram[secondInfo->sfx * 68 + PEMSA_RAM_SFX + 65]);
 		}
@@ -196,9 +193,9 @@ double PemsaAudioChannel::prepareSample(int id) {
 
 	if (id == 1) {
 		PemsaChannelInfo* secondInfo = &this->infos[0];
-		double vol = 7.0; // applyFx(id, secondInfo->fx);
+		double vol = applyFx(0, secondInfo->fx);
 
-		return pemsa_sample(info->instrument, info->waveOffset) * (vol / 7.0);
+		return pemsa_sample(info->instrument, info->waveOffset) * (vol / 7.0) * (applyFx(id, info->fx) / 7.0);
 	} else if (id == 0 && info->isCustom) {
 		return this->prepareSample(1);
 	}

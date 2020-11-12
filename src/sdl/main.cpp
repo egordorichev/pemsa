@@ -8,7 +8,7 @@
 #include <iostream>
 
 int main(int argc, const char** argv) {
-	const char* cart = "carts/test.p8";
+	const char* cart = "test.p8";
 
 	if (argc > 1) {
 		cart = argv[1];
