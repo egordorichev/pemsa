@@ -46,47 +46,60 @@ static int atan2(lua_State* state) {
 	return 1;
 }
 
-static int check_number_or_bool(lua_State* state, int n) {
+static float check_number_or_bool(lua_State* state, int n) {
 	if (lua_isboolean(state, n)) {
 		return lua_toboolean(state, n);
 	}
 
-	float value = (float) luaL_checknumber(state, n);
-	
-	return *((int*) &value);
-}
-
-static void push_number_as_double(lua_State* state, int n) {
-	lua_pushnumber(state, *((float*) &n));
+	return luaL_checknumber(state, n);
 }
 
 static int band(lua_State* state) {
-	push_number_as_double(state, check_number_or_bool(state, 1) & check_number_or_bool(state, 2));
+	lua_pushnumber(state, (int) check_number_or_bool(state, 1) & (int) check_number_or_bool(state, 2));
 	return 1;
 }
 
 static int bnot(lua_State* state) {
-	push_number_as_double(state, ~(check_number_or_bool(state, 1)));
+	float a = check_number_or_bool(state, 1);
+	int fa = floor(a);
+
+	lua_pushnumber(state, (~fa) + (~((int) ((a - fa) * 65532)) / 65532.0f));
 	return 1;
 }
 
 static int bor(lua_State* state) {
-	push_number_as_double(state, check_number_or_bool(state, 1) | check_number_or_bool(state, 2));
+	float a = check_number_or_bool(state, 1);
+	int b = check_number_or_bool(state, 2);
+	int fa = floor(a);
+
+	lua_pushnumber(state, (fa | b) + (((int) ((a - fa) * 65532) | b) / 65532.0f));
 	return 1;
 }
 
 static int bxor(lua_State* state) {
-	push_number_as_double(state, check_number_or_bool(state, 1) ^ check_number_or_bool(state, 2));
+	float a = check_number_or_bool(state, 1);
+	int b = check_number_or_bool(state, 2);
+	int fa = floor(a);
+
+	lua_pushnumber(state, (fa ^ b) + (((int) ((a - fa) * 65532) ^ b) / 65532.0f));
 	return 1;
 }
 
 static int shl(lua_State* state) {
-	push_number_as_double(state, check_number_or_bool(state, 1) << check_number_or_bool(state, 2));
+	float a = check_number_or_bool(state, 1);
+	int b = check_number_or_bool(state, 2);
+	int fa = floor(a);
+
+	lua_pushnumber(state, (fa << b) + (((int) ((a - fa) * 65532) << b) / 65532.0f));
 	return 1;
 }
 
 static int shr(lua_State* state) {
-	push_number_as_double(state, check_number_or_bool(state, 1) >> check_number_or_bool(state, 2));
+	float a = check_number_or_bool(state, 1);
+	int b = check_number_or_bool(state, 2);
+	int fa = floor(a);
+
+	lua_pushnumber(state, (fa >> b) + (((int) ((a - fa) * 65532) >> b) / 65532.0f));
 	return 1;
 }
 
@@ -140,12 +153,14 @@ void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "ceil", ceil);
 	lua_register(state, "sgn", sgn);
 	lua_register(state, "atan2", atan2);
+
 	lua_register(state, "band", band);
 	lua_register(state, "bnot", bnot);
 	lua_register(state, "bor", bor);
 	lua_register(state, "bxor", bxor);
 	lua_register(state, "shl", shl);
 	lua_register(state, "shr", shr);
+
 	lua_register(state, "cos", cos);
 	lua_register(state, "sin", sin);
 	lua_register(state, "sqrt", sqrt);
