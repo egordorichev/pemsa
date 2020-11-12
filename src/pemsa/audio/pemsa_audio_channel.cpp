@@ -21,7 +21,9 @@ PemsaAudioChannel::PemsaAudioChannel(PemsaEmulator* emulator, int channelId) {
 	this->channelId = channelId;
 }
 
-void PemsaAudioChannel::play(int sfx) {
+void PemsaAudioChannel::play(int sfx, bool music) {
+	this->playingMusic = music;
+
 	PemsaChannelInfo* info = &this->infos[0];
 
 	info->note = 0;
@@ -206,6 +208,10 @@ double PemsaAudioChannel::adjustVolume(int id, double wave, double volume) {
 
 	info->lastVolume += (volume - info->lastVolume) * 0.05;
 	return wave * info->lastVolume;
+}
+
+bool PemsaAudioChannel::isPlayingMusic() {
+	return this->playingMusic;
 }
 
 PemsaChannelInfo::PemsaChannelInfo() {

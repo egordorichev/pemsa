@@ -32,13 +32,15 @@ class PemsaAudioChannel {
 	public:
 		PemsaAudioChannel(PemsaEmulator* emulator, int channelId);
 
-		void play(int sfx);
+		void play(int sfx, bool music);
 		double sample();
 		bool isActive();
 		void stop();
 
 		int getSfx();
 		int getNote();
+
+		bool isPlayingMusic();
 	private:
 		PemsaEmulator* emulator;
 		PemsaChannelInfo infos[2];
@@ -50,6 +52,7 @@ class PemsaAudioChannel {
 		double adjustVolume(int id, double wave, double volume);
 
 		int channelId;
+		bool playingMusic;
 };
 
 #endif
