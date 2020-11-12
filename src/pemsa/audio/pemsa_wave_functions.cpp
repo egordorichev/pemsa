@@ -41,7 +41,7 @@ double pemsa_phaser(double t) {
 	return (fabs(fmod(t, 2) - 1) - 0.5f + (fabs(fmod((t * 127 / 128), 2) - 1) - 0.5) / 2) - 0.25;
 }
 
-static PemsaNoiseInfo noiseInfos[4];
+static PemsaNoiseInfo noiseInfos[PEMSA_CHANNEL_COUNT];
 
 double pemsa_noise(double t) {
 	return 0;
@@ -60,7 +60,7 @@ double pemsa_sample(int channel, int function, double t) {
 	}
 
 	if (function == 6) {
-		if (channel < 0 || channel > 3) {
+		if (channel < 0 || channel >= PEMSA_CHANNEL_COUNT) {
 			return 0;
 		}
 

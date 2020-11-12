@@ -173,12 +173,7 @@ double PemsaAudioChannel::prepareSample(int id) {
 		info->fx = (uint8_t) ((hi & 0b01110000) >> 4);
 		info->isCustom = (uint8_t) ((hi & 0b10000000) >> 7) == 1;
 
-		if (id == 1) {
-			PemsaChannelInfo* secondInfo = &this->infos[0];
-
-			info->note += secondInfo->note - 24;
-			info->volume = fmax(0, fmin(7, (int) info->volume * secondInfo->volume));
-		} else if (info->isCustom) {
+		if (id == 0 && info->isCustom) {
 			PemsaChannelInfo* secondInfo = &this->infos[1];
 
 			secondInfo->sfx = info->instrument;
@@ -195,6 +190,8 @@ double PemsaAudioChannel::prepareSample(int id) {
 	if (id == 1) {
 		PemsaChannelInfo* secondInfo = &this->infos[0];
 		double vol = applyFx(0, secondInfo->fx);
+
+		info->note = (this->emulator->getMemoryModule()->ram[info->sfx * 68 + PEMSA_RAM_SFX + (int) info->offset * 2] & 0b00111111) + secondInfo->note - 24;
 
 		return this->adjustVolume(id, pemsa_sample(this->channelId, info->instrument, info->waveOffset), (vol / 7.0) * (applyFx(id, info->fx) / 7.0));
 	} else if (id == 0 && info->isCustom) {
