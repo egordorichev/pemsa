@@ -25,7 +25,7 @@ static int abs(lua_State* state) {
 }
 
 static int flr(lua_State* state) {
-	lua_pushnumber(state, (int) luaL_checknumber(state, 1));
+	lua_pushnumber(state, floor(luaL_checknumber(state, 1)));
 	return 1;
 }
 
