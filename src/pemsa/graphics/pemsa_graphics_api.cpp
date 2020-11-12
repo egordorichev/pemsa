@@ -465,14 +465,14 @@ static int spr(lua_State* state) {
 
 // sspr( sx, sy, sw, sh, dx, dy, [dw,] [dh,] [flip_x,] [flip_y] )
 static int sspr(lua_State* state) {
-	int sx = round(luaL_checknumber(state, 1));
-	int sy = round(luaL_checknumber(state, 2));
-	int sw = round(luaL_checknumber(state, 3));
-	int sh = round(luaL_checknumber(state, 4));
-	int dx = round(luaL_checknumber(state, 5));
-	int dy = round(luaL_checknumber(state, 6));
-	int dw = round(luaL_optnumber(state, 7, sw));
-	int dh = round(luaL_optnumber(state, 8, sh));
+	double sx = luaL_checknumber(state, 1);
+	double sy = luaL_checknumber(state, 2);
+	double sw = luaL_checknumber(state, 3);
+	double sh = luaL_checknumber(state, 4);
+	double dx = luaL_checknumber(state, 5);
+	double dy = luaL_checknumber(state, 6);
+	double dw = luaL_optnumber(state, 7, sw);
+	double dh = luaL_optnumber(state, 8, sh);
 
 	bool flipX = pemsa_optional_bool(state, 9, false);
 	bool flipY = pemsa_optional_bool(state, 10, false);
@@ -506,14 +506,12 @@ static int sspr(lua_State* state) {
 		flipY = !flipY;
 	}
 
-	float ratioX = sw / (float) dw;
-	float ratioY = sh / (float) dh;
-	float x = sx;
+	double ratioX = sw / dw;
+	double ratioY = sh / dh;
+	double x = sx;
 	double screenX = dx;
-	float y;
+	double y;
 	double screenY;
-
-
 
 	while (x < sx + sw && screenX < dx + dw) {
 		y = sy;
@@ -523,7 +521,7 @@ static int sspr(lua_State* state) {
 			int color = memoryModule->getPixel(x, y, PEMSA_RAM_GFX) & 0x0f;
 
 			if (!drawStateModule->isTransparent(color)) {
-				memoryModule->setPixel((int) (flipX ? dx + dw - 1 - ((int) screenX - dx) : (int) screenX), (int) (flipY ? dy + dh - 1 - ((int) screenY - dy) : (int) screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
+				memoryModule->setPixel((int) (flipX ? dx + dw - 1 - (screenX - dx) : screenX), (int) (flipY ? dy + dh - 1 - (screenY - dy) : screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
 			}
 
 			y += ratioY;
