@@ -6,11 +6,26 @@
 
 #include <iostream>
 
+// Split the controller DB to bypass ANSI compatibility string character limit.
 const char* controller_db =
-#include "sdl/sdl_controller_db.hpp"
+
+#if defined(_WIN32)
+#include "sdl/sdl_controller_db_windows.hpp"
+#elif defined(__linux__)
+#include "sdl/sdl_controller_db_linux.hpp"
+#elif defined(__APPLE__)
+	#include <TargetConditionals.h>
+  #if TARGET_OS_MAC
+		#include "sdl/sdl_controller_db_mac.hpp"
+	#else
+		#include "sdl/sdl_controller_db_ios.hpp"
+	#endif
+#elif defined(__ANDROID__)
+#include "sdl/sdl_controller_db_android.hpp"
+#endif
 
 SdlInputBackend::SdlInputBackend() {
-	SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem((void *) controller_db, sizeof(controller_db)), 1);
+	SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem((void *) controller_db, strlen(controller_db)), 1);
 
 	for (int p = 0; p < PEMSA_PLAYER_COUNT; p++) {
 		for (int i = 0; i < PEMSA_BUTTON_COUNT; i++) {

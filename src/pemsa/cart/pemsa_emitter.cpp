@@ -30,7 +30,7 @@ static float strtof(const char* ostr, char** endptr, int base) {
 
 std::string pemsa_emit(PemsaScanner* scanner) {
 	std::stringstream output;
-	PemsaToken token;
+	PemsaToken token = PemsaToken();
 	PemsaToken previous;
 
 	bool running = true;

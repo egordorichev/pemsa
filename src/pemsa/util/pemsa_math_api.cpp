@@ -1,6 +1,11 @@
 #include "pemsa/pemsa_emulator.hpp"
 #include <cmath>
 
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+
 static PemsaEmulator* emulator;
 
 static int rnd(lua_State* state) {
@@ -20,7 +25,7 @@ static int abs(lua_State* state) {
 }
 
 static int flr(lua_State* state) {
-	lua_pushnumber(state, luaL_optnumber(state, 1, 0));
+	lua_pushnumber(state, floor(luaL_optnumber(state, 1, 0)));
 	return 1;
 }
 

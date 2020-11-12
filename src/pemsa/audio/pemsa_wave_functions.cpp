@@ -6,6 +6,12 @@
 #include <chrono>
 #include <random>
 
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+
+
 double pemsa_sine(double t) {
 	return (fabs(fmod(t, 1.0) * 2.0 - 1.0) * 2 - 1.0) * 0.7;
 }

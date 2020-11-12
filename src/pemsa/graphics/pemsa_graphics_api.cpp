@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#define LUA_COMPAT_APIINTCASTS
+#endif
+
 #include "pemsa/graphics/pemsa_graphics_module.hpp"
 #include "pemsa/util/pemsa_font.hpp"
 #include "pemsa/pemsa_emulator.hpp"
@@ -461,17 +465,22 @@ static int spr(lua_State* state) {
 
 // sspr( sx, sy, sw, sh, dx, dy, [dw,] [dh,] [flip_x,] [flip_y] )
 static int sspr(lua_State* state) {
-	int sx = round(luaL_checknumber(state, 1));
-	int sy = round(luaL_checknumber(state, 2));
-	int sw = round(luaL_checknumber(state, 3));
-	int sh = round(luaL_checknumber(state, 4));
-	int dx = round(luaL_checknumber(state, 5));
-	int dy = round(luaL_checknumber(state, 6));
-	int dw = round(luaL_optnumber(state, 7, sw));
-	int dh = round(luaL_optnumber(state, 8, sh));
+	double sx = luaL_checknumber(state, 1);
+	double sy = luaL_checknumber(state, 2);
+	double sw = luaL_checknumber(state, 3);
+	double sh = luaL_checknumber(state, 4);
+	double dx = luaL_checknumber(state, 5);
+	double dy = luaL_checknumber(state, 6);
+	double dw = luaL_optnumber(state, 7, sw);
+	double dh = luaL_optnumber(state, 8, sh);
 
 	bool flipX = pemsa_optional_bool(state, 9, false);
 	bool flipY = pemsa_optional_bool(state, 10, false);
+
+	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
+	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+	dx -= drawStateModule->getCameraX();
+	dy -= drawStateModule->getCameraY();
 
 	if (sw < 0) {
 		sw *= -1;
@@ -497,18 +506,12 @@ static int sspr(lua_State* state) {
 		flipY = !flipY;
 	}
 
-	float ratioX = sw / (float) dw;
-	float ratioY = sh / (float) dh;
-	float x = sx;
+	double ratioX = sw / dw;
+	double ratioY = sh / dh;
+	double x = sx;
 	double screenX = dx;
-	float y;
+	double y;
 	double screenY;
-
-	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
-	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
-
-	dx -= drawStateModule->getCameraX();
-	dy -= drawStateModule->getCameraY();
 
 	while (x < sx + sw && screenX < dx + dw) {
 		y = sy;
@@ -518,7 +521,7 @@ static int sspr(lua_State* state) {
 			int color = memoryModule->getPixel(x, y, PEMSA_RAM_GFX) & 0x0f;
 
 			if (!drawStateModule->isTransparent(color)) {
-				memoryModule->setPixel((int) (flipX ? dx + dw - ((int) screenX - dx) : (int) screenX), (int) (flipY ? dy + dh - ((int) screenY - dy) : (int) screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
+				memoryModule->setPixel((int) (flipX ? dx + dw - 1 - (screenX - dx) : screenX), (int) (flipY ? dy + dh - 1 - (screenY - dy) : screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
 			}
 
 			y += ratioY;
@@ -582,7 +585,7 @@ static int print(lua_State* state) {
 		return 0;
 	}
 
-	const char* text = pemsa_to_string(state, 1);
+	std::string text = std::string(pemsa_to_string(state, 1));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
@@ -611,14 +614,18 @@ static int print(lua_State* state) {
 
 	}
 
+	// Remove .0 if the string is an integer number
+	if (text.size() >= 2 && text[text.size() - 1] == '0' && text[text.size() - 2] == '.') {
+		text = text.substr(0, text.size() - 2);
+	}
+
 	int index = 0;
 
 	bool transparent = false;
 	int offsetX = 0;
 	int offsetY = 0;
 
-	while (*text != '\0') {
-		char cr = *text++;
+	for(char cr : text) {
 
 		if (cr == '\n') {
 			offsetX = 0;
