@@ -1,9 +1,11 @@
 #include "pemsa/cart/pemsa_emitter.hpp"
+#include "fix16.hpp"
 
 #include <sstream>
 #include <iostream>
 #include <cstring>
 #include <cmath>
+#include <climits>
 
 static float strtof(const char* ostr, char** endptr, int base) {
 	char* str = (char*) malloc(strlen(ostr) + 1);
@@ -222,7 +224,13 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 					}
 				}
 
-				output << std::string(token.start, token.length);
+				// Make sure the number fits
+				float f = strtof(token.start, NULL);
+
+				double whole;
+				double fraction = (int) (modf(f, &whole) * 10000.0f);
+
+				output << fmin(SHRT_MAX, fmax(SHRT_MIN, whole)) + fmin(SHRT_MAX, fmax(SHRT_MIN, fraction)) / 10000.0f;
 				break;
 			}
 
