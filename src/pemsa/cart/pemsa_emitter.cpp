@@ -48,8 +48,9 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	const char* expressionStart = scanner->getCurrent();
 	const char* start = expressionStart;
 
+#ifndef PEMSA_BLOCK_ADDITIONAL_CODE
 	// Emoji button setup
-	output << "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = 62975.5, 31455.5, 32125.5, 1.5, 6943.5, 3855.5, 2.5, 46527.5, 4.5, 45503.5, 0.5, 45407.5, 3.5, 47133.5, 63903.5, 20927.5, 39327.5, 45343.5, 0.5, 21845.5, 5.5, 20767.5, 62911.5, 23130.5, 39743.5, 41184.5\n";
+	output << "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = -2560.5, 31455.5, 32125.5, 1, 6943.5, 3855.5, 2, -19008.5, 4, -20032.5,0.5, -20128.5, 3, -18402.5, -1632.5, 20927.5, -26208.5, -20192.5, 0, 21845.5, 5, 20767.5, -2624.5, 23130.5, -25792.5, -24351.5\n";
 	output << "sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil\n";
 
 	output << "function foreach(a, f)\n";
@@ -94,7 +95,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	output << "		end\n";
 	output << "	end\n";
 	output << "end\n";
-
+#endif
 
 	while (running) {
 		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE) {

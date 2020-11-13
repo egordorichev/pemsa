@@ -46,7 +46,7 @@ static int atan2(lua_State* state) {
 	return 1;
 }
 
-static float check_number_or_bool(lua_State* state, int n) {
+static LUA_NUMBER check_number_or_bool(lua_State* state, int n) {
 	if (lua_isboolean(state, n)) {
 		return lua_toboolean(state, n);
 	}
@@ -68,11 +68,10 @@ static int bnot(lua_State* state) {
 }
 
 static int bor(lua_State* state) {
-	float a = check_number_or_bool(state, 1);
-	int b = check_number_or_bool(state, 2);
-	int fa = floor(a);
+	LUA_NUMBER a = check_number_or_bool(state, 1);
+	LUA_NUMBER b = check_number_or_bool(state, 2);
 
-	lua_pushnumber(state, (fa | b) + (((int) ((a - fa) * 65532) | b) / 65532.0f));
+	lua_pushnumber(state, a | b);
 	return 1;
 }
 

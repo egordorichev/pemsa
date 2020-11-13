@@ -4,6 +4,8 @@
 #include "pemsa/cart/pemsa_scanner.hpp"
 #include <string>
 
+#define PEMSA_BLOCK_ADDITIONAL_CODE
+
 std::string pemsa_emit(PemsaScanner* scanner);
 
 #endif

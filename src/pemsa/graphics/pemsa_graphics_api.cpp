@@ -541,12 +541,12 @@ static int sspr(lua_State* state) {
 }
 
 static int map(lua_State* state) {
-	int mx = luaL_optint(state, 1, 0);
-	int my = luaL_optint(state, 2, 0);
-	int x = luaL_optint(state, 3, 0);
-	int y = luaL_optint(state, 4, 0);
-	int mw = luaL_optint(state, 5, 16);
-	int mh = luaL_optint(state, 6, 16);
+	int mx = luaL_optinteger(state, 1, 0);
+	int my = luaL_optinteger(state, 2, 0);
+	int x = luaL_optinteger(state, 3, 0);
+	int y = luaL_optinteger(state, 4, 0);
+	int mw = luaL_optinteger(state, 5, 16);
+	int mh = luaL_optinteger(state, 6, 16);
 	int layer = luaL_optinteger(state, 7, 0);
 
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
