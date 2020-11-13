@@ -50,12 +50,12 @@ static int printh(lua_State* state) {
 }
 
 static int pemsa_time(lua_State* state) {
-	lua_pushnumber(state, emulator->getCartridgeModule()->getCart()->time);
+	pemsa_pushnumber(state, emulator->getCartridgeModule()->getCart()->time);
 	return 1;
 }
 
 static int tonum(lua_State* state) {
-	lua_pushnumber(state, lua_tonumber(state, 1));
+	pemsa_pushnumber(state, lua_tonumber(state, 1));
 	return 1;
 }
 
@@ -75,7 +75,7 @@ static int extcmd(lua_State* state) {
 }
 
 static int stat(lua_State* state) {
-	int id = lua_checknumber(state, 1);
+	int id = pemsa_checknumber(state, 1);
 	double result = 0;
 
 	switch (id) {
@@ -253,7 +253,7 @@ static int stat(lua_State* state) {
 		}
 	}
 
-	lua_pushnumber(state, result);
+	pemsa_pushnumber(state, result);
 	return 1;
 }
 

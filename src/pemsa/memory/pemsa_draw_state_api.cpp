@@ -19,9 +19,9 @@ static int pal(lua_State* state) {
 		return 0;
 	}
 
-	int color = lua_checknumber(state, 1);
-	int replacement = lua_optnumber(state, 2, 0);
-	int p = lua_optnumber(state, 3, 0);
+	int color = pemsa_checknumber(state, 1);
+	int replacement = pemsa_optnumber(state, 2, 0);
+	int p = pemsa_optnumber(state, 3, 0);
 
 	if (p == 0) {
 		drawStateModule->setDrawColor(color, replacement);
@@ -43,7 +43,7 @@ static int palt(lua_State* state) {
 		return 0;
 	}
 
-	int color = lua_checknumber(state, 1);
+	int color = pemsa_checknumber(state, 1);
 	bool transparent = pemsa_optional_bool(state, 2, color == 0);
 
 	drawStateModule->setTransparent(color, transparent);
@@ -51,7 +51,7 @@ static int palt(lua_State* state) {
 }
 
 static int color(lua_State* state) {
-	emulator->getDrawStateModule()->setColor(lua_optnumber(state, 1, 6));
+	emulator->getDrawStateModule()->setColor(pemsa_optnumber(state, 1, 6));
 	return 0;
 }
 
@@ -66,10 +66,10 @@ static int clip(lua_State* state) {
 	int h = 128;
 
 	if (lua_gettop(state) != 0) {
-		x = lua_checknumber(state, 1);
-		y = lua_checknumber(state, 2);
-		w = lua_checknumber(state, 3);
-		h = lua_checknumber(state, 4);
+		x = pemsa_checknumber(state, 1);
+		y = pemsa_checknumber(state, 2);
+		w = pemsa_checknumber(state, 3);
+		h = pemsa_checknumber(state, 4);
 	}
 
 	uint8_t* ram = emulator->getMemoryModule()->ram;
@@ -86,7 +86,7 @@ static int clip(lua_State* state) {
 }
 
 static int fillp(lua_State* state) {
-	double p = lua_optnumber(state, 1, 0);
+	double p = pemsa_optnumber(state, 1, 0);
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
 	drawStateModule->setFillPattern(p);
@@ -96,8 +96,8 @@ static int fillp(lua_State* state) {
 }
 
 static int camera(lua_State* state) {
-	int x = round(lua_optnumber(state, 1, 0));
-	int y = round(lua_optnumber(state, 2, 0));
+	int x = round(pemsa_optnumber(state, 1, 0));
+	int y = round(pemsa_optnumber(state, 2, 0));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
@@ -108,8 +108,8 @@ static int camera(lua_State* state) {
 }
 
 static int cursor(lua_State* state) {
-	int x = round(lua_optnumber(state, 1, 0));
-	int y = round(lua_optnumber(state, 2, 0));
+	int x = round(pemsa_optnumber(state, 1, 0));
+	int y = round(pemsa_optnumber(state, 2, 0));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 

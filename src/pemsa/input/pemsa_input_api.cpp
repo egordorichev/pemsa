@@ -13,12 +13,12 @@ int btn(lua_State* state) {
 			SET_BIT(mask, i, input->isDown(i % PEMSA_BUTTON_COUNT, i / PEMSA_BUTTON_COUNT));
 		}
 
-		lua_pushnumber(state, mask);
+		pemsa_pushnumber(state, mask);
 		return 1;
 	}
 
-	int button = lua_checknumber(state, 1);
-	int player = lua_optnumber(state, 2, 0);
+	int button = pemsa_checknumber(state, 1);
+	int player = pemsa_optnumber(state, 2, 0);
 
 	lua_pushboolean(state, input->isDown(button, player));
 	return 1;
@@ -34,12 +34,12 @@ int btnp(lua_State* state) {
 			SET_BIT(mask, i, input->isPressed(i % PEMSA_BUTTON_COUNT, i / PEMSA_BUTTON_COUNT));
 		}
 
-		lua_pushnumber(state, mask);
+		pemsa_pushnumber(state, mask);
 		return 1;
 	}
 
-	int button = lua_checknumber(state, 1);
-	int player = lua_optnumber(state, 2, 0);
+	int button = pemsa_checknumber(state, 1);
+	int player = pemsa_optnumber(state, 2, 0);
 
 	lua_pushboolean(state, input->isPressed(button, player));
 	return 1;

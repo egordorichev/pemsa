@@ -6,7 +6,7 @@
 static PemsaEmulator* emulator;
 
 static int fget(lua_State* state) {
-	int tile = lua_checknumber(state, 1);
+	int tile = pemsa_checknumber(state, 1);
 
 	if (tile < 0 || tile > 255) {
 		lua_pushboolean(state, false);
@@ -19,14 +19,14 @@ static int fget(lua_State* state) {
 		int bit = luaL_checkinteger(state, 2);
 		lua_pushboolean(state, (mask & (1 << bit)) != 0);
 	} else {
-		lua_pushnumber(state, mask);
+		pemsa_pushnumber(state, mask);
 	}
 
 	return 1;
 }
 
 static int fset(lua_State* state) {
-	int tile = lua_checknumber(state, 1);
+	int tile = pemsa_checknumber(state, 1);
 
 	if (tile < 0 || tile > 255) {
 		return 0;
@@ -34,7 +34,7 @@ static int fset(lua_State* state) {
 
 	uint8_t* ram = emulator->getMemoryModule()->ram + PEMSA_RAM_GFX_PROPS + tile;
 
-	int bit = lua_checknumber(state, 2);
+	int bit = pemsa_checknumber(state, 2);
 	bool on = pemsa_optional_bool(state, 3, false);
 
 	*ram = SET_BIT(*ram, bit, on)
@@ -42,22 +42,22 @@ static int fset(lua_State* state) {
 }
 
 static int mget(lua_State* state) {
-	int x = lua_checknumber(state, 1);
-	int y = lua_checknumber(state, 2);
+	int x = pemsa_checknumber(state, 1);
+	int y = pemsa_checknumber(state, 2);
 
 	if (x < 0 || y < 0 || x > 127 || y > 63) {
-		lua_pushnumber(state, 0);
+		pemsa_pushnumber(state, 0);
 	} else {
-		lua_pushnumber(state, emulator->getMemoryModule()->ram[(y > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + x + y * 128]);
+		pemsa_pushnumber(state, emulator->getMemoryModule()->ram[(y > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + x + y * 128]);
 	}
 
 	return 1;
 }
 
 static int mset(lua_State* state) {
-	int x = lua_checknumber(state, 1);
-	int y = lua_checknumber(state, 2);
-	int tile = lua_optnumber(state, 3, 0);
+	int x = pemsa_checknumber(state, 1);
+	int y = pemsa_checknumber(state, 2);
+	int tile = pemsa_optnumber(state, 3, 0);
 
 	if (!(x < 0 || y < 0 || x > 127 || y > 63)) {
 		emulator->getMemoryModule()->ram[(y > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + x + y * 128] = tile % 256;
@@ -72,9 +72,9 @@ static int cstore(lua_State* state) {
 }
 
 static int memcpy(lua_State* state) {
-	int to = lua_checknumber(state, 1);
-	int from = lua_checknumber(state, 2);
-	int amount = lua_checknumber(state, 3);
+	int to = pemsa_checknumber(state, 1);
+	int from = pemsa_checknumber(state, 2);
+	int amount = pemsa_checknumber(state, 3);
 
 	if (to < 0 || from < 0 || to + amount > PEMSA_RAM_END || from + amount > PEMSA_RAM_END) {
 		return 0;
@@ -90,9 +90,9 @@ static int memcpy(lua_State* state) {
 }
 
 static int memset(lua_State* state) {
-	int to = lua_checknumber(state, 1);
-	int value = lua_checknumber(state, 2);
-	int amount = lua_checknumber(state, 3);
+	int to = pemsa_checknumber(state, 1);
+	int value = pemsa_checknumber(state, 2);
+	int amount = pemsa_checknumber(state, 3);
 
 	if (to < 0 || to + amount >= PEMSA_RAM_END) {
 		return 0;
@@ -108,22 +108,22 @@ static int memset(lua_State* state) {
 }
 
 static int peek(lua_State* state) {
-	int index = lua_checknumber(state, 1);
+	int index = pemsa_checknumber(state, 1);
 
 	if (index >= 0 && index < PEMSA_RAM_END) {
-		lua_pushnumber(state, emulator->getMemoryModule()->ram[index]);
+		pemsa_pushnumber(state, emulator->getMemoryModule()->ram[index]);
 	} else {
-		lua_pushnumber(state, 0);
+		pemsa_pushnumber(state, 0);
 	}
 
 	return 1;
 }
 
 static int poke(lua_State* state) {
-	int index = lua_checknumber(state, 1);
+	int index = pemsa_checknumber(state, 1);
 
 	if (index >= 0 && index < PEMSA_RAM_END) {
-		emulator->getMemoryModule()->ram[index] = lua_checknumber(state, 2);
+		emulator->getMemoryModule()->ram[index] = pemsa_checknumber(state, 2);
 	}
 
 	return 0;
@@ -137,9 +137,9 @@ static int reload(lua_State* state) {
 	if (lua_gettop(state) == 0) {
 		amount = 0x4300;
 	} else {
-		to = lua_checknumber(state, 1);
-		from = lua_checknumber(state, 2);
-		amount = lua_checknumber(state, 3);
+		to = pemsa_checknumber(state, 1);
+		from = pemsa_checknumber(state, 2);
+		amount = pemsa_checknumber(state, 3);
 	}
 
 	if (to < 0 || from < 0 || to + amount > PEMSA_RAM_END || from + amount > PEMSA_ROM_END) {

@@ -148,8 +148,6 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 }
 
 size_t fix16tostr(fix16_t value, char *buf) {
-	printf("FIXME %f\n", fix16_to_float(value));
-
 	size_t start = (size_t) buf;
 	uint32_t uvalue = (value >= 0) ? value : -value;
 	if (value < 0)
@@ -168,10 +166,10 @@ size_t fix16tostr(fix16_t value, char *buf) {
 		fracpart -= scale;
 	}
 
-	while (fracpart % 10 == 0) {
+	/*while (fracpart != 0 && fracpart % 10 == 0) {
 		fracpart /= 10;
 		scale /= 10;
-	}
+	}*/
 
 	/* Format integer part */
 	buf = itoa_loop(buf, 10000, intpart, true);

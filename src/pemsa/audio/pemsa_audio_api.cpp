@@ -3,7 +3,7 @@
 static PemsaEmulator* emulator;
 
 static int music(lua_State* state) {
-	int n = lua_checknumber(state, 1);
+	int n = pemsa_checknumber(state, 1);
 
 	if (n >= -1 && n < 64) {
 		emulator->getAudioModule()->playMusic(n);
@@ -13,10 +13,10 @@ static int music(lua_State* state) {
 }
 
 static int sfx(lua_State* state) {
-	int n = lua_checknumber(state, 1);
+	int n = pemsa_checknumber(state, 1);
 
 	if (n >= -1 && n < 64) {
-		emulator->getAudioModule()->playSfx(n, lua_optnumber(state, 2, -1));
+		emulator->getAudioModule()->playSfx(n, pemsa_optnumber(state, 2, -1));
 	}
 
 	return 0;

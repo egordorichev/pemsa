@@ -3,24 +3,24 @@
 static PemsaEmulator* emulator;
 
 static int dget(lua_State* state) {
-	int index = lua_checknumber(state, 1);
+	int index = pemsa_checknumber(state, 1);
 
 	if (index >= 0 && index < PEMSA_CART_DATA_SIZE) {
-		lua_pushnumber(state, emulator->getCartridgeModule()->getCart()->cartData[index]);
+		pemsa_pushnumber(state, emulator->getCartridgeModule()->getCart()->cartData[index]);
 	} else {
-		lua_pushnumber(state, 0);
+		pemsa_pushnumber(state, 0);
 	}
 
 	return 1;
 }
 
 static int dset(lua_State* state) {
-	int index = lua_checknumber(state, 1);
+	int index = pemsa_checknumber(state, 1);
 
 	if (index >= 0 && index < PEMSA_CART_DATA_SIZE) {
 		PemsaCartridgeModule* cartridgeModule = emulator->getCartridgeModule();
 
-		cartridgeModule->getCart()->cartData[index] = lua_checknumber(state, 2);
+		cartridgeModule->getCart()->cartData[index] = pemsa_checknumber(state, 2);
 		cartridgeModule->saveData();
 	}
 
