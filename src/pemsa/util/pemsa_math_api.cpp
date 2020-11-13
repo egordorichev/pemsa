@@ -76,29 +76,66 @@ static int bor(lua_State* state) {
 }
 
 static int bxor(lua_State* state) {
-	float a = check_number_or_bool(state, 1);
-	int b = check_number_or_bool(state, 2);
-	int fa = floor(a);
+	LUA_NUMBER a = check_number_or_bool(state, 1);
+	LUA_NUMBER b = check_number_or_bool(state, 2);
 
-	lua_pushnumber(state, (fa ^ b) + (((int) ((a - fa) * 65532) ^ b) / 65532.0f));
+	lua_pushnumber(state, a ^ b);
 	return 1;
 }
 
-static int shl(lua_State* state) {
-	float a = check_number_or_bool(state, 1);
-	int b = check_number_or_bool(state, 2);
-	int fa = floor(a);
+void printBits(size_t const size, void const * const ptr)
+{
+	unsigned char *b = (unsigned char*) ptr;
+	unsigned char byte;
+	int i, j;
 
-	lua_pushnumber(state, (fa << b) + (((int) ((a - fa) * 65532) << b) / 65532.0f));
+	for (i = size-1; i >= 0; i--) {
+		for (j = 7; j >= 0; j--) {
+			byte = (b[i] >> j) & 1;
+			printf("%u", byte);
+		}
+	}
+	puts("");
+}
+
+static int shl(lua_State* state) {
+	LUA_NUMBER a = check_number_or_bool(state, 1);
+	LUA_NUMBER b = check_number_or_bool(state, 2);
+
+	int c = fix16_to_int(b);
+
+	if (c < 32) {
+		for (int i = 31; i >= c; i--) {
+			a ^= (-(a & (1UL << (i - c))) ^ a) & (1UL << i);
+		}
+
+		for (int i = c - 1; i >= 0; i--) {
+			a &= ~(1UL << i);
+		}
+	}
+
+	lua_pushnumber(state, a);
 	return 1;
 }
 
 static int shr(lua_State* state) {
-	float a = check_number_or_bool(state, 1);
-	int b = check_number_or_bool(state, 2);
-	int fa = floor(a);
+	LUA_NUMBER a = check_number_or_bool(state, 1);
+	LUA_NUMBER b = check_number_or_bool(state, 2);
 
-	lua_pushnumber(state, (fa >> b) + (((int) ((a - fa) * 65532) >> b) / 65532.0f));
+	int c = fix16_to_int(b);
+
+	if (c < 32) {
+		for (int i = c; i < 32; i++) {
+			bool set = a & (1UL << i);
+			a ^= (-set ^ a) & (1UL << (i - c));
+		}
+
+		for (int i = 0; i < c; i++) {
+			a &= ~(1UL << i);
+		}
+	}
+
+	lua_pushnumber(state, a);
 	return 1;
 }
 

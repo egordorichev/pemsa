@@ -148,6 +148,8 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 }
 
 size_t fix16tostr(fix16_t value, char *buf) {
+	printf("FIXME %f\n", fix16_to_float(value));
+
 	size_t start = (size_t) buf;
 	uint32_t uvalue = (value >= 0) ? value : -value;
 	if (value < 0)
