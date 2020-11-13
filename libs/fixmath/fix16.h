@@ -140,7 +140,11 @@ extern fix16_t fix16_sdiv(fix16_t inArg0, fix16_t inArg1) FIXMATH_FUNC_ATTRS;
 */
 extern fix16_t fix16_mod(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
 extern fix16_t fix16_shl(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
-
+extern fix16_t fix16_shr(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
+extern fix16_t fix16_band(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
+extern fix16_t fix16_bor(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
+extern fix16_t fix16_bxor(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
+extern fix16_t fix16_bnot(fix16_t x) FIXMATH_FUNC_ATTRS;
 
 
 /*! Returns the linear interpolation: (inArg0 * (1 - inFract)) + (inArg1 * inFract)

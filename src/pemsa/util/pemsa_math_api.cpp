@@ -55,93 +55,32 @@ static LUA_NUMBER check_number_or_bool(lua_State* state, int n) {
 }
 
 static int band(lua_State* state) {
-	LUA_NUMBER a = check_number_or_bool(state, 1);
-	LUA_NUMBER b = check_number_or_bool(state, 2);
-
-	for (int i = 0; i < 32; i++) {
-		int64_t pos = 1UL << i;
-		a ^= (-((a & pos) & (b & pos)) ^ a) & pos;
-	}
-
-	lua_pushnumber(state, a);
+	lua_pushnumber(state, fix16_band(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 
 static int bnot(lua_State* state) {
-	LUA_NUMBER a = check_number_or_bool(state, 1);
-
-	for (int i = 0; i < 32; i++) {
-		int64_t pos = 1UL << i;
-		a ^= (-(!(a & pos)) ^ a) & pos;
-	}
-
-	lua_pushnumber(state, a);
+	lua_pushnumber(state, fix16_bnot(check_number_or_bool(state, 1)));
 	return 1;
 }
 
 static int bor(lua_State* state) {
-	LUA_NUMBER a = check_number_or_bool(state, 1);
-	LUA_NUMBER b = check_number_or_bool(state, 2);
-
-	for (int i = 0; i < 32; i++) {
-		int64_t pos = 1UL << i;
-		a ^= (-((a & pos) | (b & pos)) ^ a) & pos;
-	}
-
-	lua_pushnumber(state, a);
+	lua_pushnumber(state, fix16_bor(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 
 static int bxor(lua_State* state) {
-	LUA_NUMBER a = check_number_or_bool(state, 1);
-	LUA_NUMBER b = check_number_or_bool(state, 2);
-
-	for (int i = 0; i < 32; i++) {
-		int64_t pos = 1UL << i;
-		a ^= (-((a & pos) ^ (b & pos)) ^ a) & pos;
-	}
-
-	lua_pushnumber(state, a);
+	lua_pushnumber(state, fix16_bxor(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 
 static int shl(lua_State* state) {
-	LUA_NUMBER a = check_number_or_bool(state, 1);
-	LUA_NUMBER b = check_number_or_bool(state, 2);
-
-	int c = fix16_to_int(b);
-
-	if (c < 32) {
-		for (int i = 31; i >= c; i--) {
-			a ^= (-(a & (1UL << (i - c))) ^ a) & (1UL << i);
-		}
-
-		for (int i = c - 1; i >= 0; i--) {
-			a &= ~(1UL << i);
-		}
-	}
-
-	lua_pushnumber(state, a);
+	lua_pushnumber(state, fix16_shl(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 
 static int shr(lua_State* state) {
-	LUA_NUMBER a = check_number_or_bool(state, 1);
-	LUA_NUMBER b = check_number_or_bool(state, 2);
-
-	int c = fix16_to_int(b);
-
-	if (c < 32) {
-		for (int i = c; i < 32; i++) {
-			a ^= (-(a & (1UL << i)) ^ a) & (1UL << (i - c));
-		}
-
-		for (int i = 0; i < c; i++) {
-			a &= ~(1UL << i);
-		}
-	}
-
-	lua_pushnumber(state, a);
+	lua_pushnumber(state, fix16_shr(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 

@@ -590,7 +590,7 @@ static int print(lua_State* state) {
 		return 0;
 	}
 
-	std::string text = std::string(pemsa_to_string(state, 1));
+	const char* text = pemsa_to_string(state, 1);
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
@@ -619,18 +619,14 @@ static int print(lua_State* state) {
 
 	}
 
-	// Remove .0 if the string is an integer number
-	if (text.size() >= 2 && text[text.size() - 1] == '0' && text[text.size() - 2] == '.') {
-		text = text.substr(0, text.size() - 2);
-	}
-
 	int index = 0;
 
 	bool transparent = false;
 	int offsetX = 0;
 	int offsetY = 0;
 
-	for(char cr : text) {
+	while (*text != '\0') {
+		char cr = *text++;
 
 		if (cr == '\n') {
 			offsetX = 0;

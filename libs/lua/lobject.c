@@ -83,11 +83,6 @@ int luaO_ceillog2 (unsigned int x) {
   return l + log_2[x];
 }
 
-
-#define fix_band(a, b) (fix16_from_int(fix16_to_int(a) & fix16_to_int(b)))
-#define fix_bor(a, b) (fix16_from_int(fix16_to_int(a) | fix16_to_int(b)))
-#define fix_bxor(a, b) (a ^ b)
-
 static lua_Number numarith (lua_State *L, int op, lua_Number v1, lua_Number v2) {
   switch (op) {
     case LUA_OPADD: return luai_numadd(L, v1, v2);
@@ -97,12 +92,12 @@ static lua_Number numarith (lua_State *L, int op, lua_Number v1, lua_Number v2) 
     case LUA_OPPOW: return luai_numpow(L, v1, v2);
     case LUA_OPIDIV: return luai_numidiv(L, v1, v2);
     case LUA_OPUNM: return luai_numunm(L, v1);
-	  case LUA_OPBAND: return numop(fix_band, v1, v2);
-	  case LUA_OPBOR: return numop(fix_bor, v1, v2);
-	  case LUA_OPBXOR: return numop(fix_bxor, v1, v2);
+	  case LUA_OPBAND: return numop(fix16_band, v1, v2);
+	  case LUA_OPBOR: return numop(fix16_bor, v1, v2);
+	  case LUA_OPBXOR: return numop(fix16_bxor, v1, v2);
 	  case LUA_OPSHL: return numop(fix16_shl, v1, v2);
-	  case LUA_OPSHR: return numop(fix16_shl, v1, -v2);
-	  case LUA_OPBNOT: return numop(fix_bxor, ~l_castS2U(0), v1);
+	  case LUA_OPSHR: return numop(fix16_shr, v1, v2);
+	  case LUA_OPBNOT: return fix16_bnot(v1);
     case LUA_OPMOD: {
       lua_Number m;
       luai_nummod(L, v1, v2, m);
@@ -119,7 +114,7 @@ void luaO_arith (lua_State *L, int op, const TValue *p1, const TValue *p2, TValu
     case LUA_OPBNOT: {  /* operate only on integers */
       lua_Number n1; lua_Integer i2;
       if (tonumber(p1, &n1) && tointeger(p2, &i2)) {
-        setivalue(res, numarith(L, op, n1, fix16_from_int(i2)));
+        setivalue(res, fix16_to_int(numarith(L, op, n1, fix16_from_int(i2))));
         return;
       }
       else break;  /* go to the end */

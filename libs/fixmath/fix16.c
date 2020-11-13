@@ -1,6 +1,8 @@
 #include "fix16.h"
 #include "int64.h"
 
+#include <stdlib.h>
+#include <stdio.h>
 
 /* Subtraction and addition with overflow detection.
  * The versions without overflow detection are inlined in the header.
@@ -480,13 +482,101 @@ fix16_t fix16_mod(fix16_t x, fix16_t y)
 	return x;
 }
 
-fix16_t fix16_shl(fix16_t x, fix16_t y) {
-	int64_t product = ((int64_t) x) << ((int64_t) y);
+fix16_t fix16_shl(fix16_t a, fix16_t b) {
+	int c = fix16_to_int(b);
 
-	fix16_t result = product >> 16;
-	result += (product & 0x8000) >> 15;
+	if (c < 32) {
+		for (int i = 31; i >= c; i--) {
+			int set = (a & (1UL << (i - c))) != 0 ? 1 : 0;
+			a ^= (-(set) ^ a) & (1UL << i);
+		}
 
-	return result;
+		for (int i = c - 1; i >= 0; i--) {
+			a &= ~(1UL << i);
+		}
+	}
+
+	return a;
+}
+
+void printBits(size_t const size, void const * const ptr)
+{
+	unsigned char *b = (unsigned char*) ptr;
+	unsigned char byte;
+	int i, j;
+
+	for (i = size-1; i >= 0; i--) {
+		for (j = 7; j >= 0; j--) {
+			byte = (b[i] >> j) & 1;
+			printf("%u", byte);
+		}
+	}
+	puts("");
+}
+
+fix16_t fix16_shr(fix16_t a, fix16_t b) {
+	int c = fix16_to_int(b);
+
+	if (c < 32) {
+		printBits(4, &a);
+
+		for (int i = 0; i < 32 - c; i++) {
+			int set = (a & (1UL << (i + c))) != 0 ? 1 : 0;
+			a ^= (-(set) ^ a) & (1UL << (i));
+		}
+
+		for (int i = 31; i >= 31 - c; i--) {
+			a &= ~(1UL << i);
+		}
+
+		printBits(4, &a);
+	}
+
+	return a;
+}
+
+fix16_t fix16_band(fix16_t a, fix16_t b) {
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		int set = ((a & pos) & (b & pos)) != 0 ? 1 : 0;
+
+		a ^= (-(set) ^ a) & pos;
+	}
+
+	return a;
+}
+
+fix16_t fix16_bor(fix16_t a, fix16_t b) {
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		int set = ((a & pos) | (b & pos)) != 0 ? 1 : 0;
+		
+		a ^= (-(set) ^ a) & pos;
+	}
+
+	return a;
+}
+
+fix16_t fix16_bxor(fix16_t a, fix16_t b) {
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		int set = ((a & pos) ^ (b & pos)) != 0 ? 1 : 0;
+		
+		a ^= (-(set) ^ a) & pos;
+	}
+
+	return a;
+}
+
+fix16_t fix16_bnot(fix16_t a) {
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		int set = ((a & pos)) != 0 ? 1 : 0;
+		
+		a ^= (-(!(set)) ^ a) & pos;
+	}
+
+	return a;
 }
 
 fix16_t fix16_lerp8(fix16_t inArg0, fix16_t inArg1, uint8_t inFract)
