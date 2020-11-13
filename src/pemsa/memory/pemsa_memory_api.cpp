@@ -6,7 +6,7 @@
 static PemsaEmulator* emulator;
 
 static int fget(lua_State* state) {
-	int tile = luaL_checknumber(state, 1);
+	int tile = lua_checknumber(state, 1);
 
 	if (tile < 0 || tile > 255) {
 		lua_pushboolean(state, false);
@@ -26,7 +26,7 @@ static int fget(lua_State* state) {
 }
 
 static int fset(lua_State* state) {
-	int tile = luaL_checknumber(state, 1);
+	int tile = lua_checknumber(state, 1);
 
 	if (tile < 0 || tile > 255) {
 		return 0;
@@ -34,7 +34,7 @@ static int fset(lua_State* state) {
 
 	uint8_t* ram = emulator->getMemoryModule()->ram + PEMSA_RAM_GFX_PROPS + tile;
 
-	int bit = luaL_checknumber(state, 2);
+	int bit = lua_checknumber(state, 2);
 	bool on = pemsa_optional_bool(state, 3, false);
 
 	*ram = SET_BIT(*ram, bit, on)
@@ -42,8 +42,8 @@ static int fset(lua_State* state) {
 }
 
 static int mget(lua_State* state) {
-	int x = luaL_checknumber(state, 1);
-	int y = luaL_checknumber(state, 2);
+	int x = lua_checknumber(state, 1);
+	int y = lua_checknumber(state, 2);
 
 	if (x < 0 || y < 0 || x > 127 || y > 63) {
 		lua_pushnumber(state, 0);
@@ -55,9 +55,9 @@ static int mget(lua_State* state) {
 }
 
 static int mset(lua_State* state) {
-	int x = luaL_checknumber(state, 1);
-	int y = luaL_checknumber(state, 2);
-	int tile = luaL_optnumber(state, 3, 0);
+	int x = lua_checknumber(state, 1);
+	int y = lua_checknumber(state, 2);
+	int tile = lua_optnumber(state, 3, 0);
 
 	if (!(x < 0 || y < 0 || x > 127 || y > 63)) {
 		emulator->getMemoryModule()->ram[(y > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + x + y * 128] = tile % 256;
@@ -72,9 +72,9 @@ static int cstore(lua_State* state) {
 }
 
 static int memcpy(lua_State* state) {
-	int to = luaL_checknumber(state, 1);
-	int from = luaL_checknumber(state, 2);
-	int amount = luaL_checknumber(state, 3);
+	int to = lua_checknumber(state, 1);
+	int from = lua_checknumber(state, 2);
+	int amount = lua_checknumber(state, 3);
 
 	if (to < 0 || from < 0 || to + amount > PEMSA_RAM_END || from + amount > PEMSA_RAM_END) {
 		return 0;
@@ -90,9 +90,9 @@ static int memcpy(lua_State* state) {
 }
 
 static int memset(lua_State* state) {
-	int to = luaL_checknumber(state, 1);
-	int value = luaL_checknumber(state, 2);
-	int amount = luaL_checknumber(state, 3);
+	int to = lua_checknumber(state, 1);
+	int value = lua_checknumber(state, 2);
+	int amount = lua_checknumber(state, 3);
 
 	if (to < 0 || to + amount >= PEMSA_RAM_END) {
 		return 0;
@@ -108,7 +108,7 @@ static int memset(lua_State* state) {
 }
 
 static int peek(lua_State* state) {
-	int index = luaL_checknumber(state, 1);
+	int index = lua_checknumber(state, 1);
 
 	if (index >= 0 && index < PEMSA_RAM_END) {
 		lua_pushnumber(state, emulator->getMemoryModule()->ram[index]);
@@ -120,10 +120,10 @@ static int peek(lua_State* state) {
 }
 
 static int poke(lua_State* state) {
-	int index = luaL_checknumber(state, 1);
+	int index = lua_checknumber(state, 1);
 
 	if (index >= 0 && index < PEMSA_RAM_END) {
-		emulator->getMemoryModule()->ram[index] = luaL_checknumber(state, 2);
+		emulator->getMemoryModule()->ram[index] = lua_checknumber(state, 2);
 	}
 
 	return 0;
@@ -137,9 +137,9 @@ static int reload(lua_State* state) {
 	if (lua_gettop(state) == 0) {
 		amount = 0x4300;
 	} else {
-		to = luaL_checknumber(state, 1);
-		from = luaL_checknumber(state, 2);
-		amount = luaL_checknumber(state, 3);
+		to = lua_checknumber(state, 1);
+		from = lua_checknumber(state, 2);
+		amount = lua_checknumber(state, 3);
 	}
 
 	if (to < 0 || from < 0 || to + amount > PEMSA_RAM_END || from + amount > PEMSA_ROM_END) {

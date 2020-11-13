@@ -17,8 +17,8 @@ int btn(lua_State* state) {
 		return 1;
 	}
 
-	int button = luaL_checknumber(state, 1);
-	int player = luaL_optnumber(state, 2, 0);
+	int button = lua_checknumber(state, 1);
+	int player = lua_optnumber(state, 2, 0);
 
 	lua_pushboolean(state, input->isDown(button, player));
 	return 1;
@@ -38,8 +38,8 @@ int btnp(lua_State* state) {
 		return 1;
 	}
 
-	int button = luaL_checknumber(state, 1);
-	int player = luaL_optnumber(state, 2, 0);
+	int button = lua_checknumber(state, 1);
+	int player = lua_optnumber(state, 2, 0);
 
 	lua_pushboolean(state, input->isPressed(button, player));
 	return 1;

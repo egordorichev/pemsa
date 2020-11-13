@@ -9,38 +9,38 @@
 static PemsaEmulator* emulator;
 
 static int rnd(lua_State* state) {
-	lua_pushnumber(state, (double) rand() / RAND_MAX * luaL_optnumber(state, 1, 1));
+	lua_pushnumber(state, (double) rand() / RAND_MAX * lua_optnumber(state, 1, 1));
 	return 1;
 }
 
 static int srand(lua_State* state) {
-	srand(luaL_optnumber(state, 1, 1));
+	srand(lua_optnumber(state, 1, 1));
 	return 0;
 }
 
 static int abs(lua_State* state) {
-	double v = luaL_checknumber(state, 1);
+	double v = lua_checknumber(state, 1);
 	lua_pushnumber(state, v < 0 ? v * -1 : v);
 	return 1;
 }
 
 static int flr(lua_State* state) {
-	lua_pushnumber(state, floor(luaL_optnumber(state, 1, 0)));
+	lua_pushnumber(state, floor(lua_optnumber(state, 1, 0)));
 	return 1;
 }
 
 static int ceil(lua_State* state) {
-	lua_pushnumber(state, ceil(luaL_optnumber(state, 1, 0)));
+	lua_pushnumber(state, ceil(lua_optnumber(state, 1, 0)));
 	return 1;
 }
 
 static int sgn(lua_State* state) {
-	lua_pushnumber(state, luaL_optnumber(state, 1, 1) < 0 ? -1 : 1);
+	lua_pushnumber(state, lua_optnumber(state, 1, 1) < 0 ? -1 : 1);
 	return 1;
 }
 
 static int atan2(lua_State* state) {
-	double angle = atan2(luaL_checknumber(state, 1), luaL_checknumber(state, 2));
+	double angle = atan2(lua_checknumber(state, 1), lua_checknumber(state, 2));
 	lua_pushnumber(state, fmod((angle) / (M_PI * 2) - 0.25, 2.0));
 
 	return 1;
@@ -51,7 +51,7 @@ static LUA_NUMBER check_number_or_bool(lua_State* state, int n) {
 		return lua_toboolean(state, n);
 	}
 
-	return luaL_checknumber(state, n);
+	return lua_checknumber(state, n);
 }
 
 static int band(lua_State* state) {
@@ -85,34 +85,34 @@ static int shr(lua_State* state) {
 }
 
 static int cos(lua_State* state) {
-	lua_pushnumber(state, cos(luaL_checknumber(state, 1) * M_PI * 2));
+	lua_pushnumber(state, cos(lua_checknumber(state, 1) * M_PI * 2));
 	return 1;
 }
 
 static int sin(lua_State* state) {
-	lua_pushnumber(state, -sin(luaL_checknumber(state, 1) * M_PI * 2));
+	lua_pushnumber(state, -sin(lua_checknumber(state, 1) * M_PI * 2));
 	return 1;
 }
 
 static int sqrt(lua_State* state) {
-	lua_pushnumber(state, sqrt(luaL_checknumber(state, 1)));
+	lua_pushnumber(state, sqrt(lua_checknumber(state, 1)));
 	return 1;
 }
 
 static int min(lua_State* state) {
-	lua_pushnumber(state, fmin(luaL_checknumber(state, 1), luaL_checknumber(state, 2)));
+	lua_pushnumber(state, fmin(lua_checknumber(state, 1), lua_checknumber(state, 2)));
 	return 1;
 }
 
 static int max(lua_State* state) {
-	lua_pushnumber(state, fmax(luaL_checknumber(state, 1), luaL_checknumber(state, 2)));
+	lua_pushnumber(state, fmax(lua_checknumber(state, 1), lua_checknumber(state, 2)));
 	return 1;
 }
 
 static int mid(lua_State* state) {
-	double x = luaL_checknumber(state, 1);
-	double y = luaL_checknumber(state, 2);
-	double z = luaL_checknumber(state, 3);
+	double x = lua_checknumber(state, 1);
+	double y = lua_checknumber(state, 2);
+	double z = lua_checknumber(state, 3);
 
 	if (x > y) {
 		double tmp = x;

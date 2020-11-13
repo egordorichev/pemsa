@@ -75,7 +75,7 @@ static int extcmd(lua_State* state) {
 }
 
 static int stat(lua_State* state) {
-	int id = luaL_checknumber(state, 1);
+	int id = lua_checknumber(state, 1);
 	double result = 0;
 
 	switch (id) {

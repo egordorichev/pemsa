@@ -499,27 +499,10 @@ fix16_t fix16_shl(fix16_t a, fix16_t b) {
 	return a;
 }
 
-void printBits(size_t const size, void const * const ptr)
-{
-	unsigned char *b = (unsigned char*) ptr;
-	unsigned char byte;
-	int i, j;
-
-	for (i = size-1; i >= 0; i--) {
-		for (j = 7; j >= 0; j--) {
-			byte = (b[i] >> j) & 1;
-			printf("%u", byte);
-		}
-	}
-	puts("");
-}
-
 fix16_t fix16_shr(fix16_t a, fix16_t b) {
 	int c = fix16_to_int(b);
 
 	if (c < 32) {
-		printBits(4, &a);
-
 		for (int i = 0; i < 32 - c; i++) {
 			int set = (a & (1UL << (i + c))) != 0 ? 1 : 0;
 			a ^= (-(set) ^ a) & (1UL << (i));
@@ -528,8 +511,6 @@ fix16_t fix16_shr(fix16_t a, fix16_t b) {
 		for (int i = 31; i >= 31 - c; i--) {
 			a &= ~(1UL << i);
 		}
-
-		printBits(4, &a);
 	}
 
 	return a;

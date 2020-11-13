@@ -114,7 +114,7 @@ void luaO_arith (lua_State *L, int op, const TValue *p1, const TValue *p2, TValu
     case LUA_OPBNOT: {  /* operate only on integers */
       lua_Number n1; lua_Integer i2;
       if (tonumber(p1, &n1) && tointeger(p2, &i2)) {
-        setivalue(res, fix16_to_int(numarith(L, op, n1, fix16_from_int(i2))));
+        setfltvalue(res, (numarith(L, op, n1, fix16_from_int(i2))));
         return;
       }
       else break;  /* go to the end */
