@@ -55,15 +55,27 @@ static LUA_NUMBER check_number_or_bool(lua_State* state, int n) {
 }
 
 static int band(lua_State* state) {
-	lua_pushnumber(state, (int) check_number_or_bool(state, 1) & (int) check_number_or_bool(state, 2));
+	LUA_NUMBER a = check_number_or_bool(state, 1);
+	LUA_NUMBER b = check_number_or_bool(state, 2);
+
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		a ^= (-((a & pos) & (b & pos)) ^ a) & pos;
+	}
+
+	lua_pushnumber(state, a);
 	return 1;
 }
 
 static int bnot(lua_State* state) {
-	float a = check_number_or_bool(state, 1);
-	int fa = floor(a);
+	LUA_NUMBER a = check_number_or_bool(state, 1);
 
-	lua_pushnumber(state, (~fa) + (~((int) ((a - fa) * 65532)) / 65532.0f));
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		a ^= (-(!(a & pos)) ^ a) & pos;
+	}
+
+	lua_pushnumber(state, a);
 	return 1;
 }
 
@@ -71,7 +83,12 @@ static int bor(lua_State* state) {
 	LUA_NUMBER a = check_number_or_bool(state, 1);
 	LUA_NUMBER b = check_number_or_bool(state, 2);
 
-	lua_pushnumber(state, a | b);
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		a ^= (-((a & pos) | (b & pos)) ^ a) & pos;
+	}
+
+	lua_pushnumber(state, a);
 	return 1;
 }
 
@@ -79,23 +96,13 @@ static int bxor(lua_State* state) {
 	LUA_NUMBER a = check_number_or_bool(state, 1);
 	LUA_NUMBER b = check_number_or_bool(state, 2);
 
-	lua_pushnumber(state, a ^ b);
-	return 1;
-}
-
-void printBits(size_t const size, void const * const ptr)
-{
-	unsigned char *b = (unsigned char*) ptr;
-	unsigned char byte;
-	int i, j;
-
-	for (i = size-1; i >= 0; i--) {
-		for (j = 7; j >= 0; j--) {
-			byte = (b[i] >> j) & 1;
-			printf("%u", byte);
-		}
+	for (int i = 0; i < 32; i++) {
+		int64_t pos = 1UL << i;
+		a ^= (-((a & pos) ^ (b & pos)) ^ a) & pos;
 	}
-	puts("");
+
+	lua_pushnumber(state, a);
+	return 1;
 }
 
 static int shl(lua_State* state) {
@@ -126,8 +133,7 @@ static int shr(lua_State* state) {
 
 	if (c < 32) {
 		for (int i = c; i < 32; i++) {
-			bool set = a & (1UL << i);
-			a ^= (-set ^ a) & (1UL << (i - c));
+			a ^= (-(a & (1UL << i)) ^ a) & (1UL << (i - c));
 		}
 
 		for (int i = 0; i < c; i++) {
