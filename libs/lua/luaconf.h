@@ -435,20 +435,6 @@
 
 #define l_floor(x)		(l_mathop(floor)(x))
 
-/*
-@@ lua_numbertointeger converts a float number to an integer, or
-** returns 0 if float is not within the range of a lua_Integer.
-** (The range comparisons are tricky because of rounding. The tests
-** here assume a two-complement representation, where MININTEGER always
-** has an exact representation as a float; MAXINTEGER may not have one,
-** and therefore its conversion to float may have an ill-defined value.)
-*/
-#define lua_numbertointeger(n,p) \
-  ((n) >= (LUA_NUMBER)(LUA_MININTEGER) && \
-   (n) < -(LUA_NUMBER)(LUA_MININTEGER) && \
-      (*(p) = (LUA_INTEGER)(n), 1))
-
-
 /* now the variable definitions */
 
 #if LUA_FLOAT_TYPE == LUA_FLOAT_FLOAT		/* { single float */
@@ -505,8 +491,10 @@
 #include "fix16.h"
 #include "strtofix16.h"
 
-#undef lua_numbertointeger
-#define lua_numbertointeger(n, p) (*(p) = (LUA_INTEGER) fix16_to_int(n))
+#define lua_numbertointeger(n,p) \
+  ((n) >= (LUA_NUMBER)(LUA_MININTEGER) && \
+   (n) < -(LUA_NUMBER)(LUA_MININTEGER) && \
+      (*(p) = (LUA_INTEGER)(fix16_to_int(n)), 1))
 
 #define lua_number2str(s,sz,n) (fix16tostr(n, (s)))
 

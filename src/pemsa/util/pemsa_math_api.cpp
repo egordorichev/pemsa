@@ -80,7 +80,7 @@ static int bxor(lua_State* state) {
 }
 
 static int shl(lua_State* state) {
-	printf("%f >> %f = %f\n", fix16_to_float(check_number_or_bool(state, 1)), fix16_to_float(check_number_or_bool(state, 2)), fix16_to_float(fix16_shl(check_number_or_bool(state, 1), check_number_or_bool(state, 2))));
+	printf("%f << %f = %f\n", fix16_to_float(check_number_or_bool(state, 1)), fix16_to_float(check_number_or_bool(state, 2)), fix16_to_float(fix16_shl(check_number_or_bool(state, 1), check_number_or_bool(state, 2))));
 
 	pemsa_pushnumber_raw(state, fix16_shl(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
