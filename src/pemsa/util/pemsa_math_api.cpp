@@ -46,41 +46,48 @@ static int atan2(lua_State* state) {
 	return 1;
 }
 
-static LUA_NUMBER check_number_or_bool(lua_State* state, int n) {
+static fix16_t check_number_or_bool(lua_State* state, int n) {
 	if (lua_isboolean(state, n)) {
-		return lua_toboolean(state, n);
+		return fix16_from_int(lua_toboolean(state, n));
 	}
 
-	return pemsa_checknumber(state, n);
+	return pemsa_checknumbe_raw(state, n);
 }
 
 static int band(lua_State* state) {
-	pemsa_pushnumber(state, fix16_band(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
+	fix16_t a = check_number_or_bool(state, 1);
+	fix16_t b = check_number_or_bool(state, 2);
+
+	printf("%f & %f = %f\n", fix16_to_float(a), fix16_to_float(b), fix16_to_float(fix16_band(a, b)));
+
+	pemsa_pushnumber_raw(state, fix16_band(a, b));
 	return 1;
 }
 
 static int bnot(lua_State* state) {
-	pemsa_pushnumber(state, fix16_bnot(check_number_or_bool(state, 1)));
+	pemsa_pushnumber_raw(state, fix16_bnot(check_number_or_bool(state, 1)));
 	return 1;
 }
 
 static int bor(lua_State* state) {
-	pemsa_pushnumber(state, fix16_bor(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
+	pemsa_pushnumber_raw(state, fix16_bor(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 
 static int bxor(lua_State* state) {
-	pemsa_pushnumber(state, fix16_bxor(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
+	pemsa_pushnumber_raw(state, fix16_bxor(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 
 static int shl(lua_State* state) {
-	pemsa_pushnumber(state, fix16_shl(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
+	printf("%f >> %f = %f\n", fix16_to_float(check_number_or_bool(state, 1)), fix16_to_float(check_number_or_bool(state, 2)), fix16_to_float(fix16_shl(check_number_or_bool(state, 1), check_number_or_bool(state, 2))));
+
+	pemsa_pushnumber_raw(state, fix16_shl(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 
 static int shr(lua_State* state) {
-	pemsa_pushnumber(state, fix16_shr(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
+	pemsa_pushnumber_raw(state, fix16_shr(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
 	return 1;
 }
 

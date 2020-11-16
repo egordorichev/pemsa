@@ -15,11 +15,11 @@ double pemsa_sine(double t) {
 }
 
 double pemsa_square(double t) {
-	return pemsa_sine(t) >= 0 ? 1.0 : -1.0;
+	return (pemsa_sine(t) >= 0 ? 1.0 : -1.0) * 0.7;
 }
 
 double pemsa_pulse(double t) {
-	return (fmod(t, 1) < 0.3125 ? 1 : -1);
+	return (fmod(t, 1) < 0.3125 ? 1 : -1) * 0.7;
 }
 
 double pemsa_tilted_saw(double t) {

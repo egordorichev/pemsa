@@ -55,7 +55,39 @@ static int pemsa_time(lua_State* state) {
 }
 
 static int tonum(lua_State* state) {
-	pemsa_pushnumber(state, lua_tonumber(state, 1));
+	const char* ostr = luaL_checkstring(state, 1);
+	int base = 10;
+	int length = strlen(ostr);
+
+	if (length > 2) {
+		if (ostr[1] == 'x') {
+			base = 16;
+		} else if (ostr[2] == 'b') {
+			base = 2;
+		}
+	}
+
+	char* str = (char*) malloc(length + 1);
+	strcpy(str, ostr);
+	const char* dot = ".";
+
+	char *beforeDot = strtok(str, dot);
+	char *afterDot = strtok(NULL, dot);
+
+	float f = (float) strtol(beforeDot, 0, base);
+	int sign = (str[0] == '-' ? -1 : 1);
+	char n[2] = { 0 };
+
+	if (afterDot != nullptr) {
+		for (int i = 0; afterDot[i]; i++) {
+			n[0] = afterDot[i];
+			f += strtol(n, 0, base) * pow(base, -(i + 1)) * sign;
+		}
+	}
+
+	free(str);
+	pemsa_pushnumber(state, f);
+
 	return 1;
 }
 

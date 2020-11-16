@@ -487,7 +487,7 @@ fix16_t fix16_shl(fix16_t a, fix16_t b) {
 
 	if (c < 32) {
 		for (int i = 31; i >= c; i--) {
-			int set = (a & (1UL << (i - c))) != 0 ? 1 : 0;
+			int set = (a & (1UL << (i - c))) != 0;
 			a ^= (-(set) ^ a) & (1UL << i);
 		}
 
@@ -504,7 +504,7 @@ fix16_t fix16_shr(fix16_t a, fix16_t b) {
 
 	if (c < 32) {
 		for (int i = 0; i < 32 - c; i++) {
-			int set = (a & (1UL << (i + c))) != 0 ? 1 : 0;
+			int set = (a & (1UL << (i + c))) != 0;
 			a ^= (-(set) ^ a) & (1UL << (i));
 		}
 
@@ -519,7 +519,7 @@ fix16_t fix16_shr(fix16_t a, fix16_t b) {
 fix16_t fix16_band(fix16_t a, fix16_t b) {
 	for (int i = 0; i < 32; i++) {
 		int64_t pos = 1UL << i;
-		int set = ((a & pos) & (b & pos)) != 0 ? 1 : 0;
+		int set = (((a & pos) != 0) & ((b & pos) != 0)) != 0;
 
 		a ^= (-(set) ^ a) & pos;
 	}
@@ -530,7 +530,7 @@ fix16_t fix16_band(fix16_t a, fix16_t b) {
 fix16_t fix16_bor(fix16_t a, fix16_t b) {
 	for (int i = 0; i < 32; i++) {
 		int64_t pos = 1UL << i;
-		int set = ((a & pos) | (b & pos)) != 0 ? 1 : 0;
+		int set = (((a & pos) != 0) | ((b & pos) != 0)) != 0;
 		
 		a ^= (-(set) ^ a) & pos;
 	}
@@ -541,7 +541,7 @@ fix16_t fix16_bor(fix16_t a, fix16_t b) {
 fix16_t fix16_bxor(fix16_t a, fix16_t b) {
 	for (int i = 0; i < 32; i++) {
 		int64_t pos = 1UL << i;
-		int set = ((a & pos) ^ (b & pos)) != 0 ? 1 : 0;
+		int set = (((a & pos) != 0) ^ ((b & pos) != 0)) != 0;
 		
 		a ^= (-(set) ^ a) & pos;
 	}
@@ -552,7 +552,7 @@ fix16_t fix16_bxor(fix16_t a, fix16_t b) {
 fix16_t fix16_bnot(fix16_t a) {
 	for (int i = 0; i < 32; i++) {
 		int64_t pos = 1UL << i;
-		int set = ((a & pos)) != 0 ? 1 : 0;
+		int set = (a & pos) != 0;
 		
 		a ^= (-(!(set)) ^ a) & pos;
 	}
@@ -560,8 +560,7 @@ fix16_t fix16_bnot(fix16_t a) {
 	return a;
 }
 
-fix16_t fix16_lerp8(fix16_t inArg0, fix16_t inArg1, uint8_t inFract)
-{
+fix16_t fix16_lerp8(fix16_t inArg0, fix16_t inArg1, uint8_t inFract) {
 	int64_t tempOut = int64_mul_i32_i32(inArg0, (((int32_t)1 << 8) - inFract));
 	tempOut = int64_add(tempOut, int64_mul_i32_i32(inArg1, inFract));
 	tempOut = int64_shift(tempOut, -8);

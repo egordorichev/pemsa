@@ -3,27 +3,9 @@
 #include <fix16.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <stdio.h>
-
-#ifndef FIXMATH_NO_CTYPE
 #include <ctype.h>
 
-#else
-static inline int isdigit(int c)
-{
-    return c >= '0' && c <= '9';
-}
-
-static inline int isxdigit(int c)
-{
-    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')
-}
-
-static inline int isspace(int c)
-{
-    return c == ' ' || c == '\r' || c == '\n' || c == '\t' || c == '\v' || c == '\f';
-}
-#endif
+#define isbdigit(c) (c == '0' || c == '1')
 
 static const uint32_t scales[8] = {
 	/* 5 decimals is enough for full fix16_t precision */
@@ -102,6 +84,41 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 				fracpart *= 16;
 				char c = *nptr++;
 				fracpart += (c > '9')? (c &~ 0x20) - 'A' + 10: (c - '0');;
+			}
+
+			value += fix16_div(fracpart, scale);
+		}
+	}
+	else if ((nptr[0] == '0') && (( nptr[1] == 'b') || ( nptr[1] == 'B' ) )) {
+		nptr++;
+		nptr++;
+
+		/* Decode the integer part */
+		while (isbdigit(*nptr)) {
+			intpart <<= 1;
+			char c = *nptr++;
+			intpart += (c - '0');
+			count++;
+		}
+
+		/* Check for overflow (nb: count == 0 is OK)*/
+		if (count > 4 || intpart > 32768 || (!negative && intpart > 32767)) {
+			errno = ERANGE;
+			if (endptr) *endptr = (char *) nptr;
+			return negative ? -fix16_overflow : fix16_overflow;
+		}
+
+		value = intpart << 16;
+
+		/* Decode the decimal part */
+		if (*nptr == '.' || *nptr == ',') {
+			nptr++;
+
+			while (isbdigit(*nptr) && scale < 0xFFFF) {
+				scale *= 2;
+				fracpart *= 2;
+				char c = *nptr++;
+				fracpart += (c - '0');
 			}
 
 			value += fix16_div(fracpart, scale);

@@ -6,8 +6,9 @@
 #include <cstring>
 #include <cmath>
 #include <climits>
+#include <iomanip>
 
-static float strtof(const char* ostr, char** endptr, int base) {
+static float strtof(const char* ostr, int base) {
 	char* str = (char*) malloc(strlen(ostr) + 1);
 	strcpy(str, ostr);
 	const char* dot = ".";
@@ -207,30 +208,6 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				}
 
 				output << cc;
-				break;
-			}
-
-			case TOKEN_NUMBER: {
-				const char* number = token.start;
-
-				if (token.length > 2) {
-					if (number[1] == 'x') {
-						output << (double) strtof(number, NULL, 16);
-
-						break;
-					}	else if (number[1] == 'b') {
-						output << (double) strtof(number + 2, NULL, 2);
-						break;
-					}
-				}
-
-				// Make sure the number fits
-				float f = strtof(token.start, NULL);
-
-				double whole;
-				double fraction = (int) (modf(f, &whole) * 10000.0f);
-
-				output << fmin(SHRT_MAX, fmax(SHRT_MIN, whole)) + fmin(SHRT_MAX, fmax(SHRT_MIN, fraction)) / 10000.0f;
 				break;
 			}
 

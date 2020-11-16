@@ -14,9 +14,13 @@
 int pemsa_trace_lua(lua_State* state);
 bool pemsa_optional_bool(lua_State* state, int index, bool defaultValue);
 
-#define pemsa_checknumber(state, n) (fix16_to_float(luaL_optnumber(state, n, 0)))
+#define pemsa_checknumbe_raw(state, n) (luaL_optnumber(state, n, 0))
+#define pemsa_checknumber(state, n) (fix16_to_float(pemsa_checknumbe_raw(state, n)))
 #define pemsa_optnumber(state, n, v) (fix16_to_float(luaL_optnumber(state, n, fix16_from_float(v))))
 #define pemsa_optinteger(state, n, v) ((int) fix16_to_float(luaL_optnumber(state, n, fix16_from_int(v))))
-#define pemsa_pushnumber(state, n) (lua_pushnumber(state, fix16_from_float(n)))
+#define pemsa_pushnumber_raw(state, n) (lua_pushnumber(state, n))
+#define pemsa_pushnumber(state, n) (pemsa_pushnumber_raw(state, fix16_from_float(n)))
+
+
 
 #endif
