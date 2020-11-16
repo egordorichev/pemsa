@@ -9,7 +9,7 @@
 static PemsaEmulator* emulator;
 
 static int rnd(lua_State* state) {
-	pemsa_pushnumber(state, (double) rand() / RAND_MAX * pemsa_optnumber(state, 1, 1));
+	pemsa_pushnumber(state, (float) rand() / RAND_MAX * pemsa_optnumber(state, 1, 1));
 	return 1;
 }
 

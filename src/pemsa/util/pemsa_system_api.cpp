@@ -18,7 +18,9 @@ const char* pemsa_to_string(lua_State* state, int i) {
 	lua_pushvalue(state, i);
 	const char *str = nullptr;
 
-	if (lua_istable(state, -1)) {
+	if (lua_isnil(state, -1)) {
+		str = "nil";
+	} else if (lua_istable(state, -1)) {
 		str = "table";
 	} else if (lua_isfunction(state, -1)) {
 		str = "function";

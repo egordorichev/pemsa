@@ -117,7 +117,7 @@ static int l_hashfloat (lua_Number n) {
 static Node *mainposition (const Table *t, const TValue *key) {
   switch (ttype(key)) {
     case LUA_TNUMINT:
-      return hashint(t, ivalue(key));
+		  return hashint(t, ivalue(key));
     case LUA_TNUMFLT:
       return hashmod(t, l_hashfloat(fltvalue(key)));
     case LUA_TSHRSTR:

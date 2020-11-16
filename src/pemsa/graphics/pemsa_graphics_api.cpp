@@ -586,10 +586,6 @@ static int print(lua_State* state) {
 		return 0;
 	}
 
-	if (lua_isnil(state, 1)) {
-		return 0;
-	}
-
 	const char* text = pemsa_to_string(state, 1);
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
