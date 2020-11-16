@@ -432,7 +432,10 @@ LUALIB_API lua_Integer luaL_checkinteger (lua_State *L, int arg) {
   int isnum;
   lua_Integer d = lua_tointegerx(L, arg, &isnum);
   if (!isnum) {
-    interror(L, arg);
+  	lua_Number nn = lua_tonumberx(L, arg, &isnum);
+  	printf("%f\n", fix16_to_float(nn));
+    return fix16_to_int(nn);
+  	// interror(L, arg);
   }
   return d;
 }

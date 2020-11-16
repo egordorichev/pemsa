@@ -1217,7 +1217,7 @@ void luaV_execute (lua_State *L) {
         TValue *pstep = ra + 2;
         lua_Integer ilimit;
         int stopnow;
-        if (ttisinteger(init) && ttisinteger(pstep) &&
+        if (ttisinteger(plimit) && ttisinteger(init) && ttisinteger(pstep) &&
             forlimit(plimit, &ilimit, ivalue(pstep), &stopnow)) {
           /* all values are integer */
           lua_Integer initv = (stopnow ? 0 : ivalue(init));

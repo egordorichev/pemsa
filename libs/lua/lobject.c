@@ -250,6 +250,12 @@ static const char *l_str2int (const char *s, lua_Integer *result) {
       empty = 0;
     }
   }
+
+  if (*s == '.') {
+  	// Pls parse float
+		return NULL;
+  }
+
   while (lisspace(cast_uchar(*s))) s++;  /* skip trailing spaces */
   if (empty || *s != '\0') return NULL;  /* something wrong in the numeral */
   else {
@@ -264,8 +270,7 @@ size_t luaO_str2num (const char *s, TValue *o) {
   const char *e;
   if ((e = l_str2int(s, &i)) != NULL) {  /* try as an integer */
     setivalue(o, i);
-  }
-  else if ((e = l_str2d(s, &n)) != NULL) {  /* else try as a float */
+  } else if ((e = l_str2d(s, &n)) != NULL) {  /* else try as a float */
     setfltvalue(o, n);
   }
   else
