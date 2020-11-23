@@ -444,7 +444,7 @@ static void plot_sprite(int n, int x, int y, int width, int height, bool flipX, 
 				continue;
 			}
 
-			memoryModule->setPixel((int) x + (flipX ? 8 * width - i : i), (int) y + (flipY ? 8 * height - j : j), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
+			memoryModule->setPixel((int) x + (flipX ? 8 * width - i - 1 : i), (int) y + (flipY ? 8 * height - j - 1 : j), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
 		}
 	}
 }
