@@ -71,51 +71,112 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 #ifndef PEMSA_BLOCK_ADDITIONAL_CODE
 	// Emoji button setup
-	output << "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = -2560.5, 31455.5, 32125.5, 1, 6943.5, 3855.5, 2, -19008.5, 4, -20032.5,0.5, -20128.5, 3, -18402.5, -1632.5, 20927.5, -26208.5, -20192.5, 0, 21845.5, 5, 20767.5, -2624.5, 23130.5, -25792.5, -24351.5\n";
-	output << "sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil\n";
+	output <<R"(
+A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = -2560.5, 31455.5, 32125.5, 1, 6943.5, 3855.5, 2, -19008.5, 4, -20032.5,0.5, -20128.5, 3, -18402.5, -1632.5, 20927.5, -26208.5, -20192.5, 0, 21845.5, 5, 20767.5, -2624.5, 23130.5, -25792.5, -24351.5 
+sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil 
 
-	output << "function foreach(a, f)\n";
-	output << " if not a then return end\n";
-	output << " for _, v in ipairs(a) do f(v) end\n";
-	output << "end\n";
-	output << "function count(a) if not a then return 0 end return #a end\n";
-	output << "function arraylen(t)\n";
-	output << "\tlocal len = 0\n";
-	output << "\tfor i, _ in pairs(t) do\n";
-	output << "\t\tif type(i) == \"number\" then\n";
-	output << "\t\t\tlen = i\n";
-	output << "\t\tend\n";
-	output << "\tend\n";
-	output << "\treturn len\n";
-	output << "end\n";
-	output << "function all(a)\n";
-	output << "\tif a == nil then\n";
-	output << "\t\treturn function() end\n";
-	output << "\tend\n";
-	output << "\tlocal i = 0\n";
-	output << "\tlocal n = arraylen(a)\n";
-	output << "\treturn function()\n";
-	output << "\t\ti = i + 1\n";
-	output << "\t\twhile (a[i] == nil and i <= n) do\n";
-	output << "\t\t\ti = i + 1\n";
-	output << "\t\tend\n";
-	output << "\t\treturn a[i]\n";
-	output << "\tend\n";
-	output << "end\n";
-	output << "function add(a, v)\n";
-	output << "	if a == nil then return end\n";
-	output << "	table.insert(a, v)\n";
-	output << "	return v\n";
-	output << "end\n";
-	output << "function del(a, dv)\n";
-	output << "	if a == nil then return end\n";
-	output << "	for i, v in ipairs(a) do\n";
-	output << "		if v == dv then\n";
-	output << "			table.remove(a, i)\n";
-	output << "		return dv\n";
-	output << "		end\n";
-	output << "	end\n";
-	output << "end\n";
+function foreach(a, f)
+ if not a then return end 
+ for _, v in ipairs(a) do f(v) end 
+end
+function count(a) if not a then return 0 end return #a end 
+function arraylen(t) 
+ local len = 0 
+ for i, _ in pairs(t) do 
+  if type(i) == "number" then 
+   len = i 
+  end 
+ end 
+ return len 
+end 
+function all(a) 
+ if a == nil then 
+  return function() end 
+ end 
+ local i = 0 
+ local n = arraylen(a) 
+ return function() 
+  i = i + 1 
+  while (a[i] == nil and i <= n) do 
+   i = i + 1 
+  end 
+  return a[i] 
+ end 
+end 
+function add(a, v, i)
+	if a == nil then return end 
+	if i then
+		table.insert(a, i, v)
+	else
+		table.insert(a, v)
+	end
+	return v
+end 
+function del(a, dv) 
+	if a == nil then return end 
+	for i, v in ipairs(a) do 
+		if v == dv then 
+			table.remove(a, i) 
+			return dv
+		end 
+	end 
+end
+local __menu_options={"continue","favorite","reset cart"}
+local __current_option=1
+local __menu_on=false
+local __menu_functions={[3]=__reset}
+function __update_menu()
+	if btnp(6) then
+		__menu_on=not __menu_on
+		__set_paused(__menu_on)
+
+		if not __menu_on then
+			if __menu_functions[__current_option] then
+				__menu_functions[__current_option]()
+			end
+			cls()
+		end
+	end
+
+	if not __menu_on then return end
+
+	if btnp(2) then
+		__current_option=__current_option-1
+		if __current_option<1 then
+			__current_option=#__menu_options
+		end
+	end
+
+	if btnp(3) then
+		__current_option=__current_option+1
+		if __current_option>#__menu_options then
+			__current_option=1
+		end
+	end
+
+	local h=10+#__menu_options*8
+	local x=24
+	local y=(128-h)/2
+	rectfill(x,y,x+81,y+h-1,0)
+	rect(x+1,y+1,x+80,y+h-2,7)
+
+	local ax=x+5
+	local ay=y-1+__current_option*8
+
+	for i=0,2 do
+		line(ax+i,ay+i,ax+i,ay+4-i,7)
+	end
+
+	for i=1,#__menu_options do
+		local current=__current_option==i
+		print(__menu_options[i],x+11+(current and 1 or 0),y-1+i*8)
+	end
+end
+
+function menuitem(i,name,fn)
+	if i<1 or i>5 then return end
+end
+)";
 #endif
 
 	while (running) {
@@ -309,7 +370,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				if (start != token.start) {
 					char c = token.start[-1];
 
-					if (c == ' ' || c == '\r' || c == '\n' || c == '\t') {
+					if (c == ' ' || c == '\r' || c == '\n' || c == ' ') {
 						expressionStart = token.start;
 					}
 				}

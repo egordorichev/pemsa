@@ -8,12 +8,6 @@
 
 static PemsaEmulator* emulator;
 
-/*
- * todo:
- * menuitem(index, [label, callback])
- * extcmd(cmd)
- */
-
 const char* pemsa_to_string(lua_State* state, int i) {
 	lua_pushvalue(state, i);
 	const char *str = nullptr;
@@ -78,11 +72,6 @@ static int tostr(lua_State* state) {
 
 	lua_pushstring(state, lua_tostring(state, 1));
 	return 1;
-}
-
-static int menuitem(lua_State* state) {
-	std::cerr << "Warning: menuitem() is not currently implemented\n";
-	return 0;
 }
 
 static int extcmd(lua_State* state) {
@@ -338,7 +327,6 @@ void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "tonum", tonum);
 	lua_register(state, "tostr", tostr);
 
-	lua_register(state, "menuitem", menuitem);
 	lua_register(state, "extcmd", extcmd);
 	lua_register(state, "stop", stop);
 	lua_register(state, "stat", stat);

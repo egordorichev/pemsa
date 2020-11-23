@@ -3,7 +3,7 @@
 #include <cstring>
 
 PemsaMemoryModule::PemsaMemoryModule(PemsaEmulator *emulator) : PemsaModule(emulator) {
-	memset(this->ram, 0, PEMSA_RAM_END);
+	this->reset();
 }
 
 void PemsaMemoryModule::setPixel(int x, int y, int c, int region) {
@@ -21,4 +21,8 @@ uint8_t PemsaMemoryModule::getPixel(int x, int y, int region) {
 	}
 
 	return GET_HALF(ram[(y * 128 + x) / 2 + region], (x & 1) == 0);
+}
+
+void PemsaMemoryModule::reset() {
+	memset(this->ram, 0, PEMSA_RAM_END);
 }

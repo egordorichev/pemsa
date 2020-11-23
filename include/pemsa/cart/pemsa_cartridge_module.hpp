@@ -25,16 +25,26 @@ class PemsaCartridgeModule : public PemsaModule {
 		PemsaCartridge* getCart();
 		std::condition_variable* getLock();
 		std::mutex* getMutex();
+
+		void flip();
+		void setPaused(bool paused);
+		void cleanupCart();
+		void initiateSelfDestruct();
+		void notify();
 	private:
 		PemsaCartridge* cart;
 
 		std::condition_variable lock;
 		std::mutex mutex;
 		std::thread* gameThread;
+		const char* lastLoaded;
+
+		bool waiting;
 		bool threadRunning;
+		bool paused;
+		bool destruct;
 
 		void gameLoop();
-		void cleanupCart();
 
 		void callIfExists(const char* function);
 		bool globalExists(const char* name);

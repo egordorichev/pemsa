@@ -31,7 +31,7 @@ void PemsaGraphicsModule::update(double dt) {
 		std::unique_lock<std::mutex> uniqueLock(*cartridgeModule->getMutex());
 
 		this->backend->flip();
-		cartridgeModule->getLock()->notify_all();
+		cartridgeModule->notify();
 	}
 }
 

@@ -33,7 +33,7 @@ static const char* take_string(std::string str) {
 }
 
 PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator) : PemsaModule(emulator) {
-
+	this->destruct = false;
 }
 
 PemsaCartridgeModule::~PemsaCartridgeModule() {
@@ -41,6 +41,19 @@ PemsaCartridgeModule::~PemsaCartridgeModule() {
 }
 
 void PemsaCartridgeModule::update(double dt) {
+	if (this->destruct) {
+		this->destruct = false;
+		cleanupCart();
+
+		this->emulator->getMemoryModule()->reset();
+		this->emulator->getDrawStateModule()->reset();
+		this->emulator->getInputModule()->getBackend()->reset();
+
+		this->paused = false;
+
+		load(lastLoaded);
+	}
+
 	if (this->cart != nullptr) {
 		this->cart->time += dt;
 	}
@@ -246,6 +259,9 @@ bool PemsaCartridgeModule::load(const char *path) {
 		}
 	}
 
+	this->paused = false;
+	this->lastLoaded = path;
+
 	lua_State* state = luaL_newstate();
 
 	this->cart->state = state;
@@ -316,16 +332,19 @@ void PemsaCartridgeModule::gameLoop() {
 	this->callIfExists("_init");
 
 	while (this->threadRunning) {
-		if (this->cart->highFps) {
-			this->callIfExists("_update60");
-		} else {
-			this->callIfExists("_update");
+		this->callIfExists("__update_menu");
+
+		if (!this->paused) {
+			if (this->cart->highFps) {
+				this->callIfExists("_update60");
+			} else {
+				this->callIfExists("_update");
+			}
+
+			this->callIfExists("_draw");
 		}
 
-		this->callIfExists("_draw");
-
-		std::unique_lock<std::mutex> uniqueLock(this->mutex);
-		this->lock.wait(uniqueLock);
+		this->flip();
 	}
 }
 
@@ -334,14 +353,16 @@ void PemsaCartridgeModule::cleanupCart() {
 		return;
 	}
 
-	lua_close(this->cart->state);
-
 	this->threadRunning = false;
-	this->cart = nullptr;
+	this->lock.notify_all();
+	this->gameThread->join();
+
+	lua_close(this->cart->state);
 
 	delete this->gameThread;
 	delete this->cart->code;
 	delete this->cart->cartDataId;
+	delete this->cart;
 }
 
 void PemsaCartridgeModule::callIfExists(const char *method_name) {
@@ -424,4 +445,23 @@ void PemsaCartridgeModule::saveData() {
 
 void PemsaCartridgeModule::stop() {
 	this->threadRunning = false;
+}
+
+void PemsaCartridgeModule::flip() {
+	this->waiting = true;
+	std::unique_lock<std::mutex> uniqueLock(this->mutex);
+	this->lock.wait(uniqueLock, [this] { return !this->waiting || !this->threadRunning; });
+}
+
+void PemsaCartridgeModule::setPaused(bool paused) {
+	this->paused = paused;
+}
+
+void PemsaCartridgeModule::initiateSelfDestruct() {
+	this->destruct = true;
+}
+
+void PemsaCartridgeModule::notify() {
+	this->waiting = false;
+	this->lock.notify_all();
 }

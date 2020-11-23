@@ -38,11 +38,7 @@ static int read_color(lua_State* state, int slot) {
 }
 
 static int flip(lua_State* state) {
-	PemsaCartridgeModule* cartridgeModule = emulator->getCartridgeModule();
-
-	std::unique_lock<std::mutex> uniqueLock(*cartridgeModule->getMutex());
-	cartridgeModule->getLock()->wait(uniqueLock);
-
+	emulator->getCartridgeModule()->flip();
 	return 0;
 }
 

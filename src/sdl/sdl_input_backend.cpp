@@ -26,14 +26,7 @@ const char* controller_db =
 
 SdlInputBackend::SdlInputBackend() {
 	SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem((void *) controller_db, strlen(controller_db)), 1);
-
-	for (int p = 0; p < PEMSA_PLAYER_COUNT; p++) {
-		for (int i = 0; i < PEMSA_BUTTON_COUNT; i++) {
-			this->state[p][i] = 0;
-		}
-	}
-
-	this->mouseState = 0;
+	this->reset();
 }
 
 SdlInputBackend::~SdlInputBackend() {
@@ -52,6 +45,7 @@ static int scancode_to_button(SDL_Scancode code, int* player) {
 		case SDL_SCANCODE_DOWN: return 3;
 		case SDL_SCANCODE_C: case SDL_SCANCODE_Z: return 4;
 		case SDL_SCANCODE_X: return 5;
+		case SDL_SCANCODE_RETURN: return 6;
 
 		case SDL_SCANCODE_S: *player = 1; return 0;
 		case SDL_SCANCODE_F: *player = 1; return 1;
@@ -274,4 +268,14 @@ const char *SdlInputBackend::readKey() {
 
 bool SdlInputBackend::hasKey() {
 	return this->isDown;
+}
+
+void SdlInputBackend::reset() {
+	for (int p = 0; p < PEMSA_PLAYER_COUNT; p++) {
+		for (int i = 0; i < PEMSA_BUTTON_COUNT; i++) {
+			this->state[p][i] = 0;
+		}
+	}
+
+	this->mouseState = 0;
 }

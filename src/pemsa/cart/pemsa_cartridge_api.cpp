@@ -34,10 +34,22 @@ static int cartdata(lua_State* state) {
 	return 0;
 }
 
+static int set_paused(lua_State* state) {
+	emulator->getCartridgeModule()->setPaused(pemsa_optional_bool(state, 1, false));
+	return 0;
+}
+
+static int reset(lua_State* state) {
+	emulator->getCartridgeModule()->initiateSelfDestruct();
+	return 0;
+}
+
 void pemsa_open_cartridge_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
 	lua_register(state, "dget", dget);
 	lua_register(state, "dset", dset);
 	lua_register(state, "cartdata", cartdata);
+	lua_register(state, "__set_paused", set_paused);
+	lua_register(state, "__reset", reset);
 }

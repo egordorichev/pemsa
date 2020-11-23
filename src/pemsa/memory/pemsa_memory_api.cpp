@@ -67,7 +67,7 @@ static int mset(lua_State* state) {
 }
 
 static int cstore(lua_State* state) {
-	std::cerr << "Warning: menuitem() is not currently implemented\n";
+	std::cerr << "Warning: cstore() is not currently implemented\n";
 	return 0;
 }
 
