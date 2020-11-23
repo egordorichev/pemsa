@@ -272,6 +272,7 @@ typedef unsigned long Instruction;
 #if !defined(luai_numdiv)
 #if LUA_FLOAT_TYPE == LUA_FLOAT_FIX16
 #define luai_numdiv(L,a,b)      (fix16_div(a, b))
+#define luai_numfdiv(L,a,b)      (fix16_fdiv(a, b))
 #else
 #define luai_numdiv(L,a,b)      ((a)/(b))
 #endif

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 /* Subtraction and addition with overflow detection.
  * The versions without overflow detection are inlined in the header.
@@ -289,6 +290,10 @@ static uint8_t clz(uint32_t x)
 	return result;
 }
 #endif
+
+fix16_t fix16_fdiv(fix16_t a, fix16_t b) {
+	return fix16_from_float(floor(fix16_to_float(a) / fix16_to_float(b)));
+}
 
 fix16_t fix16_div(fix16_t a, fix16_t b)
 {

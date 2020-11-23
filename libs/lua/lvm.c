@@ -660,7 +660,7 @@ void luaV_finishOp (lua_State *L) {
   Instruction inst = *(ci->u.l.savedpc - 1);  /* interrupted instruction */
   OpCode op = GET_OPCODE(inst);
   switch (op) {  /* finish its execution */
-    case OP_ADD: case OP_SUB: case OP_MUL: case OP_DIV: case OP_IDIV:
+	  case OP_ADD: case OP_SUB: case OP_MUL: case OP_DIV: case OP_IDIV:
     case OP_BAND: case OP_BOR: case OP_BXOR: case OP_SHL: case OP_SHR:
     case OP_MOD: case OP_POW:
     case OP_UNM: case OP_BNOT: case OP_LEN:
@@ -1006,18 +1006,14 @@ void luaV_execute (lua_State *L) {
         vmbreak;
       }
       vmcase(OP_IDIV) {  /* floor division */
-        TValue *rb = RKB(i);
-        TValue *rc = RKC(i);
-        lua_Number nb; lua_Number nc;
-        if (ttisinteger(rb) && ttisinteger(rc)) {
-          lua_Integer ib = ivalue(rb); lua_Integer ic = ivalue(rc);
-          setivalue(ra, luaV_div(L, ib, ic));
-        }
-        else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
-          setfltvalue(ra, luai_numidiv(L, nb, nc));
-        }
-        else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_IDIV)); }
-        vmbreak;
+	      TValue *rb = RKB(i);
+	      TValue *rc = RKC(i);
+	      lua_Number nb; lua_Number nc;
+	      if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
+		      setfltvalue(ra, luai_numfdiv(L, nb, nc));
+	      }
+	      else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_IDIV)); }
+	      vmbreak;
       }
       vmcase(OP_POW) {
         TValue *rb = RKB(i);

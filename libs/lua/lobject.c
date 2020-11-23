@@ -90,7 +90,7 @@ static lua_Number numarith (lua_State *L, int op, lua_Number v1, lua_Number v2) 
     case LUA_OPMUL: return luai_nummul(L, v1, v2);
     case LUA_OPDIV: return luai_numdiv(L, v1, v2);
     case LUA_OPPOW: return luai_numpow(L, v1, v2);
-    case LUA_OPIDIV: return luai_numidiv(L, v1, v2);
+    case LUA_OPIDIV: return luai_numfdiv(L, v1, v2);
     case LUA_OPUNM: return luai_numunm(L, v1);
 	  case LUA_OPBAND: return numop(fix16_band, v1, v2);
 	  case LUA_OPBOR: return numop(fix16_bor, v1, v2);
@@ -129,11 +129,7 @@ void luaO_arith (lua_State *L, int op, const TValue *p1, const TValue *p2, TValu
     }
     default: {  /* other operations */
       lua_Number n1; lua_Number n2;
-      if (ttisinteger(p1) && ttisinteger(p2)) {
-        setivalue(res, numarith(L, op, ivalue(p1), ivalue(p2)));
-        return;
-      }
-      else if (tonumber(p1, &n1) && tonumber(p2, &n2)) {
+      if (tonumber(p1, &n1) && tonumber(p2, &n2)) {
         setfltvalue(res, numarith(L, op, n1, n2));
         return;
       }

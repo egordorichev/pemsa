@@ -134,15 +134,6 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 		}
 
 		switch (token.type) {
-			case TOKEN_BACKWARDS_SLASH: {
-				int expressionLength = token.start - expressionStart;
-				output.seekp(-expressionLength, output.cur);
-				output << "flr(" << std::string(expressionStart, expressionLength) << "/";
-				outputBrace = 2;
-
-				break;
-			}
-
 			case TOKEN_MODULO_EQUAL:
 			case TOKEN_MINUS_EQUAL:
 			case TOKEN_SLASH_EQUAL:

@@ -124,6 +124,8 @@ extern fix16_t fix16_ssub(fix16_t a, fix16_t b) FIXMATH_FUNC_ATTRS;
 */
 extern fix16_t fix16_mul(fix16_t inArg0, fix16_t inArg1) FIXMATH_FUNC_ATTRS;
 
+extern fix16_t fix16_fdiv(fix16_t inArg0, fix16_t inArg1) FIXMATH_FUNC_ATTRS;
+
 /*! Divides the first given fix16_t by the second and returns the result.
 */
 extern fix16_t fix16_div(fix16_t inArg0, fix16_t inArg1) FIXMATH_FUNC_ATTRS;
