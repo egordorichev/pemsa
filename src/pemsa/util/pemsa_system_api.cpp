@@ -58,37 +58,15 @@ static int pemsa_time(lua_State* state) {
 
 static int tonum(lua_State* state) {
 	const char* ostr = luaL_checkstring(state, 1);
-	int base = 10;
-	int length = strlen(ostr);
+	bool hex = pemsa_optional_bool(state, 2, false);
 
-	if (length > 2) {
-		if (ostr[1] == 'x') {
-			base = 16;
-		} else if (ostr[2] == 'b') {
-			base = 2;
-		}
+	if (hex) {
+		// TODO: implement
+		printf("NOT IMPLEMENTED");
+	} else {
+		char *endptr;
+		pemsa_pushnumber_raw(state, strtofix16(ostr, &endptr));
 	}
-
-	char* str = (char*) malloc(length + 1);
-	strcpy(str, ostr);
-	const char* dot = ".";
-
-	char *beforeDot = strtok(str, dot);
-	char *afterDot = strtok(NULL, dot);
-
-	float f = (float) strtol(beforeDot, 0, base);
-	int sign = (str[0] == '-' ? -1 : 1);
-	char n[2] = { 0 };
-
-	if (afterDot != nullptr) {
-		for (int i = 0; afterDot[i]; i++) {
-			n[0] = afterDot[i];
-			f += strtol(n, 0, base) * pow(base, -(i + 1)) * sign;
-		}
-	}
-
-	free(str);
-	pemsa_pushnumber(state, f);
 
 	return 1;
 }
@@ -105,6 +83,13 @@ static int menuitem(lua_State* state) {
 
 static int extcmd(lua_State* state) {
 	std::cerr << "Warning: extcmd() is not currently implemented\n";
+	return 0;
+}
+
+static int stop(lua_State* state) {
+	emulator->getCartridgeModule()->stop();
+	luaL_error(state, "the cart was stopped");
+
 	return 0;
 }
 
@@ -336,6 +321,7 @@ void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
 
 	lua_register(state, "menuitem", menuitem);
 	lua_register(state, "extcmd", extcmd);
+	lua_register(state, "stop", stop);
 	lua_register(state, "stat", stat);
 	lua_register(state, "pairs", pairs);
 }

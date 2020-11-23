@@ -65,7 +65,8 @@ fix16_t fix16_ssub(fix16_t a, fix16_t b)
  * bottom 16 bits are used for rounding, and upper 16 bits are used for overflow
  * detection.
  */
- 
+
+
 #if !defined(FIXMATH_NO_64BIT) && !defined(FIXMATH_OPTIMIZE_8BIT)
 fix16_t fix16_mul(fix16_t inArg0, fix16_t inArg1)
 {
@@ -480,6 +481,22 @@ fix16_t fix16_mod(fix16_t x, fix16_t y)
 	#endif
 
 	return x;
+}
+
+
+void print_bits(size_t const size, void const * const ptr) {
+	unsigned char *b = (unsigned char*) ptr;
+	unsigned char byte;
+	int i, j;
+
+	for (i = size-1; i >= 0; i--) {
+		for (j = 7; j >= 0; j--) {
+			byte = (b[i] >> j) & 1;
+			printf("%u", byte);
+		}
+	}
+
+	puts("");
 }
 
 fix16_t fix16_shl(fix16_t a, fix16_t b) {

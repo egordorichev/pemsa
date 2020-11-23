@@ -421,3 +421,7 @@ void PemsaCartridgeModule::saveData() {
 
 	file.close();
 }
+
+void PemsaCartridgeModule::stop() {
+	this->threadRunning = false;
+}

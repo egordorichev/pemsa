@@ -20,6 +20,7 @@ class PemsaCartridgeModule : public PemsaModule {
 
 		void loadData(const char* path);
 		void saveData();
+		void stop();
 
 		PemsaCartridge* getCart();
 		std::condition_variable* getLock();

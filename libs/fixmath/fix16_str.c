@@ -52,7 +52,7 @@ size_t fix16_to_str(fix16_t value, char *buf, int decimals) {
     /* Separate the integer and decimal parts of the value */
     unsigned intpart = uvalue >> 16;
     uint32_t fracpart = uvalue & 0xFFFF;
-    uint32_t scale = scales[decimals & 7];
+    uint32_t scale = scales[4];
     fracpart = fix16_mul(fracpart, scale);
     
     if (fracpart >= scale)
@@ -76,8 +76,6 @@ size_t fix16_to_str(fix16_t value, char *buf, int decimals) {
         *buf++ = '.';
         buf = itoa_loop(buf, scale / 10, fracpart, false);
     }
-
-    // phantom .0????
 
   *buf = '\0';
 	return (size_t) buf - start;

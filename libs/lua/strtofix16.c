@@ -69,9 +69,7 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 		/* Check for overflow (nb: count == 0 is OK)*/
 		if (count > 4 || intpart > 32768 || (!negative && intpart > 32767))
 		{
-			errno = ERANGE;
-			if (endptr) *endptr = (char*) nptr;
-			return negative ? -fix16_overflow : fix16_overflow;
+
 		}
 
 		value = intpart << 16;
@@ -106,9 +104,7 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 
 		/* Check for overflow (nb: count == 0 is OK)*/
 		if (count > 4 || intpart > 32768 || (!negative && intpart > 32767)) {
-			errno = ERANGE;
-			if (endptr) *endptr = (char *) nptr;
-			return negative ? -fix16_overflow : fix16_overflow;
+
 		}
 
 		value = intpart << 16;
