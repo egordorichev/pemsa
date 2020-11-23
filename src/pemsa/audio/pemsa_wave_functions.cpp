@@ -15,7 +15,7 @@ double pemsa_sine(double t) {
 }
 
 double pemsa_square(double t) {
-	return (pemsa_sine(t) >= 0 ? 1.0 : -1.0) * 0.7;
+	return (pemsa_sine(t) >= 0 ? 1.0 : -1.0) * 0.5;
 }
 
 double pemsa_pulse(double t) {
@@ -24,7 +24,7 @@ double pemsa_pulse(double t) {
 
 double pemsa_tilted_saw(double t) {
 	t = fmod(t, 1);
-	return (((t < 0.875) ? (t * 16 / 7) : ((1 - t) * 16)) - 1) * 0.7;
+	return (((t < 0.875) ? (t * 16 / 7) : ((1 - t) * 16)) - 1) * 0.9;
 }
 
 double pemsa_saw_tooth(double t) {

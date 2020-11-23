@@ -212,6 +212,7 @@ static const char *l_str2d (const char *s, lua_Number *result) {
     if (endptr != NULL)
       endptr = s + (endptr - buff);  /* make relative to 's' */
   }
+
   return endptr;
 }
 
