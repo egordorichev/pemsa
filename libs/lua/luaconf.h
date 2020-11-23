@@ -494,7 +494,7 @@
 #define lua_numbertointeger(n,p) \
 	(*(p) = (LUA_INTEGER)(fix16_to_int(n)), 1)
 
-#define lua_number2str(s,sz,n) (fix16_to_str(n, (s), sz))
+#define lua_number2str(s,sz,n) (fix16_to_str(n, (s)))
 
 #define LUA_NUMBER	fix16_t
 

@@ -58,20 +58,24 @@ static int pemsa_time(lua_State* state) {
 
 static int tonum(lua_State* state) {
 	const char* ostr = luaL_checkstring(state, 1);
-	bool hex = pemsa_optional_bool(state, 2, false);
+	char *endptr;
 
-	if (hex) {
-		// TODO: implement
-		printf("NOT IMPLEMENTED");
-	} else {
-		char *endptr;
-		pemsa_pushnumber_raw(state, strtofix16(ostr, &endptr));
-	}
+	pemsa_pushnumber_raw(state, strtofix16(ostr, &endptr));
 
 	return 1;
 }
 
 static int tostr(lua_State* state) {
+	if (pemsa_optional_bool(state, 2, false)) {
+		fix16_t num = pemsa_checknumbe_raw(state, 1);
+		char buff[50];
+
+		fix16_to_strx(num, buff);
+		lua_pushstring(state, buff);
+
+		return 1;
+	}
+
 	lua_pushstring(state, lua_tostring(state, 1));
 	return 1;
 }

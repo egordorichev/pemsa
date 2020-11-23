@@ -229,7 +229,8 @@ extern fix16_t fix16_slog2(fix16_t x) FIXMATH_FUNC_ATTRS;
 /*! Convert fix16_t value to a string.
  * Required buffer length for largest values is 13 bytes.
  */
-extern size_t fix16_to_str(fix16_t value, char *buf, int decimals);
+extern size_t fix16_to_str(fix16_t value, char *buf);
+extern size_t fix16_to_strx(fix16_t value, char *buf);
 
 /** Helper macro for F16C. Replace token with its number of characters/digits. */
 #define FIXMATH_TOKLEN(token) ( sizeof( #token ) - 1 )

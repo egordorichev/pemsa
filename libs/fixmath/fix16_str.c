@@ -42,7 +42,7 @@ static char *itoa_loop(char *buf, uint32_t scale, uint32_t value, bool skip)
     return buf;
 }
 
-size_t fix16_to_str(fix16_t value, char *buf, int decimals) {
+size_t fix16_to_str(fix16_t value, char *buf) {
 	size_t start = (size_t) buf;
 
 	uint32_t uvalue = (value >= 0) ? value : -value;
@@ -78,5 +78,29 @@ size_t fix16_to_str(fix16_t value, char *buf, int decimals) {
     }
 
   *buf = '\0';
+	return (size_t) buf - start;
+}
+
+static inline int read_bit(int var, int pos) {
+	return (var & (1 << pos)) != 0;
+}
+
+extern size_t fix16_to_strx(fix16_t value, char *buf) {
+	size_t start = (size_t) buf;
+	*buf++ = '0';
+	*buf++ = 'x';
+
+	for (int i = 0; i < 8; i++) {
+		int bitIndex = (7 - i) * 4;
+		int v = ((read_bit(value, bitIndex + 3) << 3) + (read_bit(value, bitIndex + 2) << 2) + (read_bit(value, bitIndex + 1) << 1) + read_bit(value, bitIndex));
+
+		*buf++ = (v > 9 ? ('a' + (v - 10)) : ('0' + v));
+
+		if (i == 3) {
+			*buf++ = '.';
+		}
+	}
+
+	*buf = '\0';
 	return (size_t) buf - start;
 }
