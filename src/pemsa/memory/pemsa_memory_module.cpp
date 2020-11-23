@@ -17,7 +17,7 @@ void PemsaMemoryModule::setPixel(int x, int y, int c, int region) {
 
 uint8_t PemsaMemoryModule::getPixel(int x, int y, int region) {
 	if (x < 0 || y < 0 || x > 127 || y > 127) {
-		return 0x10;
+		return 0x0;
 	}
 
 	return GET_HALF(ram[(y * 128 + x) / 2 + region], (x & 1) == 0);

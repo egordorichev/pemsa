@@ -122,10 +122,11 @@ static int peek(lua_State* state) {
 static int poke(lua_State* state) {
 	int index = pemsa_checknumber(state, 1);
 
-	if (index >= 0 && index < PEMSA_RAM_END) {
-		emulator->getMemoryModule()->ram[index] = pemsa_checknumber(state, 2);
+	if (index < 0 || index >= PEMSA_RAM_END) {
+		return 0;
 	}
 
+	emulator->getMemoryModule()->ram[index] = pemsa_checknumber(state, 2);
 	return 0;
 }
 

@@ -31,6 +31,24 @@ static float strtof(const char* ostr, int base) {
 	return f;
 }
 
+static PemsaTokenType skippableTokens[] = {
+	TOKEN_AND, TOKEN_OR,
+
+	TOKEN_SHARP,
+	TOKEN_DOT, TOKEN_DOT_DOT, TOKEN_DOT_DOT_DOT,
+	TOKEN_EQUAL_EQUAL,
+
+	TOKEN_MINUS, TOKEN_PLUS, TOKEN_STAR, TOKEN_SLASH,
+	TOKEN_BACKWARDS_SLASH, TOKEN_LESS_EQUAL,
+	TOKEN_GREATER_EQUAL, TOKEN_LESS, TOKEN_GREATER,
+
+	TOKEN_TILDA_EQUAL, TOKEN_MODULO, TOKEN_MODULO_EQUAL,
+	TOKEN_CAP,
+	TOKEN_BAND, TOKEN_BOR,
+
+	TOKEN_EOF
+};
+
 std::string pemsa_emit(PemsaScanner* scanner) {
 	std::stringstream output;
 	PemsaToken token = PemsaToken();
@@ -107,6 +125,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 
 		token = scanner->scan();
 
+		emitToken:
 		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE) {
 			if (outputBrace > 0) {
 				if (outputBrace == 1) {
@@ -246,13 +265,28 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 				checkDo = parenCount == whileParenStart && inWhile;
 
 				output << std::string(token.start, token.length);
+
+				previous = token;
+				token = scanner->scan();
+				PemsaTokenType tt = token.type;
+
+				int i = 0;
+
+				while (skippableTokens[i] != TOKEN_EOF) {
+					if (tt == skippableTokens[i]) {
+						checkThen = false;
+						checkDo = false;
+
+						break;
+					}
+
+					i++;
+				}
+
+				goto emitToken;
 				break;
 			}
 
-			case TOKEN_LEFT_BRACKET:
-			case TOKEN_LEFT_BRACE:
-			case TOKEN_RIGHT_BRACKET:
-			case TOKEN_RIGHT_BRACE:
 			case TOKEN_LEFT_PAREN: {
 				if (token.type == TOKEN_LEFT_PAREN) {
 					parenCount++;

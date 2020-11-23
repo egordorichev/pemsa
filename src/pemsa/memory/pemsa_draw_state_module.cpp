@@ -29,7 +29,7 @@ void PemsaDrawStateModule::reset() {
 }
 
 bool PemsaDrawStateModule::isTransparent(int color) {
-	return (this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE0 + color] & 0x10) != 0;
+	return this->emulator->getMemoryModule()->ram[PEMSA_RAM_PALETTE0 + color] > 15;
 }
 
 void PemsaDrawStateModule::setTransparent(int color, bool transparent) {

@@ -242,3 +242,11 @@ void SdlGraphicsBackend::render() {
 	SDL_RenderPresent(this->renderer);
 	SDL_DestroyTexture(texture);
 }
+
+void SdlGraphicsBackend::setFps(int fps) {
+	this->fps = fps;
+}
+
+int SdlGraphicsBackend::getFps() {
+	return this->fps;
+}

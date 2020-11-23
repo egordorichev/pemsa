@@ -20,6 +20,9 @@ class SdlGraphicsBackend : public PemsaGraphicsBackend {
 
 		void handleEvent(SDL_Event* event);
 		void render();
+
+		void setFps(int fps);
+		int getFps() override;
 	private:
 		SDL_Window* window;
 		SDL_Renderer* renderer;
@@ -28,6 +31,7 @@ class SdlGraphicsBackend : public PemsaGraphicsBackend {
 		float scale;
 		int offsetX;
 		int offsetY;
+		int fps;
 
 		void resize();
 };

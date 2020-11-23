@@ -32,6 +32,8 @@ SdlInputBackend::SdlInputBackend() {
 			this->state[p][i] = 0;
 		}
 	}
+
+	this->mouseState = 0;
 }
 
 SdlInputBackend::~SdlInputBackend() {
@@ -193,7 +195,7 @@ void SdlInputBackend::handleEvent(SDL_Event *event) {
 
 		case SDL_MOUSEBUTTONDOWN: {
 			if (event->button.button < 4) {
-				this->mouseState = SET_BIT(this->mouseState, event->button.button, true);
+				SET_BIT(this->mouseState, event->button.button - 1, true);
 			}
 
 			break;
@@ -201,7 +203,7 @@ void SdlInputBackend::handleEvent(SDL_Event *event) {
 
 		case SDL_MOUSEBUTTONUP: {
 			if (event->button.button < 4) {
-				this->mouseState = SET_BIT(this->mouseState, event->button.button, false);
+				SET_BIT(this->mouseState, event->button.button - 1, false);
 			}
 
 			break;

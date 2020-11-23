@@ -181,10 +181,10 @@ static int rect(lua_State* state) {
 }
 
 static int rectfill(lua_State* state) {
-	int x0 = (pemsa_checknumber(state, 1));
-	int y0 = (pemsa_checknumber(state, 2));
-	int x1 = (pemsa_checknumber(state, 3));
-	int y1 = (pemsa_checknumber(state, 4));
+	int x0 = round(pemsa_checknumber(state, 1));
+	int y0 = round(pemsa_checknumber(state, 2));
+	int x1 = round(pemsa_checknumber(state, 3));
+	int y1 = round(pemsa_checknumber(state, 4));
 
 	if (x0 > x1) {
 		swap(&x0, &x1);

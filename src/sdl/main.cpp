@@ -74,7 +74,7 @@ int main(int argc, const char** argv) {
 		}
 
 		delta = difference / 1000.0;
-		fps = 1000.0 / difference;
+		graphics->setFps(1000.0 / difference);
 
 		start_time = end_time;
 	}

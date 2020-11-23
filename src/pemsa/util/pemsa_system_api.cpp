@@ -120,6 +120,21 @@ static int stat(lua_State* state) {
 			return 1;
 		}
 
+		case 5: {
+			lua_pushstring(state, "0.2.1b");
+			return 1;
+		}
+
+		case 7: {
+			result = emulator->getGraphicsModule()->getBackend()->getFps();
+			break;
+		}
+
+		case 8: {
+			result = emulator->getCartridgeModule()->getCart()->highFps ? 60 : 30;
+			break;
+		}
+
 		case 16:
 		case 17:
 		case 18:
