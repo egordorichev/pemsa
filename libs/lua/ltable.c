@@ -119,7 +119,7 @@ static Node *mainposition (const Table *t, const TValue *key) {
     case LUA_TNUMINT:
 		  return hashint(t, ivalue(key));
     case LUA_TNUMFLT:
-      return hashmod(t, l_hashfloat(fltvalue(key)));
+		  return hashmod(t, l_hashfloat(fltvalue(key)));
     case LUA_TSHRSTR:
       return hashstr(t, tsvalue(key));
     case LUA_TLNGSTR:

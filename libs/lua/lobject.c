@@ -306,6 +306,7 @@ int luaO_utf8esc (char *buff, unsigned long x) {
 */
 void luaO_tostring (lua_State *L, StkId obj) {
   char buff[MAXNUMBER2STR];
+
   size_t len;
   lua_assert(ttisnumber(obj));
   if (ttisinteger(obj))

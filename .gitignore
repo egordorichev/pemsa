@@ -5,4 +5,5 @@ Makefile
 cmake-install*
 *.so
 *.a
-
+.cartdata
+code.lua

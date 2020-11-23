@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <stdio.h>
 
 #define isbdigit(c) (c == '0' || c == '1')
 
@@ -21,12 +22,14 @@ static char *itoa_loop(char *buf, uint32_t scale, uint32_t value, bool skip)
 		if (!skip || digit || scale == 1)
 		{
 			skip = false;
-			*buf++ = '0' + digit;
+			*buf = '0' + digit;
+			buf++;
 			value %= scale;
 		}
 
 		scale /= 10;
 	}
+
 	return buf;
 }
 
@@ -162,42 +165,4 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 
 	if (endptr) *endptr = (char*) nptr;
 	return negative ? -value : value;
-}
-
-size_t fix16tostr(fix16_t value, char *buf) {
-	size_t start = (size_t) buf;
-	uint32_t uvalue = (value >= 0) ? value : -value;
-	if (value < 0)
-		*buf++ = '-';
-
-	/* Separate the integer and decimal parts of the value */
-	unsigned intpart = uvalue >> 16;
-	uint32_t fracpart = uvalue & 0xFFFF;
-	uint32_t scale = scales[7];
-	fracpart = fix16_mul(fracpart, scale);
-
-	if (fracpart >= scale)
-	{
-		/* Handle carry from decimal part */
-		intpart++;
-		fracpart -= scale;
-	}
-
-	/*while (fracpart != 0 && fracpart % 10 == 0) {
-		fracpart /= 10;
-		scale /= 10;
-	}*/
-
-	/* Format integer part */
-	buf = itoa_loop(buf, 10000, intpart, true);
-
-	/* Format decimal part (if any) */
-	if (scale != 1)
-	{
-		*buf++ = '.';
-		buf = itoa_loop(buf, scale / 10, fracpart, false);
-	}
-
-	*buf = '\0';
-	return (size_t) buf - start;
 }

@@ -402,7 +402,7 @@
 ** This macro is not on by default even in compatibility mode,
 ** because this is not really an incompatibility.
 */
-/* #define LUA_COMPAT_FLOATSTRING */
+#define LUA_COMPAT_FLOATSTRING
 
 /* }================================================================== */
 
@@ -492,11 +492,9 @@
 #include "strtofix16.h"
 
 #define lua_numbertointeger(n,p) \
-  ((n) >= (LUA_NUMBER)(LUA_MININTEGER) && \
-   (n) < -(LUA_NUMBER)(LUA_MININTEGER) && \
-      (*(p) = (LUA_INTEGER)(fix16_to_int(n)), 1))
+	(*(p) = (LUA_INTEGER)(fix16_to_int(n)), 1)
 
-#define lua_number2str(s,sz,n) (fix16tostr(n, (s)))
+#define lua_number2str(s,sz,n) (fix16_to_str(n, (s), sz))
 
 #define LUA_NUMBER	fix16_t
 

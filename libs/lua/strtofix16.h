@@ -5,6 +5,5 @@
 #include <stddef.h>
 
 fix16_t strtofix16(const char *nptr, char** endptr);
-size_t fix16tostr(fix16_t value, char *buf);
 
 #endif

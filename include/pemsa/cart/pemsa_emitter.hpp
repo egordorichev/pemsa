@@ -5,7 +5,6 @@
 #include <string>
 
 // #define PEMSA_BLOCK_ADDITIONAL_CODE
-
 std::string pemsa_emit(PemsaScanner* scanner);
 
 #endif
