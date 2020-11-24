@@ -129,8 +129,9 @@ static int mid(lua_State* state) {
 
 void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
+	srand(time(nullptr));
 
-	lua_register(state, "rnd", rnd);
+	lua_register(state, "__rnd", rnd);
 	lua_register(state, "srand", srand);
 	lua_register(state, "abs", abs);
 	lua_register(state, "flr", flr);

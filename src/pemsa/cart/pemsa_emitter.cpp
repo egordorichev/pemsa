@@ -83,7 +83,7 @@ function count(a) if not a then return 0 end return #a end
 function arraylen(t)
  local len = 0 
  for i, _ in pairs(t) do 
-  if type(i) == "number" then 
+  if type(i) == "number" then
    len = i 
   end 
  end 
@@ -191,11 +191,14 @@ function __update_menu()
 		end
 	end
 end
-
 function menuitem(i,name,fn)
 	if i<1 or i>5 then return end
 	__menu_options_custom[i]=name
 	__menu_functions[i]=fn
+end
+function rnd(i)
+	if type(i)=="table" then return i[flr(__rnd(#i))+1] end
+	return __rnd(i)
 end
 )";
 #endif
