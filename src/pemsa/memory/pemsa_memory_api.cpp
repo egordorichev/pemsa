@@ -126,7 +126,7 @@ static int poke(lua_State* state) {
 		return 0;
 	}
 
-	emulator->getMemoryModule()->ram[index] = pemsa_checknumber(state, 2);
+	emulator->getMemoryModule()->ram[index] = (int) pemsa_checknumber(state, 2) & 0xff;
 	return 0;
 }
 

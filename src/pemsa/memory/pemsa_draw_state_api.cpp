@@ -74,13 +74,13 @@ static int clip(lua_State* state) {
 
 	uint8_t* ram = emulator->getMemoryModule()->ram;
 
-	x = clamp(0, 128, x);
-	y = clamp(0, 128, y);
+	int nx = clamp(0, 128, x);
+	int ny = clamp(0, 128, y);
 
-	ram[PEMSA_RAM_CLIP_LEFT] = x;
-	ram[PEMSA_RAM_CLIP_TOP] = y;
-	ram[PEMSA_RAM_CLIP_RIGHT] = clamp(0, 128 - x, x + w);
-	ram[PEMSA_RAM_CLIP_BOTTOM] = clamp(0, 128 - y, y + h);
+	ram[PEMSA_RAM_CLIP_LEFT] = nx;
+	ram[PEMSA_RAM_CLIP_TOP] = ny;
+	ram[PEMSA_RAM_CLIP_RIGHT] = clamp(0, 128, x + w);
+	ram[PEMSA_RAM_CLIP_BOTTOM] = clamp(0, 128, y + h);
 
 	return 0;
 }

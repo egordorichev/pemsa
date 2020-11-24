@@ -102,7 +102,7 @@ static int stat(lua_State* state) {
 		}
 
 		case 1: {
-			result = 42;
+			result = 0.42;
 			break;
 		}
 

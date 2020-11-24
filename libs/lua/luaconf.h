@@ -562,7 +562,7 @@
 
 /* now the variable definitions */
 
-#define LUA_INTEGER		short
+#define LUA_INTEGER		int
 #define LUA_INTEGER_FRMLEN	"h"
 
 #define LUA_MAXINTEGER		SHRT_MAX
