@@ -608,7 +608,6 @@ static int print(lua_State* state) {
 		} else {
 			drawStateModule->setCursorY(y + 6);
 		}
-
 	}
 
 	int index = 0;

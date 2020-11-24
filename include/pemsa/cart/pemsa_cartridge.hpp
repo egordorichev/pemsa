@@ -26,7 +26,7 @@ struct PemsaCartridge {
 	const char* fullPath;
 	const char* cartDataId;
 
-	double time;
+	fix16_t time;
 	bool highFps;
 
 	uint8_t rom[PEMSA_CART_ROM_SIZE];
