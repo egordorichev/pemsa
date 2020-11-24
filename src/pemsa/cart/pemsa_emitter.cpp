@@ -290,7 +290,11 @@ end
 					char c = *str;
 
 					if (c == '\n') {
-						output << "\\n";
+						// \n after [[ and empty line is ignored by lua
+						if (!multiline || i != start) {
+							output << "\\n";
+						}
+
 						continue;
 					}
 
@@ -399,6 +403,18 @@ end
 					}
 				}
 
+				output << std::string(token.start, token.length);
+				break;
+			}
+
+			case TOKEN_DO:
+			case TOKEN_BREAK:
+			case TOKEN_UNTIL:
+			case TOKEN_REPEAT:
+			case TOKEN_ELSE:
+			case TOKEN_ELSE_IF:
+			case TOKEN_THEN: {
+				expressionStart = token.start + token.length;
 				output << std::string(token.start, token.length);
 				break;
 			}

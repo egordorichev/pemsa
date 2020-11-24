@@ -546,7 +546,7 @@
 
 /* The following definitions are good for most cases here */
 
-#define LUA_INTEGER_FMT		"%" LUA_INTEGER_FRMLEN "d"
+#define LUA_INTEGER_FMT		"%" LUA_INTEGER_FRMLEN
 
 #define LUAI_UACINT		LUA_INTEGER
 
@@ -563,7 +563,7 @@
 /* now the variable definitions */
 
 #define LUA_INTEGER		int
-#define LUA_INTEGER_FRMLEN	"h"
+#define LUA_INTEGER_FRMLEN	"i"
 
 #define LUA_MAXINTEGER		SHRT_MAX
 #define LUA_MININTEGER		SHRT_MIN

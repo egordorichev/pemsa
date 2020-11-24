@@ -108,6 +108,8 @@ static int min(lua_State* state) {
 }
 
 static int max(lua_State* state) {
+	double a = pemsa_checknumber(state, 1);
+
 	pemsa_pushnumber(state, fmax(pemsa_checknumber(state, 1), pemsa_checknumber(state, 2)));
 	return 1;
 }

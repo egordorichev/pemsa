@@ -52,7 +52,7 @@ size_t fix16_to_str(fix16_t value, char *buf) {
     /* Separate the integer and decimal parts of the value */
     unsigned intpart = uvalue >> 16;
     uint32_t fracpart = uvalue & 0xFFFF;
-    uint32_t scale = scales[4];
+    uint32_t scale = scales[3];
     fracpart = fix16_mul(fracpart, scale);
     
     if (fracpart >= scale)

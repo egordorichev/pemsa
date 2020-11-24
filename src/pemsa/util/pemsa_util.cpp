@@ -17,3 +17,11 @@ bool pemsa_optional_bool(lua_State* state, int index, bool defaultValue) {
 
 	return defaultValue;
 }
+
+fix16_t pemsa_optional_number(lua_State* state, int n, fix16_t def) {
+	if (lua_isnumber(state, n)) {
+		return lua_tonumber(state, n);
+	}
+
+	return def;
+}
