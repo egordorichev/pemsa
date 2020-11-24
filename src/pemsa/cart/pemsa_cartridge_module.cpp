@@ -41,6 +41,10 @@ PemsaCartridgeModule::~PemsaCartridgeModule() {
 }
 
 void PemsaCartridgeModule::update(double dt) {
+	if (this->cart != nullptr) {
+		this->cart->time += dt;
+	}
+
 	if (this->destruct) {
 		this->destruct = false;
 		cleanupCart();
@@ -132,6 +136,7 @@ bool PemsaCartridgeModule::load(const char *path) {
 			}
 
 			if (cart_state != old_state) {
+
 				index = 0;
 				continue;
 			}
@@ -307,8 +312,8 @@ PemsaCartridge *PemsaCartridgeModule::getCart() {
 }
 
 void PemsaCartridgeModule::gameLoop() {
-	this->cart->time = 0b00000000000000000001000100010001;
 	this->threadRunning = true;
+	this->cart->time = 1 / 30.0;
 
 	lua_State* state = this->cart->state;
 
@@ -325,14 +330,12 @@ void PemsaCartridgeModule::gameLoop() {
 	this->cart->highFps = this->globalExists("_update60");
 
 	if (this->cart->highFps) {
-		this->cart->time = 0b00000000000000000000110011001100;
+		this->cart->time = 1 / 60.0;
 	}
 
 	this->callIfExists("_init");
 
 	while (this->threadRunning) {
-		this->callIfExists("__update_menu");
-
 		if (!this->paused) {
 			if (this->cart->highFps) {
 				this->callIfExists("_update60");
@@ -447,9 +450,7 @@ void PemsaCartridgeModule::stop() {
 }
 
 void PemsaCartridgeModule::flip() {
-	// FIXME: this is half accurate, but 1 bit is off somehow?
-	this->cart->time = fix16_add(this->cart->time, this->cart->highFps ? 0b00000000000000000000010001000100
-	: 0b00000000000000000000100010001000);
+	this->callIfExists("__update_menu");
 
 	this->waiting = true;
 	std::unique_lock<std::mutex> uniqueLock(this->mutex);

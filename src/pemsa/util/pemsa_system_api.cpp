@@ -46,7 +46,7 @@ static int printh(lua_State* state) {
 }
 
 static int pemsa_time(lua_State* state) {
-	pemsa_pushnumber_raw(state, emulator->getCartridgeModule()->getCart()->time);
+	pemsa_pushnumber(state, emulator->getCartridgeModule()->getCart()->time);
 	return 1;
 }
 
