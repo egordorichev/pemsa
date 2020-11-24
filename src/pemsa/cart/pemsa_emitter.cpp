@@ -80,7 +80,7 @@ function foreach(a, f)
  for _, v in ipairs(a) do f(v) end 
 end
 function count(a) if not a then return 0 end return #a end 
-function arraylpemsa_casesen(t)
+function arraylen(t)
  local len = 0 
  for i, _ in pairs(t) do 
   if type(i) == "number" then 
@@ -121,12 +121,23 @@ function del(a, dv)
 		end 
 	end 
 end
-local __menu_options={"continue","favorite","reset cart"}
+local __menu_options_custom={}
 local __current_option=1
 local __menu_on=false
-local __menu_functions={[3]=__reset}
+local __menu_functions={}
 local __favorite=false
 function __update_menu()
+	if not btnp(6) and not __menu_on then return end
+
+	local __menu_options={}
+	for o in all(__menu_options_custom) do
+		add(__menu_options,o)
+	end
+
+	add(__menu_options,"continue",1)
+	add(__menu_options,"favorite")
+	add(__menu_options,"reset cart")
+
 	if btnp(6) then
 		if __current_option==#__menu_options-1 then
 			__favorite=not __favorite
@@ -135,9 +146,9 @@ function __update_menu()
 			__set_paused(__menu_on)
 
 			if not __menu_on then
-				if __menu_functions[__current_option] then
-					__menu_functions[__current_option]()
-				end
+				local fn=__menu_functions[__current_option-1]
+				if __current_option==#__menu_options then fn=__reset end
+				if fn then fn() end
 				cls()
 			end
 		end
@@ -183,6 +194,8 @@ end
 
 function menuitem(i,name,fn)
 	if i<1 or i>5 then return end
+	__menu_options_custom[i]=name
+	__menu_functions[i]=fn
 end
 )";
 #endif
