@@ -1,7 +1,8 @@
 #include "pemsa/pemsa_emulator.hpp"
 #include "pemsa/util/pemsa_font.hpp"
 
-PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *audio, PemsaInputBackend *input) {
+PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *audio, PemsaInputBackend *input, bool* running) {
+	this->running = running;
 	pemsa_setup_font();
 
 	graphics->setEmulator(this);
@@ -56,4 +57,8 @@ void PemsaEmulator::reset() {
 	for (int i = 0; i < PEMSA_MODULE_COUNT; i++) {
 		this->modules[i]->reset();
 	}
+}
+
+void PemsaEmulator::stop() {
+	*this->running = false;
 }

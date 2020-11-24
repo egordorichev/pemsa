@@ -15,7 +15,7 @@
 
 class PemsaEmulator {
 	public:
-		PemsaEmulator(PemsaGraphicsBackend* graphics, PemsaAudioBackend *audio, PemsaInputBackend *input);
+		PemsaEmulator(PemsaGraphicsBackend* graphics, PemsaAudioBackend *audio, PemsaInputBackend *input, bool* running);
 		~PemsaEmulator();
 
 		void update(double dt);
@@ -27,6 +27,8 @@ class PemsaEmulator {
 		PemsaCartridgeModule* getCartridgeModule();
 		PemsaMemoryModule* getMemoryModule();
 		PemsaDrawStateModule* getDrawStateModule();
+
+		void stop();
 	private:
 		PemsaModule* modules[PEMSA_MODULE_COUNT];
 
@@ -36,6 +38,8 @@ class PemsaEmulator {
 		PemsaCartridgeModule* cartridgeModule;
 		PemsaMemoryModule* memoryModule;
 		PemsaDrawStateModule* drawStateModule;
+
+		bool* running;
 };
 
 const char* pemsa_to_string(lua_State* state, int n);

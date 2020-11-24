@@ -86,6 +86,11 @@ static int stop(lua_State* state) {
 	return 0;
 }
 
+static int exit(lua_State* state) {
+	emulator->stop();
+	return 0;
+}
+
 static int stat(lua_State* state) {
 	int id = pemsa_checknumber(state, 1);
 	double result = 0;
@@ -329,6 +334,7 @@ void pemsa_open_system_api(PemsaEmulator* machine, lua_State* state) {
 
 	lua_register(state, "extcmd", extcmd);
 	lua_register(state, "stop", stop);
+	lua_register(state, "exit", exit);
 	lua_register(state, "stat", stat);
 	lua_register(state, "pairs", pairs);
 }

@@ -28,8 +28,9 @@ int main(int argc, const char** argv) {
 
 	SdlGraphicsBackend* graphics = new SdlGraphicsBackend(window);
 	SdlInputBackend* input = new SdlInputBackend();
+	bool running = true;
 
-	PemsaEmulator emulator(graphics, new SdlAudioBackend(), input);
+	PemsaEmulator emulator(graphics, new SdlAudioBackend(), input, &running);
 	SDL_ShowCursor(0);
 
 	if (!emulator.getCartridgeModule()->load(cart)) {
@@ -42,7 +43,6 @@ int main(int argc, const char** argv) {
 	}
 
 	SDL_Event event;
-	bool running = true;
 
 	Uint32 start_time = SDL_GetTicks();
 
