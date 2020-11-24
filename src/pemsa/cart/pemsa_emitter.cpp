@@ -80,7 +80,7 @@ function foreach(a, f)
  for _, v in ipairs(a) do f(v) end 
 end
 function count(a) if not a then return 0 end return #a end 
-function arraylen(t) 
+function arraylpemsa_casesen(t)
  local len = 0 
  for i, _ in pairs(t) do 
   if type(i) == "number" then 
@@ -125,16 +125,21 @@ local __menu_options={"continue","favorite","reset cart"}
 local __current_option=1
 local __menu_on=false
 local __menu_functions={[3]=__reset}
+local __favorite=false
 function __update_menu()
 	if btnp(6) then
-		__menu_on=not __menu_on
-		__set_paused(__menu_on)
+		if __current_option==#__menu_options-1 then
+			__favorite=not __favorite
+		else
+			__menu_on=not __menu_on
+			__set_paused(__menu_on)
 
-		if not __menu_on then
-			if __menu_functions[__current_option] then
-				__menu_functions[__current_option]()
+			if not __menu_on then
+				if __menu_functions[__current_option] then
+					__menu_functions[__current_option]()
+				end
+				cls()
 			end
-			cls()
 		end
 	end
 
@@ -169,7 +174,10 @@ function __update_menu()
 
 	for i=1,#__menu_options do
 		local current=__current_option==i
-		print(__menu_options[i],x+11+(current and 1 or 0),y-1+i*8)
+		print(__menu_options[i],x+11+(__menu_options[i] and 1 or 0),y-1+i*8,7)
+		if i==#__menu_options-1 then
+			print("\017",x+51,y-1+i*8,__favorite and 8 or 13)
+		end
 	end
 end
 

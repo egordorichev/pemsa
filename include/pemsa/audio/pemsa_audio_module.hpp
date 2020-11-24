@@ -25,6 +25,8 @@ class PemsaAudioModule : public PemsaModule {
 
 		int getMusic();
 		int getOffset();
+
+		void reset() override;
 	private:
 		PemsaAudioBackend* backend;
 		PemsaAudioChannel* channels[PEMSA_CHANNEL_COUNT];

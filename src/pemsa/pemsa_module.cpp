@@ -19,3 +19,7 @@ void PemsaModule::update(double dt) {
 void PemsaModule::onCartridgeLoaded() {
 
 }
+
+void PemsaModule::reset() {
+
+}

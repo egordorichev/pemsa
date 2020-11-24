@@ -10,7 +10,7 @@ class PemsaDrawStateModule : public PemsaModule {
 	public:
 		PemsaDrawStateModule(PemsaEmulator* emulator);
 
-		void reset();
+		void reset() override;
 		bool isTransparent(int color);
 		void setTransparent(int color, bool transparent);
 

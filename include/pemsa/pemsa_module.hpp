@@ -12,6 +12,7 @@ class PemsaModule {
 		virtual void init();
 		virtual void update(double dt);
 		virtual void onCartridgeLoaded();
+		virtual void reset();
 	protected:
 		PemsaEmulator* emulator;
 		double time;

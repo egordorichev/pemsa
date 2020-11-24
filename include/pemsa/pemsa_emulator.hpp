@@ -19,6 +19,7 @@ class PemsaEmulator {
 		~PemsaEmulator();
 
 		void update(double dt);
+		void reset();
 
 		PemsaGraphicsModule* getGraphicsModule();
 		PemsaAudioModule* getAudioModule();

@@ -51,3 +51,9 @@ PemsaMemoryModule *PemsaEmulator::getMemoryModule() {
 PemsaDrawStateModule *PemsaEmulator::getDrawStateModule() {
 	return this->drawStateModule;
 }
+
+void PemsaEmulator::reset() {
+	for (int i = 0; i < PEMSA_MODULE_COUNT; i++) {
+		this->modules[i]->reset();
+	}
+}

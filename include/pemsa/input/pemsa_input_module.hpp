@@ -26,6 +26,8 @@ class PemsaInputModule : public PemsaModule {
 
 		void updateInput();
 		PemsaInputBackend* getBackend();
+
+		void reset() override;
 	private:
 		PemsaInputBackend* backend;
 };

@@ -23,3 +23,7 @@ PemsaInputBackend *PemsaInputModule::getBackend() {
 void PemsaInputModule::updateInput() {
 	this->backend->update();
 }
+
+void PemsaInputModule::reset() {
+	this->backend->reset();
+}

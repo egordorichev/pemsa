@@ -9,11 +9,12 @@ PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* b
 	}
 
 	this->backend->setEmulator(emulator);
-	this->backend->setupBuffer();
 
 	this->time = 0;
 	this->musicOffset = 0;
 	this->currentMusic = -1;
+
+	this->backend->setupBuffer();
 }
 
 PemsaAudioModule::~PemsaAudioModule() {
@@ -168,4 +169,10 @@ int PemsaAudioModule::getMusic() {
 
 int PemsaAudioModule::getOffset() {
 	return this->musicOffset;
+}
+
+void PemsaAudioModule::reset() {
+	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+		this->channels[i]->stop();
+	}
 }

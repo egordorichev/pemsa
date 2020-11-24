@@ -45,10 +45,7 @@ void PemsaCartridgeModule::update(double dt) {
 		this->destruct = false;
 		cleanupCart();
 
-		this->emulator->getMemoryModule()->reset();
-		this->emulator->getDrawStateModule()->reset();
-		this->emulator->getInputModule()->getBackend()->reset();
-
+		this->emulator->reset();
 		this->paused = false;
 
 		load(lastLoaded);
