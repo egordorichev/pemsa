@@ -1,10 +1,7 @@
 #include "fix16.h"
 #include <stdbool.h>
 #ifndef FIXMATH_NO_CTYPE
-#include <ctype.h>
-#include <glob.h>
 #include <memory.h>
-#include <stdio.h>
 
 #else
 static inline int isdigit(int c)

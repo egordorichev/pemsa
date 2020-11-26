@@ -23,7 +23,6 @@ class PemsaCartridgeModule : public PemsaModule {
 		void stop();
 
 		PemsaCartridge* getCart();
-		std::condition_variable* getLock();
 		std::mutex* getMutex();
 
 		void flip();

@@ -299,10 +299,6 @@ bool PemsaCartridgeModule::load(const char *path) {
 	return true;
 }
 
-std::condition_variable *PemsaCartridgeModule::getLock() {
-	return &this->lock;
-}
-
 std::mutex *PemsaCartridgeModule::getMutex() {
 	return &this->mutex;
 }

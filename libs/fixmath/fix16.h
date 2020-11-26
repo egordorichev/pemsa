@@ -1,9 +1,9 @@
 #ifndef __libfixmath_fix16_h__
 #define __libfixmath_fix16_h__
 
-// #define FIXMATH_NO_OVERFLOW
+#include <stdlib.h>
 
-#include <glob.h>
+// #define FIXMATH_NO_OVERFLOW
 
 #ifdef __cplusplus
 extern "C"

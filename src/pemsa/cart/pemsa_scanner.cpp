@@ -281,22 +281,35 @@ PemsaToken PemsaScanner::skipWhitespace() {
 
 			case '-':
 			case '/': {
+				bool legit = c == '-';
+
 				if (this->peekNext() == c) {
 					this->advance();
 					this->advance();
 
-					bool multiline = c == '-' && this->peek() == '[' && this->peekNext() == '[';
+					bool multiline = legit && this->peek() == '[' && this->peekNext() == '[';
 
 					if (multiline) {
+						int count = 1;
+
 						this->advance();
 						this->advance();
 
-						while (!(this->peek() == ']' && this->peekNext() == ']') && !this->isAtEnd()) {
-							this->advance();
+						while (count > 0 && !this->isAtEnd()) {
+							if (this->peek() == '[' && this->peekNext() == '[') {
+								count++;
+
+								this->advance();
+								this->advance();
+							} else if (this->peek() == ']' && this->peekNext() == ']') {
+								count--;
+
+								this->advance();
+								this->advance();
+							} else {
+								this->advance();
+							}
 						}
-
-						this->advance();
-						this->advance();
 					} else {
 						while (this->peek() != '\n' && !this->isAtEnd()) {
 							this->advance();
