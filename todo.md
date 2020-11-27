@@ -5,7 +5,7 @@
 * PEEK2(A)   %A
 * PEEK4(A)   $A
 * poke4 poke2
-* ord()
-* chr()
 
 -- shaking char in danktombs when hitting a wall
+-- danktombs text in menu is offset wrongly
+-- one room dungeon extra map rendered

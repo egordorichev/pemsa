@@ -137,6 +137,26 @@ static int mid(lua_State* state) {
 	return 1;
 }
 
+static int ord(lua_State* state) {
+	if (lua_gettop(state) == 0) {
+		return 0;
+	}
+
+	if (lua_isstring(state, 1) || lua_isnumber(state, 1)) {
+		pemsa_pushnumber(state, (int) *lua_tostring(state, 1));
+		return 1;
+	}
+
+	return 0;
+}
+
+static int chr(lua_State* state) {
+	char str = (char) pemsa_checknumber(state, 1);
+	lua_pushstring(state, &str);
+
+	return 1;
+}
+
 void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 	srand(time(nullptr));
@@ -162,4 +182,7 @@ void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "min", min);
 	lua_register(state, "max", max);
 	lua_register(state, "mid", mid);
+
+	lua_register(state, "ord", ord);
+	lua_register(state, "chr", chr);
 }
