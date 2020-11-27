@@ -1,5 +1,7 @@
 #include "pemsa/pemsa_emulator.hpp"
+
 #include <cmath>
+#include <string.h>
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
@@ -143,8 +145,15 @@ static int ord(lua_State* state) {
 	}
 
 	if (lua_isstring(state, 1) || lua_isnumber(state, 1)) {
-		pemsa_pushnumber(state, (int) *lua_tostring(state, 1));
-		return 1;
+		int index = pemsa_optnumber(state, 2, 1) - 1;
+		const char* str = lua_tostring(state, 1);
+
+		if (index < 0 || index >= strlen(str)) {
+			return 0;
+		} else {
+			pemsa_pushnumber(state, (int) *(str + index));
+			return 1;
+		}
 	}
 
 	return 0;

@@ -73,7 +73,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	// Emoji button setup
 	output <<R"(
 A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = -2560.5, 31455.5, 32125.5, 1, 6943.5, 3855.5, 2, -19008.5, 4, -20032.5,0.5, -20128.5, 3, -18402.5, -1632.5, 20927.5, -26208.5, -20192.5, 0, 21845.5, 5, 20767.5, -2624.5, 23130.5, -25792.5, -24351.5 
-sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil 
+sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil
 
 function foreach(a, f)
  if not a then return end 
@@ -111,15 +111,18 @@ function add(a, v, i)
 		table.insert(a, v)
 	end
 	return v
-end 
-function del(a, dv) 
-	if a == nil then return end 
-	for i, v in ipairs(a) do 
-		if v == dv then 
-			table.remove(a, i) 
+end
+function del(a, dv)
+	if a == nil then return end
+	for i, v in ipairs(a) do
+		if v == dv then
+			table.remove(a, i)
 			return dv
-		end 
-	end 
+		end
+	end
+end
+function deli(a, i)
+	if a ~= nil then table.remove(a, i) end
 end
 local __menu_options_custom={}
 local __current_option=1
