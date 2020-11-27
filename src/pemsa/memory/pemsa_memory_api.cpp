@@ -119,14 +119,57 @@ static int peek(lua_State* state) {
 	return 1;
 }
 
+static int peek2(lua_State* state) {
+	int index = pemsa_checknumber(state, 1);
+
+	if (index >= 0 && index < PEMSA_RAM_END) {
+		pemsa_pushnumber(state, *((uint16_t*) (emulator->getMemoryModule()->ram + index)));
+	} else {
+		pemsa_pushnumber(state, 0);
+	}
+
+	return 1;
+}
+
+static int peek4(lua_State* state) {
+	int index = pemsa_checknumber(state, 1);
+
+	if (index >= 0 && index < PEMSA_RAM_END) {
+		pemsa_pushnumber(state, *((uint16_t*) (emulator->getMemoryModule()->ram + index)));
+	} else {
+		pemsa_pushnumber(state, 0);
+	}
+
+	return 1;
+}
+
 static int poke(lua_State* state) {
 	int index = pemsa_checknumber(state, 1);
 
-	if (index < 0 || index >= PEMSA_RAM_END) {
-		return 0;
+	if (index >= 0 && index < PEMSA_RAM_END) {
+		emulator->getMemoryModule()->ram[index] = (int) pemsa_checknumber(state, 2) & 0xff;
 	}
 
-	emulator->getMemoryModule()->ram[index] = (int) pemsa_checknumber(state, 2) & 0xff;
+	return 0;
+}
+
+static int poke2(lua_State* state) {
+	int index = pemsa_checknumber(state, 1);
+
+	if (index >= 0 && index < PEMSA_RAM_END) {
+		*((uint16_t*) (emulator->getMemoryModule()->ram + index)) = (int) pemsa_checknumber(state, 2) & 0xffff;
+	}
+
+	return 0;
+}
+
+static int poke4(lua_State* state) {
+	int index = pemsa_checknumber(state, 1);
+
+	if (index >= 0 && index < PEMSA_RAM_END) {
+		*((uint32_t*) (emulator->getMemoryModule()->ram + index)) = (int) pemsa_checknumber(state, 2) & 0xffffff;
+	}
+
 	return 0;
 }
 
@@ -168,7 +211,13 @@ void pemsa_open_memory_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "cstore", cstore);
 	lua_register(state, "memcpy", memcpy);
 	lua_register(state, "memset", memset);
+
 	lua_register(state, "peek", peek);
+	lua_register(state, "peek2", peek2);
+	lua_register(state, "peek4", peek4);
 	lua_register(state, "poke", poke);
+	lua_register(state, "poke2", poke2);
+	lua_register(state, "poke4", poke4);
+
 	lua_register(state, "reload", reload);
 }
