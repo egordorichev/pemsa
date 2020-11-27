@@ -64,7 +64,7 @@ double PemsaAudioModule::sample() {
 		result += this->channels[i]->sample();
 	}
 
-	return result / PEMSA_CHANNEL_COUNT * 0.5;
+	return result / PEMSA_CHANNEL_COUNT * 0.8;
 }
 
 void PemsaAudioModule::playSfx(int sfx, int ch) {

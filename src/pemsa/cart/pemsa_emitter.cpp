@@ -419,6 +419,27 @@ end
 				break;
 			}
 
+			case TOKEN_MODULO: {
+				PemsaTokenType t = previous.type;
+				if (t == TOKEN_NUMBER || t == TOKEN_IDENTIFIER) {
+					output << "%";
+				} else {
+					output << "peek2";
+				}
+
+				break;
+			}
+
+			case TOKEN_DOG: {
+				output << "peek";
+				break;
+			}
+
+			case TOKEN_DOLLAR: {
+				output << "peek4";
+				break;
+			}
+
 			default: {
 				output << std::string(token.start, token.length);
 				break;

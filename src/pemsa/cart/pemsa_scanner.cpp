@@ -80,6 +80,8 @@ PemsaToken PemsaScanner::scan() {
 	}
 
 	switch (c) {
+		case '@': return this->makeToken(TOKEN_DOG);
+		case '$': return this->makeToken(TOKEN_DOLLAR);
 		case '^': return this->makeToken(TOKEN_CAP);
 		case '&': return this->makeToken(TOKEN_BAND);
 		case '|': return this->makeToken(TOKEN_BOR);
