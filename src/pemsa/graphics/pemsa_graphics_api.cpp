@@ -59,8 +59,8 @@ static int cls(lua_State* state) {
 }
 
 static int pset(lua_State* state) {
-	int x = round(pemsa_checknumber(state, 1));
-	int y = round(pemsa_checknumber(state, 2));
+	int x = floor(pemsa_checknumber(state, 1));
+	int y = floor(pemsa_checknumber(state, 2));
 	int c = read_color(state, 3);
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
@@ -74,8 +74,8 @@ static int pset(lua_State* state) {
 }
 
 static int pget(lua_State* state) {
-	int x = round(pemsa_checknumber(state, 1));
-	int y = round(pemsa_checknumber(state, 2));
+	int x = floor(pemsa_checknumber(state, 1));
+	int y = floor(pemsa_checknumber(state, 2));
 
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 	pemsa_pushnumber(state, emulator->getMemoryModule()->getPixel(x - drawStateModule->getCameraX(), y - drawStateModule->getCameraY(), PEMSA_RAM_SCREEN));
@@ -84,8 +84,8 @@ static int pget(lua_State* state) {
 }
 
 static int sset(lua_State* state) {
-	int x = round(pemsa_checknumber(state, 1));
-	int y = round(pemsa_checknumber(state, 2));
+	int x = floor(pemsa_checknumber(state, 1));
+	int y = floor(pemsa_checknumber(state, 2));
 
 	if (!(x < 0 || y < 0 || x > 127 || y > 127)) {
 		int c = read_color(state, 3);
@@ -96,8 +96,8 @@ static int sset(lua_State* state) {
 }
 
 static int sget(lua_State* state) {
-	int x = round(pemsa_checknumber(state, 1));
-	int y = round(pemsa_checknumber(state, 2));
+	int x = floor(pemsa_checknumber(state, 1));
+	int y = floor(pemsa_checknumber(state, 2));
 
 	pemsa_pushnumber(state, emulator->getMemoryModule()->getPixel(x, y, PEMSA_RAM_GFX));
 	return 1;
@@ -153,10 +153,10 @@ static void plot_line(int x0, int y0, int x1, int y1, int c) {
 }
 
 static int line(lua_State* state) {
-	int x0 = round(pemsa_checknumber(state, 1));
-	int y0 = round(pemsa_checknumber(state, 2));
-	int x1 = round(pemsa_checknumber(state, 3));
-	int y1 = round(pemsa_checknumber(state, 4));
+	int x0 = floor(pemsa_checknumber(state, 1));
+	int y0 = floor(pemsa_checknumber(state, 2));
+	int x1 = floor(pemsa_checknumber(state, 3));
+	int y1 = floor(pemsa_checknumber(state, 4));
 
 	int c =  read_color(state, 5);
 	plot_line(x0, y0, x1, y1, c);
@@ -165,10 +165,10 @@ static int line(lua_State* state) {
 }
 
 static int rect(lua_State* state) {
-	int x0 = round(pemsa_checknumber(state, 1));
-	int y0 = round(pemsa_checknumber(state, 2));
-	int x1 = round(pemsa_checknumber(state, 3));
-	int y1 = round(pemsa_checknumber(state, 4));
+	int x0 = floor(pemsa_checknumber(state, 1));
+	int y0 = floor(pemsa_checknumber(state, 2));
+	int x1 = floor(pemsa_checknumber(state, 3));
+	int y1 = floor(pemsa_checknumber(state, 4));
 
 	int c = read_color(state, 5);
 
@@ -181,10 +181,10 @@ static int rect(lua_State* state) {
 }
 
 static int rectfill(lua_State* state) {
-	int x0 = round(pemsa_checknumber(state, 1));
-	int y0 = round(pemsa_checknumber(state, 2));
-	int x1 = round(pemsa_checknumber(state, 3));
-	int y1 = round(pemsa_checknumber(state, 4));
+	int x0 = floor(pemsa_checknumber(state, 1));
+	int y0 = floor(pemsa_checknumber(state, 2));
+	int x1 = floor(pemsa_checknumber(state, 3));
+	int y1 = floor(pemsa_checknumber(state, 4));
 
 	if (x0 > x1) {
 		swap(&x0, &x1);
@@ -216,10 +216,10 @@ static int rectfill(lua_State* state) {
 }
 
 static int oval(lua_State* state) {
-	int x0 = round(pemsa_checknumber(state, 1));
-	int y0 = round(pemsa_checknumber(state, 2));
-	int x1 = round(pemsa_checknumber(state, 3));
-	int y1 = round(pemsa_checknumber(state, 4));
+	int x0 = floor(pemsa_checknumber(state, 1));
+	int y0 = floor(pemsa_checknumber(state, 2));
+	int x1 = floor(pemsa_checknumber(state, 3));
+	int y1 = floor(pemsa_checknumber(state, 4));
 	int c = read_color(state, 5);
 
 	int width = abs(round((x0 - x1) / 2));
@@ -278,10 +278,10 @@ static int oval(lua_State* state) {
 }
 
 static int ovalfill(lua_State* state) {
-	float x0 = pemsa_checknumber(state, 1);
-	float y0 = pemsa_checknumber(state, 2);
-	float x1 = pemsa_checknumber(state, 3);
-	float y1 = pemsa_checknumber(state, 4);
+	float x0 = floor(pemsa_checknumber(state, 1));
+	float y0 = floor(pemsa_checknumber(state, 2));
+	float x1 = floor(pemsa_checknumber(state, 3));
+	float y1 = floor(pemsa_checknumber(state, 4));
 	int c = read_color(state, 5);
 
 	int width = abs(round((x0 - x1) / 2));
@@ -329,9 +329,9 @@ static int ovalfill(lua_State* state) {
 }
 
 static int circ(lua_State* state) {
-	int ox = round(pemsa_checknumber(state, 1));
-	int oy = round(pemsa_checknumber(state, 2));
-	int r = round(pemsa_optnumber(state, 3, 1));
+	int ox = floor(pemsa_checknumber(state, 1));
+	int oy = floor(pemsa_checknumber(state, 2));
+	int r = floor(pemsa_optnumber(state, 3, 1));
 
 	int c = read_color(state, 4);
 
@@ -391,9 +391,9 @@ static inline void plot(int cx, int cy, int x, int y, int c) {
 }
 
 static int circfill(lua_State* state) {
-	int ox = round(pemsa_checknumber(state, 1));
-	int oy = round(pemsa_checknumber(state, 2));
-	int r = round(pemsa_optnumber(state, 3, 1));
+	int ox = floor(pemsa_checknumber(state, 1));
+	int oy = floor(pemsa_checknumber(state, 2));
+	int r = floor(pemsa_optnumber(state, 3, 1));
 
 	int c = read_color(state, 4);
 
@@ -456,8 +456,8 @@ static int spr(lua_State* state) {
 		return 0;
 	}
 
-	int x = round(pemsa_optnumber(state, 2, 0));
-	int y = round(pemsa_optnumber(state, 3, 0));
+	int x = floor(pemsa_optnumber(state, 2, 0));
+	int y = floor(pemsa_optnumber(state, 3, 0));
 	int width = pemsa_optnumber(state, 4, 1);
 	int height = pemsa_optnumber(state, 5, 1);
 
@@ -597,8 +597,8 @@ static int print(lua_State* state) {
 	bool givenCoords = lua_gettop(state) > 1;
 
 	if (givenCoords) {
-		x = round(pemsa_checknumber(state, 2)) - drawStateModule->getCameraX();
-		y = round(pemsa_checknumber(state, 3)) - drawStateModule->getCameraY();
+		x = floor(pemsa_checknumber(state, 2)) - drawStateModule->getCameraX();
+		y = floor(pemsa_checknumber(state, 3)) - drawStateModule->getCameraY();
 		c = read_color(state, 4);
 	} else {
 		x = drawStateModule->getCursorX();
@@ -666,10 +666,10 @@ static int print(lua_State* state) {
 }
 
 static int tline(lua_State* state) {
-	int x0 = round(pemsa_checknumber(state, 1));
-	int y0 = round(pemsa_checknumber(state, 2));
-	int x1 = round(pemsa_checknumber(state, 3));
-	int y1 = round(pemsa_checknumber(state, 4));
+	int x0 = floor(pemsa_checknumber(state, 1));
+	int y0 = floor(pemsa_checknumber(state, 2));
+	int x1 = floor(pemsa_checknumber(state, 3));
+	int y1 = floor(pemsa_checknumber(state, 4));
 
 	float mx = pemsa_optnumber(state, 5, 0);
 	float my = pemsa_optnumber(state, 6, 0);
