@@ -121,7 +121,6 @@ typedef unsigned int Instruction;
 #define luai_numfdiv(L,a,b)      (fix16_fdiv(a, b))
 
 #define luai_nummod(L,a,b,m) { (m) = l_mathop(fmod)(a,b); if ((luai_nummul(L,m,b)) < 0) (m) += (b); }
-
 #define luai_numpow(L,a,b)      ((void)L, l_mathop(pow)(a,b))
 
 #define luai_numadd(L,a,b)      (fix16_add(a, b))

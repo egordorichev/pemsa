@@ -33,9 +33,7 @@ static char *itoa_loop(char *buf, uint32_t scale, uint32_t value, bool skip)
 	return buf;
 }
 
-
-fix16_t strtofix16(const char *nptr, char** endptr)
-{
+fix16_t strtofix16(const char *nptr, char** endptr) {
 	while (isspace(*nptr))
 		nptr++;
 
@@ -73,7 +71,7 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 		{
 			nptr++;
 
-			while (isxdigit(*nptr) && scale < 0xFFFF)
+			while (isxdigit(*nptr))
 			{
 				scale *= 16;
 				fracpart *= 16;
@@ -83,8 +81,7 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 
 			value += fix16_div(fracpart, scale);
 		}
-	}
-	else if ((nptr[0] == '0') && (( nptr[1] == 'b') || ( nptr[1] == 'B' ) )) {
+	} else if ((nptr[0] == '0') && (( nptr[1] == 'b') || ( nptr[1] == 'B' ) )) {
 		nptr++;
 		nptr++;
 
@@ -102,7 +99,7 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 		if (*nptr == '.' || *nptr == ',') {
 			nptr++;
 
-			while (isbdigit(*nptr) && scale < 0xFFFF) {
+			while (isbdigit(*nptr)) {
 				scale *= 2;
 				fracpart *= 2;
 				char c = *nptr++;
@@ -111,12 +108,9 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 
 			value += fix16_div(fracpart, scale);
 		}
-	}
-	else
-	{
+	} else {
 		/* Decode the integer part */
-		while (isdigit(*nptr))
-		{
+		while (isdigit(*nptr)) {
 			intpart *= 10;
 			intpart += *nptr++ - '0';
 			count++;
@@ -125,12 +119,10 @@ fix16_t strtofix16(const char *nptr, char** endptr)
 		value = intpart << 16;
 
 		/* Decode the decimal part */
-		if (*nptr == '.' || *nptr == ',')
-		{
+		if (*nptr == '.' || *nptr == ',') {
 			nptr++;
 
-			while (isdigit(*nptr) && scale < 100000)
-			{
+			while (isdigit(*nptr)) {
 				scale *= 10;
 				fracpart *= 10;
 				fracpart += *nptr++ - '0';

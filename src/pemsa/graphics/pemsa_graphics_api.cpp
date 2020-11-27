@@ -27,11 +27,15 @@ static PemsaEmulator* emulator;
 static int read_color(lua_State* state, int slot) {
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
-	if (lua_gettop(state) >= slot && lua_isnumber(state, slot)) {
-		int color = fix16_to_int(lua_tonumber(state, slot));
-		drawStateModule->setColor(color);
+	if (lua_gettop(state) >= slot) {
+		if (lua_isnumber(state, slot)) {
+			int color = fix16_to_int(lua_tonumber(state, slot));
+			drawStateModule->setColor(color);
 
-		return color;
+			return color;
+		}
+
+		return 0;
 	}
 
 	return drawStateModule->getColor();
@@ -522,7 +526,7 @@ static int sspr(lua_State* state) {
 			int color = memoryModule->getPixel(x, y, PEMSA_RAM_GFX) & 0x0f;
 
 			if (!drawStateModule->isTransparent(color)) {
-				memoryModule->setPixel((int) (flipX ? dx + dw - 1 - (screenX - dx) : screenX), (int) (flipY ? dy + dh - 1 - (screenY - dy) : screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
+				memoryModule->setPixel((int) (flipX ? (dx + dw - 1 - (screenX - dx)) : screenX), (int) (flipY ? (dy + dh - 1 - (screenY - dy)) : screenY), drawStateModule->getDrawColor(color), PEMSA_RAM_SCREEN);
 			}
 
 			y += ratioY;

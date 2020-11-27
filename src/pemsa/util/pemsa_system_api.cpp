@@ -61,7 +61,7 @@ static int tonum(lua_State* state) {
 
 static int tostr(lua_State* state) {
 	if (pemsa_optional_bool(state, 2, false)) {
-		fix16_t num = pemsa_checknumbe_raw(state, 1);
+		fix16_t num = pemsa_checknumber_raw(state, 1);
 		char buff[50];
 
 		fix16_to_strx(num, buff);

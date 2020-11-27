@@ -47,11 +47,19 @@ static int atan2(lua_State* state) {
 }
 
 static fix16_t check_number_or_bool(lua_State* state, int n) {
-	if (lua_isboolean(state, n)) {
-		return fix16_from_int(lua_toboolean(state, n));
+	if (lua_gettop(state) >= n) {
+		if (lua_isboolean(state, n)) {
+			return fix16_from_int(lua_toboolean(state, n));
+		}
+
+		if (lua_isnil(state, n)) {
+			return fix16_from_int(0);
+		}
+
+		return pemsa_checknumber_raw(state, n);
 	}
 
-	return pemsa_checknumbe_raw(state, n);
+	return n;
 }
 
 static int band(lua_State* state) {
@@ -98,7 +106,7 @@ static int sin(lua_State* state) {
 }
 
 static int sqrt(lua_State* state) {
-	pemsa_pushnumber(state, sqrt(pemsa_checknumber(state, 1)));
+	pemsa_pushnumber_raw(state, fix16_sqrt(pemsa_checknumber_raw(state, 1)));
 	return 1;
 }
 

@@ -95,7 +95,7 @@
 #define LUA_INTEGER_FMT		"%" LUA_INTEGER_FRMLEN
 #define LUAI_UACINT		LUA_INTEGER
 #define LUA_UNSIGNED		unsigned LUAI_UACINT
-#define LUA_INTEGER		int
+#define LUA_INTEGER		short
 #define LUA_INTEGER_FRMLEN	"i"
 
 #define LUA_MAXINTEGER		SHRT_MAX
@@ -107,7 +107,7 @@
 #define fix16_fabs 			fix16_abs
 #define fix16_fmod 			fix16_mod
 #define fix16_log10(x)  (fix16_div(fix16_log(x), fix16_log(10)))
-#define fix16_pow(x, y)	(fix16_exp(fix16_mul(y, fix16_log(x))))
+#define fix16_pow(x, y)	(fix16_from_float(powf(fix16_to_float(x), fix16_to_float(y))))
 #define fix16_frexp(x, i) ((*i) = x >> 16)
 #define lua_str2number(s,p)	(strtofix16(s, (p)))
 #define l_floor(x)		(fix16_floor(x))

@@ -9,8 +9,11 @@
  * Not sure if someone relies on this behaviour, but not going
  * to break it for now. It doesn't slow the code much overall.
  */
-fix16_t fix16_sqrt(fix16_t inValue)
-{
+fix16_t fix16_sqrt(fix16_t inValue) {
+	if (fix16_to_float(inValue) < 0) {
+		return 0;
+	}
+
 	uint8_t  neg = (inValue < 0);
 	uint32_t num = (neg ? -inValue : inValue);
 	uint32_t result = 0;

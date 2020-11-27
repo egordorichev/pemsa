@@ -2,8 +2,8 @@
 #define __libfixmath_fix16_h__
 
 #include <stdlib.h>
-
-// #define FIXMATH_NO_OVERFLOW
+#define FIXMATH_NO_OVERFLOW
+#define FIXMATH_NO_ROUNDING
 
 #ifdef __cplusplus
 extern "C"

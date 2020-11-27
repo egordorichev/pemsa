@@ -11,11 +11,19 @@ int pemsa_trace_lua(lua_State* state) {
 }
 
 bool pemsa_optional_bool(lua_State* state, int index, bool defaultValue) {
+	if (lua_gettop(state) < index) {
+		return defaultValue;
+	}
+
 	if (lua_isboolean(state, index)) {
 		return lua_toboolean(state, index);
 	}
 
-	return defaultValue;
+	if (lua_isnil(state, index)) {
+		return false;
+	}
+
+	return true;
 }
 
 fix16_t pemsa_optional_number(lua_State* state, int n, fix16_t def) {

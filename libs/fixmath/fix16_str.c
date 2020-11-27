@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #ifndef FIXMATH_NO_CTYPE
 #include <memory.h>
+#include <stdio.h>
 
 #else
 static inline int isdigit(int c)
@@ -49,7 +50,7 @@ size_t fix16_to_str(fix16_t value, char *buf) {
     /* Separate the integer and decimal parts of the value */
     unsigned intpart = uvalue >> 16;
     uint32_t fracpart = uvalue & 0xFFFF;
-    uint32_t scale = scales[3];
+    uint32_t scale = scales[4];
     fracpart = fix16_mul(fracpart, scale);
     
     if (fracpart >= scale)
@@ -84,8 +85,6 @@ static inline int read_bit(int var, int pos) {
 
 extern size_t fix16_to_strx(fix16_t value, char *buf) {
 	size_t start = (size_t) buf;
-	*buf++ = '0';
-	*buf++ = 'x';
 
 	for (int i = 0; i < 8; i++) {
 		int bitIndex = (7 - i) * 4;
@@ -99,5 +98,6 @@ extern size_t fix16_to_strx(fix16_t value, char *buf) {
 	}
 
 	*buf = '\0';
+	printf("%s\n", start);
 	return (size_t) buf - start;
 }
