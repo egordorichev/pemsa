@@ -181,17 +181,26 @@ static int stat(lua_State* state) {
 		}
 
 		case 32: {
-			result = emulator->getInputModule()->getBackend()->getMouseX();
+			if (emulator->getMemoryModule()->ram[0x5f2d] != 0) {
+				result = emulator->getInputModule()->getBackend()->getMouseX();
+			}
+
 			break;
 		}
 
 		case 33: {
-			result = emulator->getInputModule()->getBackend()->getMouseY();
+			if (emulator->getMemoryModule()->ram[0x5f2d] != 0) {
+				result = emulator->getInputModule()->getBackend()->getMouseY();
+			}
+
 			break;
 		}
 
 		case 34: {
-			result = emulator->getInputModule()->getBackend()->getMouseMask();
+			if (emulator->getMemoryModule()->ram[0x5f2d] != 0) {
+				result = emulator->getInputModule()->getBackend()->getMouseMask();
+			}
+
 			break;
 		}
 

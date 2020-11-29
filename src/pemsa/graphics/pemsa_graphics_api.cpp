@@ -468,7 +468,6 @@ static int spr(lua_State* state) {
 	return 0;
 }
 
-// sspr( sx, sy, sw, sh, dx, dy, [dw,] [dh,] [flip_x,] [flip_y] )
 static int sspr(lua_State* state) {
 	float sx = pemsa_checknumber(state, 1);
 	float sy = pemsa_checknumber(state, 2);
@@ -479,11 +478,16 @@ static int sspr(lua_State* state) {
 	float dw = pemsa_optnumber(state, 7, sw);
 	float dh = pemsa_optnumber(state, 8, sh);
 
+	if (sw == 0 || dw == 0 || sh == 0 || dh == 0) {
+		return 0;
+	}
+
 	bool flipX = pemsa_optional_bool(state, 9, false);
 	bool flipY = pemsa_optional_bool(state, 10, false);
 
 	PemsaMemoryModule* memoryModule = emulator->getMemoryModule();
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
+
 	dx -= drawStateModule->getCameraX();
 	dy -= drawStateModule->getCameraY();
 

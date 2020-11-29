@@ -37,7 +37,7 @@ typedef enum BinOpr {
 } BinOpr;
 
 
-typedef enum UnOpr { OPR_MINUS, OPR_BNOT, OPR_NOT, OPR_LEN, OPR_NOUNOPR } UnOpr;
+typedef enum UnOpr { OPR_MINUS, OPR_BNOT, OPR_NOT, OPR_LEN, OPR_PEEK2, OPR_NOUNOPR } UnOpr;
 
 
 /* get (pointer to) instruction of given 'expdesc' */

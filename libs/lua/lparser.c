@@ -989,6 +989,7 @@ static UnOpr getunopr (int op) {
     case '-': return OPR_MINUS;
     case '~': return OPR_BNOT;
     case '#': return OPR_LEN;
+	  case '%': return OPR_PEEK2;
     default: return OPR_NOUNOPR;
   }
 }
@@ -1051,10 +1052,15 @@ static BinOpr subexpr (LexState *ls, expdesc *v, int limit) {
   enterlevel(ls);
   uop = getunopr(ls->t.token);
   if (uop != OPR_NOUNOPR) {
-    int line = ls->linenumber;
-    luaX_next(ls);
-    subexpr(ls, v, UNARY_PRIORITY);
-    luaK_prefix(ls->fs, uop, v, line);
+	  int line = ls->linenumber;
+
+  	if (uop == OPR_PEEK2) {
+		  funcargs(ls, v, line);
+	  } else {
+		  luaX_next(ls);
+		  subexpr(ls, v, UNARY_PRIORITY);
+		  luaK_prefix(ls->fs, uop, v, line);
+	  }
   }
   else simpleexp(ls, v);
   /* expand while operators have priorities higher than 'limit' */

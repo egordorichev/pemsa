@@ -55,6 +55,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	PemsaToken previous;
 
 	bool running = true;
+	bool insertParen = false;
 	bool inQuestion = false;
 	bool inIf = false;
 	bool inWhile = false;
@@ -214,6 +215,11 @@ end
 		token = scanner->scan();
 
 		emitToken:
+		if (insertParen) {
+			output << ")";
+			insertParen = false;
+		}
+
 		if (token.type != TOKEN_WHITESPACE && token.type != TOKEN_NEW_LINE) {
 			if (outputBrace > 0) {
 				if (outputBrace == 1) {
@@ -424,9 +430,10 @@ end
 
 			case TOKEN_MODULO: {
 				PemsaTokenType t = previous.type;
-				if (t == TOKEN_NUMBER || t == TOKEN_IDENTIFIER) {
+				if (t == TOKEN_NUMBER || t == TOKEN_IDENTIFIER || t == TOKEN_RIGHT_PAREN || t == TOKEN_RIGHT_BRACKET) {
 					output << "%";
 				} else {
+					insertParen = true;
 					output << "peek2";
 				}
 
@@ -434,11 +441,13 @@ end
 			}
 
 			case TOKEN_DOG: {
+				insertParen = true;
 				output << "peek";
 				break;
 			}
 
 			case TOKEN_DOLLAR: {
+				insertParen = true;
 				output << "peek4";
 				break;
 			}
