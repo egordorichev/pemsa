@@ -98,6 +98,5 @@ extern size_t fix16_to_strx(fix16_t value, char *buf) {
 	}
 
 	*buf = '\0';
-	printf("%s\n", start);
 	return (size_t) buf - start;
 }
