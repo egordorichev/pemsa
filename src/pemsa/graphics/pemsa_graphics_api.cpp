@@ -427,6 +427,10 @@ static int circfill(lua_State* state) {
 }
 
 static void plot_sprite(int n, int x, int y, int width, int height, bool flipX, bool flipY) {
+	if (n < 0 || n > 255) {
+		return;
+	}
+
 	int sprX = (n & 0x0f) << 3;
 	int sprY = (n >> 4) << 3;
 
@@ -715,15 +719,19 @@ static int tline(lua_State* state) {
 		if (imx >= 0 && imy >= 0 && imx < 128 && imy < 64) {
 			int tile = memoryModule->ram[(imy > 31 ? PEMSA_RAM_GFX : PEMSA_RAM_MAP) + imx + imy * 128];
 
-			int sx = ((tile & 0x0f) << 3) + (fmod(mx, 1) * 8);
-			int sy = ((tile >> 4) << 3) + (fmod(my, 1) * 8);
+			if (tile == 0) {
+				c = -1;
+			} else {
+				int sx = ((tile & 0x0f) << 3) + (fmod(mx, 1) * 8);
+				int sy = ((tile >> 4) << 3) + (fmod(my, 1) * 8);
 
-			if (sx >= 0 && sy >= 0 && sx < 128 && sy < 128) {
-				c = memoryModule->getPixel(sx, sy, PEMSA_RAM_GFX);
+				if (sx >= 0 && sy >= 0 && sx < 128 && sy < 128) {
+					c = memoryModule->getPixel(sx, sy, PEMSA_RAM_GFX);
+				}
 			}
 		}
 
-		if (!drawStateModule->isTransparent(c)) {
+		if (c > 0 && !drawStateModule->isTransparent(c)) {
 			if (steep) {
 				memoryModule->setPixel(y - cx, x - cy, c, PEMSA_RAM_SCREEN);
 			} else {

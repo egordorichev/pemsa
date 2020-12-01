@@ -198,11 +198,11 @@ PemsaToken PemsaScanner::makeToken(PemsaTokenType type) {
 	token.type = type;
 	token.line = this->line;
 
+	token.start = this->start;
+
 	if (type == TOKEN_NEW_LINE) {
-		token.start = "\n";
 		token.length = 1;
 	} else {
-		token.start = this->start;
 		token.length = (int) (this->current - this->start);
 	}
 

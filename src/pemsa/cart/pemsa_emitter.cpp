@@ -351,6 +351,8 @@ end
 
 				inIf = false;
 				inWhile = false;
+
+				expressionStart = token.start + token.length;
 				output << '\n';
 				break;
 			}
@@ -424,6 +426,7 @@ end
 			case TOKEN_ELSE_IF:
 			case TOKEN_END:
 			case TOKEN_IF:
+			case TOKEN_EQUAL:
 			case TOKEN_THEN: {
 				expressionStart = token.start + token.length;
 				output << std::string(token.start, token.length);
