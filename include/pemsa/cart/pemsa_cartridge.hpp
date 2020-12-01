@@ -30,7 +30,7 @@ struct PemsaCartridge {
 	bool highFps;
 
 	uint8_t rom[PEMSA_CART_ROM_SIZE];
-	double cartData[PEMSA_CART_DATA_SIZE];
+	fix16_t cartData[PEMSA_CART_DATA_SIZE];
 };
 
 #endif

@@ -1,5 +1,5 @@
 * save __code__, cstore()
-* dget/dset doesnt seem to work propertly? high score didnt save in ballz lava
+* convert \x8e into 0x8e into C button
 
 * tostr() figure out 0.0001 is 0 but 0.1234 is 0.1234 in pico8
 * shaking char in danktombs when hitting a wall

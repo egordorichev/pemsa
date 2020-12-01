@@ -8,7 +8,7 @@
 #include <thread>
 #include <future>
 
-// #define PEMSA_SAVE_CODE
+#define PEMSA_SAVE_CODE
 
 class PemsaCartridgeModule : public PemsaModule {
 	public:

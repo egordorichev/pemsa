@@ -407,9 +407,9 @@ void PemsaCartridgeModule::loadData(const char *path) {
 	std::string fullPath = std::string(PEMSA_CART_DATA_PATH) + "/" + std::string(path);
 	std::ifstream file(fullPath);
 
-	double* data = this->cart->cartData;
+	fix16_t* data = this->cart->cartData;
 
-	if (file.good()) {
+	if (file.good() && file.is_open()) {
 		for (int i = 0; i < PEMSA_CART_DATA_SIZE; i++) {
 			file >> data[i];
 		}
@@ -434,11 +434,11 @@ void PemsaCartridgeModule::saveData() {
 	std::ofstream file(fullPath);
 
 	if (file.bad() || !file.is_open()) {
-		std::cerr << "Failed to save cart data";
+		std::cerr << "Failed to save cart data\n";
 		return;
 	}
 
-	double* data = this->cart->cartData;
+	fix16_t* data = this->cart->cartData;
 
 	for (int i = 0; i < PEMSA_CART_DATA_SIZE; i++) {
 		file << data[i] << "\n";
