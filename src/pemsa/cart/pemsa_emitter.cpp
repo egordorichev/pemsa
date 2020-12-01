@@ -422,13 +422,15 @@ end
 			case TOKEN_REPEAT:
 			case TOKEN_ELSE:
 			case TOKEN_ELSE_IF:
+			case TOKEN_END:
+			case TOKEN_IF:
 			case TOKEN_THEN: {
 				expressionStart = token.start + token.length;
 				output << std::string(token.start, token.length);
 				break;
 			}
 
-			case TOKEN_MODULO: {
+			/*case TOKEN_MODULO: {
 				PemsaTokenType t = previous.type;
 				if (t == TOKEN_NUMBER || t == TOKEN_IDENTIFIER || t == TOKEN_RIGHT_PAREN || t == TOKEN_RIGHT_BRACKET) {
 					output << "%";
@@ -450,7 +452,7 @@ end
 				insertParen = true;
 				output << "peek4";
 				break;
-			}
+			}*/
 
 			default: {
 				output << std::string(token.start, token.length);

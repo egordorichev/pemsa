@@ -59,9 +59,14 @@ void PemsaCartridgeModule::update(double dt) {
 bool PemsaCartridgeModule::load(const char *path) {
 	std::ifstream file(path);
 
-	if (file.bad()) {
-		std::cerr << "Failed to open the file\n";
-		return false;
+	if (file.bad() || !file.is_open()) {
+		file.close();
+		file.open(path + std::string(".p8"));
+
+		if (file.bad() || !file.is_open()) {
+			std::cerr << "Failed to open the file\n";
+			return false;
+		}
 	}
 
 	std::string line;
@@ -428,7 +433,8 @@ void PemsaCartridgeModule::saveData() {
 	std::string fullPath = std::string(PEMSA_CART_DATA_PATH) + "/" + std::string(this->cart->cartDataId);
 	std::ofstream file(fullPath);
 
-	if (file.bad()) {
+	if (file.bad() || !file.is_open()) {
+		std::cerr << "Failed to save cart data";
 		return;
 	}
 
