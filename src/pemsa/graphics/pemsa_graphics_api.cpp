@@ -625,7 +625,8 @@ static int print(lua_State* state) {
 	int offsetY = 0;
 
 	while (*text != '\0') {
-		char cr = *text++;
+		uint8_t cr = *((uint8_t*) text);
+		text++;
 
 		if (cr == '\n') {
 			offsetX = 0;
@@ -643,7 +644,7 @@ static int print(lua_State* state) {
 		const char** letter = pemsa_get_letter(cr);
 
 		if (letter != nullptr) {
-			int w = cr < '!' ? 7 : 3;
+			int w = cr > 127 ? 7 : 3;
 
 			for (int ly = 0; ly < 5; ly++) {
 				for (int lx = 0; lx < w; lx++) {

@@ -94,7 +94,7 @@ function all(a)
  if a == nil then 
   return function() end 
  end 
- local i = 0 
+ local i = 0
  local n = arraylen(a) 
  return function() 
   i = i + 1 
