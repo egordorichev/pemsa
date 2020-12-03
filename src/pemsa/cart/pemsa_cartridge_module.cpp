@@ -471,3 +471,11 @@ void PemsaCartridgeModule::notify() {
 	this->waiting = false;
 	this->lock.notify_all();
 }
+
+void PemsaCartridgeModule::save(const char* path) {
+	if (this->cart == nullptr) {
+		return;
+	}
+
+	// TODO
+}

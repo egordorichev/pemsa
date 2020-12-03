@@ -8,7 +8,7 @@
 #include <thread>
 #include <future>
 
-#define PEMSA_SAVE_CODE
+// #define PEMSA_SAVE_CODE
 
 class PemsaCartridgeModule : public PemsaModule {
 	public:
@@ -17,6 +17,7 @@ class PemsaCartridgeModule : public PemsaModule {
 
 		void update(double dt) override;
 		bool load(const char* path);
+		void save(const char* path);
 
 		void loadData(const char* path);
 		void saveData();

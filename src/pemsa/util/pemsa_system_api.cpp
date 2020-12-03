@@ -1,8 +1,5 @@
 #include "pemsa/pemsa_emulator.hpp"
 
-#include "SDL2/SDL.h"
-
-#include <cmath>
 #include <ctime>
 #include <iostream>
 
@@ -107,7 +104,7 @@ static int stat(lua_State* state) {
 		}
 
 		case 4: {
-			const char* clipboard = SDL_GetClipboardText();
+			const char* clipboard = emulator->getInputModule()->getBackend()->getClipboardText();
 
 			if (clipboard == nullptr) {
 				lua_pushnil(state);

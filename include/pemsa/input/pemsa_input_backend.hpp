@@ -16,6 +16,8 @@ class PemsaInputBackend : public PemsaBackend {
 		virtual const char* readKey() = 0;
 		virtual bool hasKey() = 0;
 		virtual void reset() = 0;
+
+		virtual const char* getClipboardText() = 0;
 };
 
 #endif
