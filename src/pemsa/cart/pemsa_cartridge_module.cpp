@@ -86,8 +86,10 @@ bool PemsaCartridgeModule::load(const char *path) {
 	}
 
 	std::stringstream code;
-	int cart_state = -1;
+	int cartState = -1;
 	int index = 0;
+	bool codePreformatted = false;
+
 	uint8_t* rom = this->cart->rom;
 
 	while (std::getline(file, line)) {
@@ -96,16 +98,16 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 		// Smallest label is __lua__ (7 chars)
 		if (length > 6 && memcmp(cline, "__", 2) == 0) {
-			int old_state = cart_state;
+			int old_state = cartState;
 			// Skip the __?
 			cline += 3;
 
 			switch (cline[-1]) {
 				case 'l': {
 					if (memcmp(cline, "ua__", 4) == 0) {
-						cart_state = STATE_LUA;
+						cartState = STATE_LUA;
 					} else if (memcmp(cline, "abel__", 6) == 0) {
-						cart_state = STATE_LABEL;
+						cartState = STATE_LABEL;
 					}
 
 					break;
@@ -113,9 +115,9 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 				case 'g': {
 					if (memcmp(cline, "fx__", 4) == 0) {
-						cart_state = STATE_GFX;
+						cartState = STATE_GFX;
 					} else if (memcmp(cline, "ff__", 4) == 0) {
-						cart_state = STATE_GFF;
+						cartState = STATE_GFF;
 					}
 
 					break;
@@ -123,9 +125,9 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 				case 'm': {
 					if (memcmp(cline, "ap__", 4) == 0) {
-						cart_state = STATE_MAP;
+						cartState = STATE_MAP;
 					} else if (memcmp(cline, "usic__", 6) == 0) {
-						cart_state = STATE_MUSIC;
+						cartState = STATE_MUSIC;
 					}
 
 					break;
@@ -133,21 +135,30 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 				case 's': {
 					if (memcmp(cline, "fx__", 4) == 0) {
-						cart_state = STATE_SFX;
+						cartState = STATE_SFX;
+					}
+
+					break;
+				}
+
+				case 'c': {
+					if (memcmp(cline, "ode__", 5) == 0) {
+						cartState = STATE_LUA;
+						codePreformatted = true;
 					}
 
 					break;
 				}
 			}
 
-			if (cart_state != old_state) {
+			if (cartState != old_state) {
 
 				index = 0;
 				continue;
 			}
 		}
 
-		switch (cart_state) {
+		switch (cartState) {
 			case STATE_LUA: {
 				code << line << "\n";
 				break;
@@ -272,9 +283,11 @@ bool PemsaCartridgeModule::load(const char *path) {
 	this->cart->fullPath = path;
 
 	std::string codeString = code.str();
-	PemsaScanner scanner(codeString.c_str());
 
-	codeString = pemsa_emit(&scanner);
+	if (!codePreformatted) {
+		PemsaScanner scanner(codeString.c_str());
+		codeString = pemsa_emit(&scanner);
+	}
 
 #ifdef PEMSA_SAVE_CODE
 	std::ofstream codeFile("code.lua", std::ios::trunc);
@@ -472,10 +485,126 @@ void PemsaCartridgeModule::notify() {
 	this->lock.notify_all();
 }
 
-void PemsaCartridgeModule::save(const char* path) {
+bool PemsaCartridgeModule::save(const char* path, bool useCodeTag) {
 	if (this->cart == nullptr) {
-		return;
+		return false;
 	}
 
-	// TODO
+	std::ofstream file(path, std::ios::binary);
+
+	if (file.bad() || !file.is_open()) {
+		std::cerr << "Failed to save the cart to " << path << "\n";
+		return false;
+	}
+
+	file << "pico-8 cartridge // http://www.pico-8.com\n";
+	file << "version 29\n";
+
+	file << (useCodeTag ? "__code__\n" : "__lua__\n");
+	file << this->cart->code;
+
+	file << "\n__gfx__\n";
+
+	uint8_t* rom = this->cart->rom;
+
+	for (int j = 0; j < 128; j++) {
+		for (int i = 0; i < 64; i++) {
+			uint8_t byte = rom[j * 64 + i + PEMSA_ROM_GFX];
+			file << INT_TO_HEX(GET_HALF(byte, true)) << INT_TO_HEX(GET_HALF(byte, false));
+		}
+
+		file << "\n";
+	}
+
+	file << "__gff__\n";
+
+	for (int j = 0; j < 2; j++) {
+		for (int i = 0; i < 128; i++) {
+			uint8_t byte = rom[j * 128 + i + PEMSA_ROM_GFX_PROPS];
+			file << INT_TO_HEX(GET_HALF(byte, false)) << INT_TO_HEX(GET_HALF(byte, true));
+		}
+
+		file << "\n";
+	}
+
+	file << "__map__\n";
+
+	for (int j = 0; j < 64; j++) {
+		for (int i = 0; i < 64; i++) {
+			uint8_t byte = rom[j * 64 + i + PEMSA_ROM_MAP];
+			file << INT_TO_HEX(GET_HALF(byte, false)) << INT_TO_HEX(GET_HALF(byte, true));
+		}
+
+		if (j % 2 == 1) {
+			file << "\n";
+		}
+	}
+
+	file << "__sfx__\n";
+
+	for (int j = 0; j < 64; j++) {
+		uint8_t editor = rom[PEMSA_ROM_SFX + j * 68 + 64];
+		uint8_t speed = rom[PEMSA_ROM_SFX + j * 68 + 65];
+		uint8_t startLoop = rom[PEMSA_ROM_SFX + j * 68 + 66];
+		uint8_t endLoop = rom[PEMSA_ROM_SFX + j * 68 + 67];
+
+		file << INT_TO_HEX(GET_HALF(editor, false)) << INT_TO_HEX(GET_HALF(editor, true));
+		file << INT_TO_HEX(GET_HALF(speed, false)) << INT_TO_HEX(GET_HALF(speed, true));
+		file << INT_TO_HEX(GET_HALF(startLoop, false)) << INT_TO_HEX(GET_HALF(startLoop, true));
+		file << INT_TO_HEX(GET_HALF(endLoop, false)) << INT_TO_HEX(GET_HALF(endLoop, true));
+
+		for (int i = 0; i < 64; i += 2) {
+			uint8_t lo = rom[PEMSA_ROM_SFX + j * 68 + i];
+			uint8_t high = rom[PEMSA_ROM_SFX + j * 68 + i + 1];
+
+			uint8_t pitch = (uint8_t) (lo & 0b00111111);
+			uint8_t waveform = (uint8_t) (((lo & 0b11000000) >> 6) | ((high & 0b1) << 2));
+			uint8_t volume = (uint8_t) ((high & 0b00001110) >> 1);
+			uint8_t effect = (uint8_t) ((high & 0b01110000) >> 4);
+
+			file << INT_TO_HEX(GET_HALF(pitch, false)) << INT_TO_HEX(GET_HALF(pitch, true));
+			file << INT_TO_HEX(waveform) << INT_TO_HEX(volume) << INT_TO_HEX(effect);
+		}
+
+		file << "\n";
+	}
+
+	file << "__music__\n";
+
+	for (int j = 0; j < 64; j++) {
+		uint8_t flag = 0;
+		uint8_t val0 = rom[j * 4 + 0 + PEMSA_ROM_SONG];
+		uint8_t val1 = rom[j * 4 + 1 + PEMSA_ROM_SONG];
+		uint8_t val2 = rom[j * 4 + 2 + PEMSA_ROM_SONG];
+		uint8_t val3 = rom[j * 4 + 3 + PEMSA_ROM_SONG];
+
+		if ((val0 & 0x80) == 0x80) {
+			flag |= 1;
+			val0 &= 0x7F;
+		}
+
+		if ((val1 & 0x80) == 0x80) {
+			flag |= 2;
+			val1 &= 0x7F;
+		}
+
+		if ((val2 & 0x80) == 0x80) {
+			flag |= 4;
+			val2 &= 0x7F;
+		}
+
+
+		char s[3];
+		sprintf(s, "%02i", flag);
+
+		file << s << " ";
+
+		file << INT_TO_HEX(GET_HALF(val0, false)) << INT_TO_HEX(GET_HALF(val0, true));
+		file << INT_TO_HEX(GET_HALF(val1, false)) << INT_TO_HEX(GET_HALF(val1, true));
+		file << INT_TO_HEX(GET_HALF(val2, false)) << INT_TO_HEX(GET_HALF(val2, true));
+		file << INT_TO_HEX(GET_HALF(val3, false)) << INT_TO_HEX(GET_HALF(val3, true)) << "\n";
+	}
+
+	file.close();
+	return true;
 }
