@@ -56,7 +56,7 @@ void PemsaCartridgeModule::update(double dt) {
 	}
 }
 
-bool PemsaCartridgeModule::load(const char *path) {
+bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	std::ifstream file(path);
 
 	if (file.bad() || !file.is_open()) {
@@ -297,6 +297,10 @@ bool PemsaCartridgeModule::load(const char *path) {
 
 	this->cart->code = take_string(codeString);
 	this->cart->codeLength = codeString.length();
+
+	if (onlyLoad) {
+		return true;
+	}
 
 	// TODO: tbh should limit the functions from here?
 	luaL_openlibs(state);

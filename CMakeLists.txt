@@ -17,5 +17,5 @@ add_library(pemsa STATIC src/pemsa/pemsa_emulator.cpp src/pemsa/pemsa_backend.cp
 	src/pemsa/audio/pemsa_audio_channel.cpp)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/lua/ ${CMAKE_CURRENT_SOURCE_DIR}/libs/fixmath/ ${CMAKE_CURRENT_SOURCE_DIR}/include/)
-target_link_libraries(pemsa customlua fixmath)
+target_link_libraries(pemsa customlua fixmath stdc++fs)
 set_target_properties(pemsa PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist/)
