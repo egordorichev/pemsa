@@ -1,8 +1,10 @@
-* cstore()
-* tostr() figure out 0.0001 is 0 but 0.1234 is 0.1234 in pico8
+* one room dungeon extra map rendered
+* slipway music feels kinda broken
 * shaking char in danktombs when hitting a wall
 * danktombs text in menu is offset wrongly
-* one room dungeon extra map rendered
+* emojis in str not parsing correctly anymore?
+
+* cstore()
+* tostr() figure out 0.0001 is 0 but 0.1234 is 0.1234 in pico8
 * split()
-* slipway music feels kinda broken
-* in slipways the fillp pattern on blocked paths has 1 extra pixel
+* music() fade out, channel mask?

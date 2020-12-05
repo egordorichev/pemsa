@@ -89,7 +89,7 @@ static int fillp(lua_State* state) {
 	double p = pemsa_optnumber(state, 1, 0);
 	PemsaDrawStateModule* drawStateModule = emulator->getDrawStateModule();
 
-	drawStateModule->setFillPattern(p);
+	drawStateModule->setFillPattern(floor(p));
 	drawStateModule->setFillPatternTransparent(floor(p) < p);
 
 	return 0;

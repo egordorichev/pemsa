@@ -653,7 +653,7 @@ static int print(lua_State* state) {
 			for (int ly = 0; ly < 5; ly++) {
 				for (int lx = 0; lx < w; lx++) {
 					if (letter[ly][lx] == 'x') {
-						DRAW_PIXEL(offsetX + x + lx, offsetY + y + ly, c)
+						memoryModule->setPixel(offsetX + x + lx, offsetY + y + ly, drawStateModule->getDrawColor(c), PEMSA_RAM_SCREEN);
 					}
 				}
 			}

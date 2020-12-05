@@ -91,12 +91,12 @@ bool PemsaDrawStateModule::isFillPatternTransparent() {
 	return emulator->getMemoryModule()->ram[PEMSA_RAM_FILL_PATTERN + 2] != 0;
 }
 
-int PemsaDrawStateModule::getFillPatternBit(int x, int y) {
-	x &= 0b11;
-	y &= 0b11;
+bool PemsaDrawStateModule::getFillPatternBit(int x, int y) {
+	x %= 4;
+	y %= 4;
 
-	int i = (y << 2) + x;
-	return (this->getFillPattern() & (1 << 15) >> i) >> (15 - i);
+	int i = y * 4 + x;
+	return ((this->getFillPattern() & (1 << 15) >> i) >> (15 - i)) != 0;
 }
 
 int PemsaDrawStateModule::getCameraX() {

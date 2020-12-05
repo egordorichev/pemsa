@@ -28,7 +28,7 @@ class PemsaDrawStateModule : public PemsaModule {
 		void setFillPatternTransparent(bool transparent);
 		bool isFillPatternTransparent();
 
-		int getFillPatternBit(int x, int y);
+		bool getFillPatternBit(int x, int y);
 
 		int getCameraX();
 		void setCameraX(int x);
