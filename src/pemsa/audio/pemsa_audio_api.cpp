@@ -14,9 +14,24 @@ static int music(lua_State* state) {
 
 static int sfx(lua_State* state) {
 	int n = pemsa_checknumber(state, 1);
+	int channel = pemsa_optional_number(state, 2, -1);
+	int offset = pemsa_optional_number(state, 3, 0);
+	int length = pemsa_optional_number(state, 4, 31);
 
-	if (n >= -1 && n < 64) {
-		emulator->getAudioModule()->playSfx(n, pemsa_optnumber(state, 2, -1));
+	PemsaAudioModule* audioModule = emulator->getAudioModule();
+
+	if (n == -1) {
+		if (channel >= 0 && channel < PEMSA_CHANNEL_COUNT) {
+			audioModule->getChannel(channel)->stop();
+		}
+	} else if (n == -2) {
+		if (channel >= 0 && channel < PEMSA_CHANNEL_COUNT) {
+			audioModule->getChannel(channel)->preventLoop();
+		}
+	} else {
+		if (n >= -1 && n < 64) {
+			audioModule->playSfx(n, channel, offset, length);
+		}
 	}
 
 	return 0;

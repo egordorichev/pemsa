@@ -21,16 +21,18 @@ PemsaAudioChannel::PemsaAudioChannel(PemsaEmulator* emulator, int channelId) {
 	this->channelId = channelId;
 }
 
-void PemsaAudioChannel::play(int sfx, bool music) {
+void PemsaAudioChannel::play(int sfx, bool music, int offset, int length) {
 	this->playingMusic = music;
+	this->stopLooping = false;
+	this->length = length;
 
 	PemsaChannelInfo* info = &this->infos[0];
 
 	info->note = 0;
 	info->lastNote = 0;
 	info->sfx = sfx;
-	info->offset = 0;
-	info->lastStep = -1;
+	info->offset = offset;
+	info->lastStep = offset - 1;
 	info->active = true;
 	info->speed = fmax(1, this->emulator->getMemoryModule()->ram[sfx * 68 + PEMSA_RAM_SFX + 65]);
 }
@@ -122,6 +124,10 @@ double PemsaAudioChannel::sampleAt(int id) {
 	return this->adjustVolume(id, pemsa_sample(this->channelId, info->instrument, info->waveOffset), applyFx(id, info->fx) / 7.0);
 }
 
+static int min(int a, int b) {
+	return a < b ? a : b;
+}
+
 double PemsaAudioChannel::prepareSample(int id) {
 	PemsaChannelInfo* info = &this->infos[id];
 
@@ -129,9 +135,9 @@ double PemsaAudioChannel::prepareSample(int id) {
 		uint8_t* ram = emulator->getMemoryModule()->ram;
 		info->lastNote = info->note;
 
-		int loopEnd = ram[info->sfx * 68 + PEMSA_RAM_SFX + 67];
+		int loopEnd = min(ram[info->sfx * 68 + PEMSA_RAM_SFX + 67], this->length);
 
-		if (loopEnd != 0) {
+		if (loopEnd != 0 && !this->stopLooping) {
 			if (info->offset >= loopEnd) {
 				info->offset = ram[info->sfx * 68 + PEMSA_RAM_SFX + 66];
 				info->lastStep = -1;
@@ -145,7 +151,8 @@ double PemsaAudioChannel::prepareSample(int id) {
 			} else {
 				info->lastStep = (int) info->offset;
 			}
-		} else if (info->offset >= 32) {
+		} else if (info->offset >= this->length) {
+			this->stopLooping = false;
 			info->active = false;
 
 			info->offset = 0;
@@ -212,6 +219,10 @@ double PemsaAudioChannel::adjustVolume(int id, double wave, double volume) {
 
 bool PemsaAudioChannel::isPlayingMusic() {
 	return this->playingMusic;
+}
+
+void PemsaAudioChannel::preventLoop() {
+	this->stopLooping = true;
 }
 
 PemsaChannelInfo::PemsaChannelInfo() {

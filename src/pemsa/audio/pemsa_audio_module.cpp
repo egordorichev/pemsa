@@ -67,7 +67,7 @@ double PemsaAudioModule::sample() {
 	return result / PEMSA_CHANNEL_COUNT * 0.8;
 }
 
-void PemsaAudioModule::playSfx(int sfx, int ch) {
+void PemsaAudioModule::playSfx(int sfx, int ch, int offset, int length) {
 	if (ch > -1 && ch < PEMSA_CHANNEL_COUNT) {
 		if (ch == -1) {
 			for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
@@ -79,7 +79,7 @@ void PemsaAudioModule::playSfx(int sfx, int ch) {
 			if (sfx == -1) {
 				this->channels[ch]->stop();
 			} else {
-				this->channels[ch]->play(sfx, false);
+				this->channels[ch]->play(sfx, false, offset, length);
 			}
 		}
 
@@ -94,18 +94,16 @@ void PemsaAudioModule::playSfx(int sfx, int ch) {
 		PemsaAudioChannel* channel = this->channels[i];
 
 		if (!channel->isActive()) {
-			channel->play(sfx, false);
+			channel->play(sfx, false, offset, length);
 			return;
 		}
 	}
-
-	uint8_t* ram = emulator->getMemoryModule()->ram;
 
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
 		PemsaAudioChannel* channel = this->channels[i];
 
 		if (!channel->isPlayingMusic()) {
-			channel->play(sfx, false);
+			channel->play(sfx, false, offset, length);
 			return;
 		}
 	}
@@ -149,7 +147,7 @@ void PemsaAudioModule::playMusic(int music) {
 		if (!IS_BIT_SET(sfxData, 6)) {
 			int sfx = sfxData % 64;
 
-			this->channels[i]->play(sfx, true);
+			this->channels[i]->play(sfx, true, 0, 32);
 			int speed = fmax(1, ram[PEMSA_RAM_SFX + sfx * 68 + 65]);
 
 			if (speed > this->musicSpeed) {

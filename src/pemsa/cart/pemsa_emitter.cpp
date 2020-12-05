@@ -77,8 +77,10 @@ A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = -
 sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil
 
 function foreach(a, f)
- if not a then return end 
- for _, v in ipairs(a) do f(v) end 
+ if not a then return end
+ for i=#a,1,-1 do
+	if a[i]~=nil then f(a[i]) end
+ end
 end
 function count(a) if not a then return 0 end return #a end 
 function arraylen(t)
