@@ -78,8 +78,12 @@ sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, 
 
 function foreach(a, f)
  if not a then return end
- for i=#a,1,-1 do
-	if a[i]~=nil then f(a[i]) end
+ local copy={}
+ for i=1,#a do
+  if a[i] ~= nil then table.insert(copy,a[i]) end
+ end
+ for i=1,#copy do
+  f(copy[i])
  end
 end
 function count(a) if not a then return 0 end return #a end 

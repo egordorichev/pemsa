@@ -6,4 +6,3 @@
 * split()
 * slipway music feels kinda broken
 * in slipways the fillp pattern on blocked paths has 1 extra pixel
-* diagonal dashes in celeste weird? 0.743243 overflowing?

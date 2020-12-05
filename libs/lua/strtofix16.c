@@ -71,7 +71,7 @@ fix16_t strtofix16(const char *nptr, char** endptr) {
 		{
 			nptr++;
 
-			while (isxdigit(*nptr))
+			while (isxdigit(*nptr) && scale < 10000)
 			{
 				scale *= 16;
 				fracpart *= 16;
@@ -99,7 +99,7 @@ fix16_t strtofix16(const char *nptr, char** endptr) {
 		if (*nptr == '.' || *nptr == ',') {
 			nptr++;
 
-			while (isbdigit(*nptr)) {
+			while (isbdigit(*nptr) && scale < 10000) {
 				scale *= 2;
 				fracpart *= 2;
 				char c = *nptr++;
@@ -122,7 +122,7 @@ fix16_t strtofix16(const char *nptr, char** endptr) {
 		if (*nptr == '.' || *nptr == ',') {
 			nptr++;
 
-			while (isdigit(*nptr)) {
+			while (isdigit(*nptr) && scale < 10000) {
 				scale *= 10;
 				fracpart *= 10;
 				fracpart += *nptr++ - '0';
