@@ -149,6 +149,8 @@ extern fix16_t fix16_band(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
 extern fix16_t fix16_bor(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
 extern fix16_t fix16_bxor(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
 extern fix16_t fix16_bnot(fix16_t x) FIXMATH_FUNC_ATTRS;
+extern fix16_t fix16_rotr(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
+extern fix16_t fix16_rotl(fix16_t x, fix16_t y) FIXMATH_FUNC_ATTRS;
 
 
 /*! Returns the linear interpolation: (inArg0 * (1 - inFract)) + (inArg1 * inFract)

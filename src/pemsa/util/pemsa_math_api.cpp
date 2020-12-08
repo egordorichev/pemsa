@@ -97,6 +97,16 @@ static int shr(lua_State* state) {
 	return 1;
 }
 
+static int rotl(lua_State* state) {
+	pemsa_pushnumber_raw(state, fix16_rotl(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
+	return 1;
+}
+
+static int rotr(lua_State* state) {
+	pemsa_pushnumber_raw(state, fix16_rotr(check_number_or_bool(state, 1), check_number_or_bool(state, 2)));
+	return 1;
+}
+
 static int cos(lua_State* state) {
 	pemsa_pushnumber(state, cos(pemsa_checknumber(state, 1) * M_PI * 2));
 	return 1;
@@ -182,6 +192,8 @@ void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "bxor", bxor);
 	lua_register(state, "shl", shl);
 	lua_register(state, "shr", shr);
+	lua_register(state, "rotl", rotl);
+	lua_register(state, "rotr", rotr);
 
 	lua_register(state, "cos", cos);
 	lua_register(state, "sin", sin);

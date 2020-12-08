@@ -566,6 +566,55 @@ fix16_t fix16_bnot(fix16_t a) {
 	return a;
 }
 
+void printBits(size_t const size, void const * const ptr)
+{
+	unsigned char *b = (unsigned char*) ptr;
+	unsigned char byte;
+	int i, j;
+
+	for (i = size-1; i >= 0; i--) {
+		for (j = 7; j >= 0; j--) {
+			byte = (b[i] >> j) & 1;
+			printf("%u", byte);
+		}
+	}
+	puts("");
+}
+
+static fix16_t mod(fix16_t a, fix16_t b) {
+	fix16_t r = a % b;
+	return r < 0 ? r + b : r;
+}
+
+static int modi(int a, int b) {
+	int r = a % b;
+	return r < 0 ? r + b : r;
+}
+
+fix16_t fix16_rotr(fix16_t a, fix16_t b) {
+	int shift = modi(fix16_to_int(b), 32);
+	fix16_t c = 0;
+
+	for (int i = 0; i < 32; i++) {
+		int set = (a & (1UL << mod(i + shift, 32))) != 0;
+		c ^= (-(set) ^ c) & (1UL << i);
+	}
+
+	return c;
+}
+
+fix16_t fix16_rotl(fix16_t a, fix16_t b) {
+	int shift = modi(fix16_to_int(b), 32);
+	fix16_t c = 0;
+
+	for (int i = 0; i < 32; i++) {
+		int set = (a & (1UL << mod(i - shift, 32))) != 0;
+		c ^= (-(set) ^ c) & (1UL << i);
+	}
+
+	return c;
+}
+
 fix16_t fix16_lerp8(fix16_t inArg0, fix16_t inArg1, uint8_t inFract) {
 	int64_t tempOut = int64_mul_i32_i32(inArg0, (((int32_t)1 << 8) - inFract));
 	tempOut = int64_add(tempOut, int64_mul_i32_i32(inArg1, inFract));
