@@ -772,6 +772,7 @@ void pemsa_open_graphics_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "spr", spr);
 	lua_register(state, "sspr", sspr);
 	lua_register(state, "map", map);
+	lua_register(state, "mapdraw", map);
 	lua_register(state, "print", print);
 	lua_register(state, "tline", tline);
 }

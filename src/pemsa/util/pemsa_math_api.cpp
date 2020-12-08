@@ -192,6 +192,7 @@ void pemsa_open_math_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "bxor", bxor);
 	lua_register(state, "shl", shl);
 	lua_register(state, "shr", shr);
+	lua_register(state, "lshr", shl);
 	lua_register(state, "rotl", rotl);
 	lua_register(state, "rotr", rotr);
 

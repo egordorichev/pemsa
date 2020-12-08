@@ -74,7 +74,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	// Emoji button setup
 	output <<R"(
 A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = -2560.5, 31455.5, 32125.5, 1, 6943.5, 3855.5, 2, -19008.5, 4, -20032.5,0.5, -20128.5, 3, -18402.5, -1632.5, 20927.5, -26208.5, -20192.5, 0, 21845.5, 5, 20767.5, -2624.5, 23130.5, -25792.5, -24351.5 
-sub, cocreate, coresume, yield, costatus, debug = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil
+sub, cocreate, coresume, yield, costatus, debug, run = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, nil, __reset
 
 function foreach(a, f)
  if not a then return end
@@ -197,7 +197,7 @@ function __update_menu()
 		local current=__current_option==i
 		print(__menu_options[i],x+11+(__menu_options[i] and 1 or 0),y-1+i*8,7)
 		if i==#__menu_options-1 then
-			print("\017",x+51,y-1+i*8,__favorite and 8 or 13)
+			print("\135",x+51,y-1+i*8,__favorite and 8 or 13)
 		end
 	end
 end
@@ -297,7 +297,7 @@ end
 					const char* str = token.start + i;
 
 					if (i < end - 1) {
-#define CASE(a, b, c, d, u, e) if (str[0] == a && str[1] == b && (str[0] == -53 || (str[2] == c && (str[0] != -16 || str[3] == d)))) { output << "\\" << e; i += (str[0] == -16 ? 3 : (str[0] == -53 ? 1 : 2)); i += 3; continue; }
+#define CASE(a, b, c, d, u, e, z) if (str[0] == a && str[1] == b && (str[0] == -53 || (str[2] == c && (str[0] != -16 || str[3] == d)))) { output << "\\" << e; i += (str[0] == -16 ? 3 : (str[0] == -53 ? 1 : 2)); i += 3; continue; }
 #include "pemsa/cart/pemsa_cases.hpp"
 #undef CASE
 					}
@@ -372,8 +372,11 @@ end
 
 				output << std::string(token.start, token.length);
 
-				previous = token;
-				token = scanner->scan();
+				do {
+					previous = token;
+					token = scanner->scan();
+				} while (token.type == TOKEN_WHITESPACE);
+
 				PemsaTokenType tt = token.type;
 
 				int i = 0;

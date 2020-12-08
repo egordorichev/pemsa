@@ -351,6 +351,9 @@ void PemsaCartridgeModule::gameLoop() {
 		this->cart->time = 1 / 60.0;
 	}
 
+	// We need to update the button press states for some edgecases like goto loops before
+	// the actual cart, like in bingle jells. without this the menu will be skipped
+	this->emulator->getInputModule()->updateInput();
 	this->callIfExists("_init");
 
 	while (this->threadRunning) {

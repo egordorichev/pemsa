@@ -48,6 +48,10 @@ static int pemsa_time(lua_State* state) {
 }
 
 static int tonum(lua_State* state) {
+	if (lua_gettop(state) < 1 || !lua_isstring(state, 1)) {
+		return 0;
+	}
+
 	const char* ostr = luaL_checkstring(state, 1);
 	char *endptr;
 
@@ -282,6 +286,11 @@ static int stat(lua_State* state) {
 			time_t t = time(NULL);
 			result = localtime(&t)->tm_sec;
 
+			break;
+		}
+
+		case 102: {
+			result = 0;
 			break;
 		}
 
