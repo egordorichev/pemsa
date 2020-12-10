@@ -149,10 +149,11 @@ function __update_menu()
 	add(__menu_options,"reset cart")
 
 	if btnp(6) then
-		if __current_option==#__menu_options-1 then
+		if __menu_on and __current_option==#__menu_options-1 then
 			__favorite=not __favorite
 		else
 			__menu_on=not __menu_on
+			__set_audio_paused(__menu_on)
 			__set_paused(__menu_on)
 
 			if not __menu_on then

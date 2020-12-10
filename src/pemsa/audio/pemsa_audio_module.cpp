@@ -13,6 +13,7 @@ PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* b
 	this->time = 0;
 	this->musicOffset = 0;
 	this->currentMusic = -1;
+	this->paused = false;
 
 	this->backend->setupBuffer();
 }
@@ -26,6 +27,10 @@ PemsaAudioModule::~PemsaAudioModule() {
 }
 
 double PemsaAudioModule::sample() {
+	if (paused) {
+		return 0;
+	}
+
 	if (this->currentMusic > -1) {
 		this->musicOffset += 7350 / (61.0 * this->musicSpeed * PEMSA_SAMPLE_RATE);
 
@@ -173,4 +178,8 @@ void PemsaAudioModule::reset() {
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
 		this->channels[i]->stop();
 	}
+}
+
+void PemsaAudioModule::setPaused(bool paused) {
+	this->paused = paused;
 }

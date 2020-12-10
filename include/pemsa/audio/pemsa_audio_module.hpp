@@ -27,6 +27,7 @@ class PemsaAudioModule : public PemsaModule {
 		int getOffset();
 
 		void reset() override;
+		void setPaused(bool paused);
 	private:
 		PemsaAudioBackend* backend;
 		PemsaAudioChannel* channels[PEMSA_CHANNEL_COUNT];
@@ -35,6 +36,7 @@ class PemsaAudioModule : public PemsaModule {
 		double musicOffset;
 		int currentMusic = -1;
 		int musicSpeed;
+		bool paused;
 };
 
 void pemsa_open_audio_api(PemsaEmulator* machine, lua_State* state);

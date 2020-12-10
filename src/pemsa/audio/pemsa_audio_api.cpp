@@ -37,9 +37,15 @@ static int sfx(lua_State* state) {
 	return 0;
 }
 
+static int set_audio_paused(lua_State* state) {
+	emulator->getAudioModule()->setPaused(pemsa_optional_bool(state, 1, false));
+	return 0;
+}
+
 void pemsa_open_audio_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
 	lua_register(state, "music", music);
 	lua_register(state, "sfx", sfx);
+	lua_register(state, "__set_audio_paused", set_audio_paused);
 }
