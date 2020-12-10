@@ -57,8 +57,40 @@ double PemsaAudioModule::sample() {
 						break;
 					}
 				}
-			} else if (this->currentMusic < 63) {
-				this->playMusic(this->currentMusic + 1);
+			} else {
+				bool found = false;
+
+				if (this->currentMusic < 63) {
+					uint8_t *songRam = ram + (this->currentMusic + 1) * 4 + PEMSA_RAM_SONG;
+
+					for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+						int data = songRam[i];
+
+						if (data != 0 && !IS_BIT_SET(data, 6)) {
+							found = true;
+							break;
+						}
+					}
+				}
+
+				bool loopFound = false;
+
+				if (!found) {
+					for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+						if (ram[this->channels[i]->getSfx() * 68 + PEMSA_RAM_SFX + 67] != 0) {
+							loopFound = true;
+							break;
+						}
+					}
+
+					if (!loopFound) {
+						this->playMusic(-1);
+					}
+				}
+
+				if (found || loopFound) {
+					this->playMusic(this->currentMusic + (found ? 1 : 0));
+				}
 			}
 		}
 	}
@@ -69,7 +101,7 @@ double PemsaAudioModule::sample() {
 		result += this->channels[i]->sample();
 	}
 
-	return result / PEMSA_CHANNEL_COUNT * 0.8;
+	return result / PEMSA_CHANNEL_COUNT;
 }
 
 void PemsaAudioModule::playSfx(int sfx, int ch, int offset, int length) {
@@ -178,6 +210,8 @@ void PemsaAudioModule::reset() {
 	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
 		this->channels[i]->stop();
 	}
+
+	this->paused = false;
 }
 
 void PemsaAudioModule::setPaused(bool paused) {

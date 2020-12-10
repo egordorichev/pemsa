@@ -14,5 +14,3 @@
 
 * slipway music feels kinda broken
 * sfx() still can not play sometimes
-
-* notes will get louder after a few loops?
