@@ -619,7 +619,7 @@ bool PemsaCartridgeModule::save(const char* path, bool useCodeTag) {
 	file << "__label__\n" << cart->label << "__credits__\n";
 
 	uint8_t creditsBuffer[PEMSA_CREDITS_HALF_SIZE];
-	memset(creditsBuffer, 5, PEMSA_CREDITS_HALF_SIZE);
+	memset(creditsBuffer, 5 + (5 << 4), PEMSA_CREDITS_HALF_SIZE);
 
 	print_line(creditsBuffer, cart->name, 3, 4);
 	print_line(creditsBuffer, cart->author, 3, 12);
