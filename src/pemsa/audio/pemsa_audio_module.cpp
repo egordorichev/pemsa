@@ -105,19 +105,21 @@ double PemsaAudioModule::sample() {
 }
 
 void PemsaAudioModule::playSfx(int sfx, int ch, int offset, int length) {
+	if (ch == -2) {
+		for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+			if (this->channels[i]->getSfx() == sfx) {
+				this->channels[i]->stop();
+			}
+		}
+
+		return;
+	}
+
 	if (ch > -1 && ch < PEMSA_CHANNEL_COUNT) {
-		if (ch == -1) {
-			for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
-				if (this->channels[i]->getSfx() == sfx) {
-					this->channels[i]->stop();
-				}
-			}
+		if (sfx == -1) {
+			this->channels[ch]->stop();
 		} else {
-			if (sfx == -1) {
-				this->channels[ch]->stop();
-			} else {
-				this->channels[ch]->play(sfx, false, offset, length);
-			}
+			this->channels[ch]->play(sfx, false, offset, length);
 		}
 
 		return;
@@ -153,25 +155,18 @@ void PemsaAudioModule::playMusic(int music) {
 		for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
 			PemsaAudioChannel *channel = this->channels[i];
 
-			if (channel->getSfx() == ram[PEMSA_RAM_SONG + this->currentMusic * 4 + i]) {
+			if (channel->isPlayingMusic()) {
 				channel->stop();
 			}
 		}
 	}
 
+	this->currentMusic = music;
+
 	if (music == -1) {
-		if (this->currentMusic != -1) {
-			for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
-				this->channels[i]->stop();
-			}
-
-			this->currentMusic = -1;
-		}
-
 		return;
 	}
 
-	this->currentMusic = music;
 	this->musicSpeed = 1;
 	this->time = 0;
 	this->musicOffset = 0;

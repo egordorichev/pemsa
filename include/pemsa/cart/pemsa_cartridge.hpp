@@ -2,6 +2,8 @@
 #define PEMSA_CARTRIDGE_HPP
 
 #include "lua.hpp"
+
+#include <string>
 #include <cstdint>
 
 #define PEMSA_ROM_GFX 0x0
@@ -17,10 +19,18 @@
 #define PEMSA_CART_DATA_SIZE 64
 #define PEMSA_CART_ROM_SIZE PEMSA_ROM_END
 
+#define PEMSA_CREDITS_WIDTH 130
+#define PEMSA_CREDITS_HEIGHT 32
+#define PEMSA_CREDITS_SIZE (PEMSA_CREDITS_WIDTH * PEMSA_CREDITS_HEIGHT)
+#define PEMSA_CREDITS_HALF_SIZE (PEMSA_CREDITS_SIZE / 2)
+
 struct PemsaCartridge {
 	lua_State* state;
 
 	const char* code;
+	const char* name;
+	const char* author;
+
 	int codeLength;
 
 	const char* fullPath;
@@ -31,6 +41,8 @@ struct PemsaCartridge {
 
 	uint8_t rom[PEMSA_CART_ROM_SIZE];
 	fix16_t cartData[PEMSA_CART_DATA_SIZE];
+
+	const char* label;
 };
 
 #endif

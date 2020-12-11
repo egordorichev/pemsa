@@ -3,6 +3,7 @@
 #include "pemsa/cart/pemsa_cartridge_module.hpp"
 #include "pemsa/memory/pemsa_memory_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
+#include "pemsa/util/pemsa_font.hpp"
 
 #include "lualib.h"
 
@@ -27,9 +28,60 @@
 static const char* take_string(std::string str) {
 	int length = str.size() + 1;
 	char* cstr = new char[length];
+
 	memcpy(cstr, str.c_str(), length);
 
 	return cstr;
+}
+
+inline std::string& ltrim(std::string& s) {
+	s.erase(0, s.find_first_not_of(" \t\n\r\f\v"));
+	return s;
+}
+
+static void print_line(uint8_t* buffer, const char* text, int x, int y) {
+	int offsetX = 0;
+	int offsetY = 0;
+
+	while (*text != '\0' && *text != '\n') {
+		uint8_t cr = *((uint8_t*) text);
+		text++;
+
+		if (cr >= 'A' && cr <= 'z') {
+			if (cr >= 'a') {
+				cr = toupper(cr);
+			} else {
+				cr = tolower(cr);
+			}
+		}
+
+		const char** letter = pemsa_get_letter(cr);
+
+		if (letter != nullptr) {
+			int w = cr > 127 ? 7 : 3;
+
+			for (int ly = 0; ly < 5; ly++) {
+				for (int lx = 0; lx < w; lx++) {
+					if (letter[ly][lx] == 'x') {
+						int xx = x + lx + offsetX;
+						int yy = y + ly + offsetY;
+
+						int index = xx / 2 + yy * (PEMSA_CREDITS_WIDTH / 2);
+
+						if (index >= PEMSA_CREDITS_HALF_SIZE || xx >= PEMSA_CREDITS_WIDTH || yy >= PEMSA_CREDITS_HEIGHT) {
+							return;
+						}
+
+						buffer[index] = SET_HALF(buffer[index], 7, (xx & 1) == 0);
+					}
+				}
+			}
+
+			offsetX += w + 1;
+		} else {
+			offsetX += 4;
+		}
+	}
 }
 
 PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator) : PemsaModule(emulator) {
@@ -78,6 +130,8 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 
 	this->cart = new PemsaCartridge();
 	this->cart->time = 0;
+	this->cart->name = nullptr;
+	this->cart->author = nullptr;
 
 	if (!std::getline(file, line) || memcmp(line.c_str(), "version", 7) != 0) {
 		// TODO: read version from the line and put it in cart rom
@@ -86,9 +140,12 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	}
 
 	std::stringstream code;
+	std::stringstream label;
+
 	int cartState = -1;
 	int index = 0;
 	bool codePreformatted = false;
+	int codeLineNumber = 1;
 
 	uint8_t* rom = this->cart->rom;
 
@@ -160,7 +217,29 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 
 		switch (cartState) {
 			case STATE_LUA: {
+				if (codeLineNumber < 3) {
+					std::string trimmedLine = ltrim(line);
+
+					if (trimmedLine.size() > 2 && (trimmedLine.rfind("--", 0) || trimmedLine.rfind("//", 0))) {
+						trimmedLine = trimmedLine.substr(2);
+						trimmedLine = ltrim(trimmedLine);
+
+						if (cart->name == nullptr) {
+							cart->name = take_string(trimmedLine);
+						} else {
+							cart->author = take_string(trimmedLine);
+						}
+					}
+				}
+
 				code << line << "\n";
+				codeLineNumber++;
+
+				break;
+			}
+
+			case STATE_LABEL: {
+				label << line << "\n";
 				break;
 			}
 
@@ -281,6 +360,7 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	this->cart->state = state;
 	this->cart->cartDataId = take_string(std::filesystem::path(path).stem().string());
 	this->cart->fullPath = path;
+	this->cart->label = take_string(label.str());
 
 	std::string codeString = code.str();
 
@@ -385,6 +465,8 @@ void PemsaCartridgeModule::cleanupCart() {
 	delete this->gameThread;
 	delete this->cart->code;
 	delete this->cart->cartDataId;
+	delete this->cart->name;
+	delete this->cart->author;
 	delete this->cart;
 }
 
@@ -529,6 +611,24 @@ bool PemsaCartridgeModule::save(const char* path, bool useCodeTag) {
 		for (int i = 0; i < 128; i++) {
 			uint8_t byte = rom[j * 128 + i + PEMSA_ROM_GFX_PROPS];
 			file << INT_TO_HEX(GET_HALF(byte, false)) << INT_TO_HEX(GET_HALF(byte, true));
+		}
+
+		file << "\n";
+	}
+
+	file << "__label__\n" << cart->label << "__credits__\n";
+
+	uint8_t creditsBuffer[PEMSA_CREDITS_HALF_SIZE];
+	memset(creditsBuffer, 5, PEMSA_CREDITS_HALF_SIZE);
+
+	print_line(creditsBuffer, cart->name, 3, 4);
+	print_line(creditsBuffer, cart->author, 3, 12);
+	print_line(creditsBuffer, "pico-8 cartidge", 3, 24);
+
+	for (int j = 0; j < PEMSA_CREDITS_HEIGHT; j++) {
+		for (int i = 0; i < PEMSA_CREDITS_WIDTH / 2; i++) {
+			uint8_t byte = creditsBuffer[j * (PEMSA_CREDITS_WIDTH / 2) + i];
+			file << INT_TO_HEX(GET_HALF(byte, true)) << INT_TO_HEX(GET_HALF(byte, false));
 		}
 
 		file << "\n";

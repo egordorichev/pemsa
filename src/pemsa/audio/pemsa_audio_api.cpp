@@ -29,7 +29,7 @@ static int sfx(lua_State* state) {
 			audioModule->getChannel(channel)->preventLoop();
 		}
 	} else {
-		if (n >= -1 && n < 64) {
+		if (n >= 0 && n < 64) {
 			audioModule->playSfx(n, channel, offset, length);
 		}
 	}
