@@ -39,7 +39,7 @@ inline std::string& ltrim(std::string& s) {
 	return s;
 }
 
-static void print_line(uint8_t* buffer, const char* text, int x, int y) {
+static void print_line(uint8_t* buffer, const char* text, int x, int y, int c) {
 	int offsetX = 0;
 	int offsetY = 0;
 
@@ -72,7 +72,7 @@ static void print_line(uint8_t* buffer, const char* text, int x, int y) {
 							return;
 						}
 
-						buffer[index] = SET_HALF(buffer[index], 7, (xx & 1) == 0);
+						buffer[index] = SET_HALF(buffer[index], c, (xx & 1) == 0);
 					}
 				}
 			}
@@ -621,9 +621,9 @@ bool PemsaCartridgeModule::save(const char* path, bool useCodeTag) {
 	uint8_t creditsBuffer[PEMSA_CREDITS_HALF_SIZE];
 	memset(creditsBuffer, 5 + (5 << 4), PEMSA_CREDITS_HALF_SIZE);
 
-	print_line(creditsBuffer, cart->name, 3, 4);
-	print_line(creditsBuffer, cart->author, 3, 12);
-	print_line(creditsBuffer, "pico-8 cartidge", 3, 24);
+	print_line(creditsBuffer, cart->name, 3, 4, 7);
+	print_line(creditsBuffer, cart->author, 3, 12, 7);
+	print_line(creditsBuffer, "pico-8 cartidge", 3, 24, 6);
 
 	for (int j = 0; j < PEMSA_CREDITS_HEIGHT; j++) {
 		for (int i = 0; i < PEMSA_CREDITS_WIDTH / 2; i++) {
