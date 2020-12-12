@@ -50,6 +50,7 @@ bool PemsaAudioChannel::isActive() {
 }
 
 void PemsaAudioChannel::stop() {
+	this->playingMusic = false;
 	this->infos[0].active = false;
 }
 
@@ -140,7 +141,7 @@ double PemsaAudioChannel::prepareSample(int id) {
 		if (loopEnd != 0 && !this->stopLooping) {
 			if (info->offset >= loopEnd) {
 				info->offset = ram[info->sfx * 68 + PEMSA_RAM_SFX + 66];
-				info->lastStep = -1;
+				info->lastStep = (int) info->offset - 1;
 
 				if (id == 0) {
 					PemsaChannelInfo* secondInfo = &this->infos[1];
@@ -200,7 +201,7 @@ double PemsaAudioChannel::prepareSample(int id) {
 		PemsaChannelInfo* secondInfo = &this->infos[0];
 		double vol = applyFx(0, secondInfo->fx);
 
-		info->note = (this->emulator->getMemoryModule()->ram[info->sfx * 68 + PEMSA_RAM_SFX + (int) info->offset * 2] & 0b00111111) + secondInfo->note - 24;
+		info->note = (this->emulator->getMemoryModule()->ram[info->sfx * 68 + PEMSA_RAM_SFX + (int) info->offset * 2] & 0b00111111) + (secondInfo->note - 2);
 
 		return this->adjustVolume(id, pemsa_sample(this->channelId, info->instrument, info->waveOffset), (vol / 7.0) * (applyFx(id, info->fx) / 7.0));
 	} else if (id == 0 && info->isCustom) {
@@ -212,8 +213,8 @@ double PemsaAudioChannel::prepareSample(int id) {
 
 double PemsaAudioChannel::adjustVolume(int id, double wave, double volume) {
 	PemsaChannelInfo* info = &this->infos[id];
-
 	info->lastVolume += (volume - info->lastVolume) * 0.05;
+
 	return wave * info->lastVolume;
 }
 
