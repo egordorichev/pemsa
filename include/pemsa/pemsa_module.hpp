@@ -8,6 +8,8 @@ class PemsaModule {
 	public:
 		PemsaModule(PemsaEmulator* emulator);
 
+		virtual ~PemsaModule() {}
+
 		virtual void defineApi(lua_State* state);
 		virtual void init();
 		virtual void update(double dt);
