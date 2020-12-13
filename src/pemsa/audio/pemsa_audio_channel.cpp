@@ -203,7 +203,8 @@ double PemsaAudioChannel::prepareSample(int id) {
 		PemsaChannelInfo* secondInfo = &this->infos[0];
 		double vol = applyFx(0, secondInfo->fx);
 
-		info->note = (this->emulator->getMemoryModule()->ram[info->sfx * 68 + PEMSA_RAM_SFX + (int) info->offset * 2] & 0b00111111) + (secondInfo->note - 2);
+		info->note = (this->emulator->getMemoryModule()->ram[info->sfx * 68 + PEMSA_RAM_SFX + (int) info->offset * 2] & 0b00111111) + (secondInfo->note - 24);
+		info->frequency = NOTE_TO_FREQUENCY(info->note);
 
 		return this->adjustVolume(id, pemsa_sample(this->channelId, info->instrument, info->waveOffset), (vol / 7.0) * (applyFx(id, info->fx) / 7.0));
 	} else if (id == 0 && info->isCustom) {
