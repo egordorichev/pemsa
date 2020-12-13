@@ -234,4 +234,5 @@ PemsaChannelInfo::PemsaChannelInfo() {
 	this->waveOffset = 0;
 	this->offset = 0;
 	this->lastVolume = 0;
+	this->sfx = 0;
 }

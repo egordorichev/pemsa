@@ -29,6 +29,8 @@ class PemsaAudioModule : public PemsaModule {
 		void reset() override;
 		void setPaused(bool paused);
 	private:
+		double createSample();
+
 		PemsaAudioBackend* backend;
 		PemsaAudioChannel* channels[PEMSA_CHANNEL_COUNT];
 
@@ -37,6 +39,9 @@ class PemsaAudioModule : public PemsaModule {
 		int currentMusic = -1;
 		int musicSpeed;
 		bool paused;
+
+		double output;
+		double epow;
 };
 
 void pemsa_open_audio_api(PemsaEmulator* machine, lua_State* state);
