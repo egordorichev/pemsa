@@ -176,19 +176,21 @@ double PemsaAudioChannel::prepareSample(int id) {
 		uint8_t lo = ram[i];
 		uint8_t hi = ram[i + 1];
 
-		info->note = (lo & 0b00111111);
+		info->volume  = (uint8_t) ((hi & 0b00001110) >> 1);
 
-		info->instrument = (uint8_t) (((lo & 0b11000000) >> 6) | ((hi & 0b1) << 2));
-		info->volume = (uint8_t) ((hi & 0b00001110) >> 1);
-		info->fx = (uint8_t) ((hi & 0b01110000) >> 4);
-		info->isCustom = (uint8_t) ((hi & 0b10000000) >> 7) == 1;
+		if (info->volume != 0) {
+			info->note = (lo & 0b00111111);
+			info->instrument = (uint8_t) (((lo & 0b11000000) >> 6) | ((hi & 0b1) << 2));
+			info->fx = (uint8_t) ((hi & 0b01110000) >> 4);
+			info->isCustom = (uint8_t) ((hi & 0b10000000) >> 7) == 1;
 
-		if (id == 0 && info->isCustom) {
-			PemsaChannelInfo* secondInfo = &this->infos[1];
+			if (id == 0 && info->isCustom) {
+				PemsaChannelInfo *secondInfo = &this->infos[1];
 
-			secondInfo->sfx = info->instrument;
-			secondInfo->active = true;
-			secondInfo->speed = fmax(1, this->emulator->getMemoryModule()->ram[secondInfo->sfx * 68 + PEMSA_RAM_SFX + 65]);
+				secondInfo->sfx = info->instrument;
+				secondInfo->active = true;
+				secondInfo->speed = fmax(1, this->emulator->getMemoryModule()->ram[secondInfo->sfx * 68 + PEMSA_RAM_SFX + 65]);
+			}
 		}
 
 		info->frequency = NOTE_TO_FREQUENCY(info->note);
@@ -213,8 +215,8 @@ double PemsaAudioChannel::prepareSample(int id) {
 
 double PemsaAudioChannel::adjustVolume(int id, double wave, double volume) {
 	PemsaChannelInfo* info = &this->infos[id];
-	info->lastVolume += (volume - info->lastVolume) * 0.05;
 
+	info->lastVolume += (volume - info->lastVolume) * 0.05;
 	return wave * info->lastVolume;
 }
 
