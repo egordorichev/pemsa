@@ -92,6 +92,7 @@ static void print_line(uint8_t* buffer, const char* text, int x, int y, int c) {
 
 PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator) : PemsaModule(emulator) {
 	this->destruct = false;
+	this->threadRunning = false;
 }
 
 PemsaCartridgeModule::~PemsaCartridgeModule() {
@@ -465,23 +466,24 @@ void PemsaCartridgeModule::cleanupCart() {
 		return;
 	}
 
-	this->threadRunning = false;
-	this->lock.notify_all();
-	this->gameThread->join();
+	if (this->threadRunning) {
+		this->threadRunning = false;
+		this->lock.notify_all();
+		this->gameThread->join();
 
-	lua_close(this->cart->state);
+		lua_close(this->cart->state);
 
-	delete this->gameThread;
+		delete this->gameThread;
+	}
+
 	delete this->cart->code;
 	delete this->cart->cartDataId;
 
-	if (this->cart->name)
-	{
+	if (this->cart->name != nullptr) {
 		delete this->cart->name;
 	}
 
-	if (this->cart->author)
-	{
+	if (this->cart->author != nullptr) {
 		delete this->cart->author;
 	}
 
@@ -639,8 +641,8 @@ bool PemsaCartridgeModule::save(const char* path, bool useCodeTag) {
 	uint8_t creditsBuffer[PEMSA_CREDITS_HALF_SIZE];
 	memset(creditsBuffer, 5 + (5 << 4), PEMSA_CREDITS_HALF_SIZE);
 
-	print_line(creditsBuffer, cart->name, 3, 4, 7);
-	print_line(creditsBuffer, cart->author, 3, 12, 7);
+	print_line(creditsBuffer, cart->name == nullptr ? "???" : cart->name, 3, 4, 7);
+	print_line(creditsBuffer, cart->author == nullptr ? "???" : cart->author, 3, 12, 7);
 	print_line(creditsBuffer, "pico-8 cartidge", 3, 24, 6);
 
 	for (int j = 0; j < PEMSA_CREDITS_HEIGHT; j++) {
