@@ -12,10 +12,7 @@
 #include <string>
 #include <cstring>
 #include <filesystem>
-
-#ifdef _WIN32
 #include <sstream>
-#endif
 
 #define STATE_LUA 0
 #define STATE_GFX 1
