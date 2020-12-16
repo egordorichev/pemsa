@@ -12,10 +12,7 @@
 #include <string>
 #include <cstring>
 #include <filesystem>
-
-#ifdef _WIN32
 #include <sstream>
-#endif
 
 #define STATE_LUA 0
 #define STATE_GFX 1
@@ -109,7 +106,7 @@ bool PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
 	this->emulator->reset();
 	this->paused = false;
 
-	this->load(path, onlyLoad);
+	return this->load(path, onlyLoad);
 }
 
 bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
