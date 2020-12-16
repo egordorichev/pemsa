@@ -1,6 +1,11 @@
 #include "pemsa/audio/pemsa_audio_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
 
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+
 PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* backend) : PemsaModule(emulator) {
 	this->backend = backend;
 
