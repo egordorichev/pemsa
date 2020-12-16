@@ -99,13 +99,17 @@ void PemsaCartridgeModule::update(double dt) {
 
 	if (this->destruct) {
 		this->destruct = false;
-		cleanupCart();
-
-		this->emulator->reset();
-		this->paused = false;
-
-		load(lastLoaded);
+		this->cleanupAndLoad(lastLoaded);
 	}
+}
+
+bool PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
+	this->cleanupCart();
+
+	this->emulator->reset();
+	this->paused = false;
+
+	this->load(path, onlyLoad);
 }
 
 bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
@@ -374,7 +378,6 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	codeFile << codeString;
 	codeFile.close();
 #endif
-
 	this->cart->code = take_string(codeString);
 	this->cart->codeLength = codeString.length();
 

@@ -16,6 +16,8 @@ class PemsaCartridgeModule : public PemsaModule {
 		~PemsaCartridgeModule();
 
 		void update(double dt) override;
+
+		bool cleanupAndLoad(const char* path, bool onlyLoad = false);
 		bool load(const char* path, bool onlyLoad = false);
 		bool save(const char* path, bool useCodeTag = true);
 
