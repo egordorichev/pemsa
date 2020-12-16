@@ -34,6 +34,15 @@ static const char* take_string(std::string str) {
 	return cstr;
 }
 
+static const char* take_cstring(const char* str) {
+	int length = strlen(str) + 1;
+	char* cstr = new char[length];
+
+	memcpy(cstr, str, length);
+
+	return cstr;
+}
+
 inline std::string& ltrim(std::string& s) {
 	s.erase(0, s.find_first_not_of(" \t\n\r\f\v"));
 	return s;
@@ -109,7 +118,7 @@ bool PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
 	this->emulator->reset();
 	this->paused = false;
 
-	this->load(path, onlyLoad);
+	return this->load(path, onlyLoad);
 }
 
 bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
@@ -468,8 +477,17 @@ void PemsaCartridgeModule::cleanupCart() {
 	delete this->gameThread;
 	delete this->cart->code;
 	delete this->cart->cartDataId;
-	delete this->cart->name;
-	delete this->cart->author;
+
+	if (this->cart->name)
+	{
+		delete this->cart->name;
+	}
+
+	if (this->cart->author)
+	{
+		delete this->cart->author;
+	}
+
 	delete this->cart;
 }
 
@@ -508,7 +526,7 @@ void PemsaCartridgeModule::loadData(const char *path) {
 		return;
 	}
 
-	this->cart->cartDataId = path;
+	this->cart->cartDataId = take_cstring(path);
 	std::string fullPath = std::string(PEMSA_CART_DATA_PATH) + "/" + std::string(path);
 	std::ifstream file(fullPath);
 
