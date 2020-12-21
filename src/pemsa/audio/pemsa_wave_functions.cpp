@@ -11,7 +11,7 @@
 
 
 double pemsa_sine(double t) {
-	return (fabs(fmod(t, 1.0) * 2.0 - 1.0) * 2 - 1.0) * 0.7;
+	return (fabs(fmod(t, 1.0) * 2.0 - 1.0) * 2 - 1.0);
 }
 
 double pemsa_square(double t) {

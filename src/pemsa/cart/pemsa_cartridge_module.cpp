@@ -370,7 +370,7 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	this->cart->fullPath = path;
 	this->cart->label = take_string(label.str());
 
-	std::string codeString = code.str() + R"(
+	std::string codeString = R"(
 if not __skip then
 	local data="00077770007777700070700000777000007770000000000000777770007777700070707000700070000000000077777000777770000770000000770000077000007777700077777000000000000770700077707000707770007077700000000000777770007777700070700000777770000777700000000090a0b000001000008111c00000100000f0e0d000"
 	local function wait(a) for i = 1,a do flip() end end
@@ -433,7 +433,8 @@ if not __skip then
 	print("\nbooting catridge...")
 	wait(40)
 	psfx(osfx)
-end)";
+end
+)" + code.str();
 
 	if (!codePreformatted) {
 		PemsaScanner scanner(codeString.c_str());

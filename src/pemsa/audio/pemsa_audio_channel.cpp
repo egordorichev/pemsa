@@ -189,6 +189,8 @@ double PemsaAudioChannel::prepareSample(int id) {
 
 				secondInfo->sfx = info->instrument;
 				secondInfo->active = true;
+				secondInfo->offset = 0;
+				secondInfo->lastStep = -1;
 				secondInfo->speed = fmax(1, this->emulator->getMemoryModule()->ram[secondInfo->sfx * 68 + PEMSA_RAM_SFX + 65]);
 			}
 		}
@@ -217,7 +219,7 @@ double PemsaAudioChannel::prepareSample(int id) {
 double PemsaAudioChannel::adjustVolume(int id, double wave, double volume) {
 	PemsaChannelInfo* info = &this->infos[id];
 
-	info->lastVolume += (volume - info->lastVolume) * 0.05;
+	info->lastVolume += (volume - info->lastVolume) * 0.01;
 	return wave * info->lastVolume;
 }
 
