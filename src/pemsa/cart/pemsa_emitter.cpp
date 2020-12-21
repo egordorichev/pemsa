@@ -298,7 +298,7 @@ end
 					const char* str = token.start + i;
 
 					if (i < end - 1) {
-#define CASE(a, b, c, d, u, e, z) if (str[0] == a && str[1] == b && (str[0] == -53 || (str[2] == c && (str[0] != -16 || str[3] == d)))) { output << "\\" << e; i += (str[0] == -16 ? 3 : (str[0] == -53 ? 1 : 2)); i += 3; continue; }
+#define CASE(a, b, c, d, u, e, z) if (str[0] == a && str[1] == b && (str[0] == -53 || (str[2] == c && (str[0] != -16 || str[3] == d)))) { output << "\\" << e; i += (str[0] == -16 ? 3 : (str[0] == -53 ? 1 : 2)); continue; }
 #include "pemsa/cart/pemsa_cases.hpp"
 #undef CASE
 					}
