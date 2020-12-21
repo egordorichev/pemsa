@@ -46,7 +46,7 @@ double PemsaAudioChannel::sample() {
 }
 
 bool PemsaAudioChannel::isActive() {
-	return this->infos[0].active;
+	return this->infos[0].active || this->infos[0].lastVolume > 0.05;
 }
 
 void PemsaAudioChannel::stop() {
@@ -129,6 +129,14 @@ static int min(int a, int b) {
 	return a < b ? a : b;
 }
 
+static bool willFxTransition(int from, int to) {
+	if (to == 3 || to == 4) {
+		return false;
+	}
+
+	return true;
+}
+
 double PemsaAudioChannel::prepareSample(int id) {
 	PemsaChannelInfo* info = &this->infos[id];
 
@@ -179,6 +187,10 @@ double PemsaAudioChannel::prepareSample(int id) {
 		info->volume  = (uint8_t) ((hi & 0b00001110) >> 1);
 
 		if (info->volume != 0) {
+			uint8_t prevInstrument = info->instrument;
+			uint8_t prevFx = info->fx;
+			bool wasCustom = info->isCustom;
+
 			info->note = (lo & 0b00111111);
 			info->instrument = (uint8_t) (((lo & 0b11000000) >> 6) | ((hi & 0b1) << 2));
 			info->fx = (uint8_t) ((hi & 0b01110000) >> 4);
@@ -189,8 +201,14 @@ double PemsaAudioChannel::prepareSample(int id) {
 
 				secondInfo->sfx = info->instrument;
 				secondInfo->active = true;
-				secondInfo->offset = 0;
-				secondInfo->lastStep = -1;
+
+				uint8_t fx = info->fx;
+
+				if (prevInstrument != info->instrument || !willFxTransition(prevFx, fx) || wasCustom != info->isCustom) {
+					secondInfo->offset = 0;
+					secondInfo->lastStep = -1;
+				}
+
 				secondInfo->speed = fmax(1, this->emulator->getMemoryModule()->ram[secondInfo->sfx * 68 + PEMSA_RAM_SFX + 65]);
 			}
 		}
