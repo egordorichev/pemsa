@@ -1,7 +1,7 @@
 #include "pemsa/pemsa_emulator.hpp"
 #include "pemsa/util/pemsa_font.hpp"
 
-PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *audio, PemsaInputBackend *input, bool* running) {
+PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *audio, PemsaInputBackend *input, bool* running, bool disableSplash) {
 	this->running = running;
 	pemsa_setup_font();
 
@@ -12,7 +12,7 @@ PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *
 	this->modules[0] = (PemsaModule*) (this->graphicsModule = new PemsaGraphicsModule(this, graphics));
 	this->modules[1] = (PemsaModule*) (this->audioModule = new PemsaAudioModule(this, audio));
 	this->modules[2] = (PemsaModule*) (this->inputModule = new PemsaInputModule(this, input));
-	this->modules[3] = (PemsaModule*) (this->cartridgeModule = new PemsaCartridgeModule(this));
+	this->modules[3] = (PemsaModule*) (this->cartridgeModule = new PemsaCartridgeModule(this, disableSplash));
 	this->modules[4] = (PemsaModule*) (this->memoryModule = new PemsaMemoryModule(this));
 	this->modules[5] = (PemsaModule*) (this->drawStateModule = new PemsaDrawStateModule(this));
 }
