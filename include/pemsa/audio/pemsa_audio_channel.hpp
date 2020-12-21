@@ -41,6 +41,7 @@ class PemsaAudioChannel {
 		int getNote();
 
 		bool isPlayingMusic();
+		bool hasLooped();
 
 		void preventLoop();
 	private:
@@ -57,6 +58,7 @@ class PemsaAudioChannel {
 		bool playingMusic;
 		bool stopLooping;
 		int length;
+		bool didLoop;
 };
 
 #endif

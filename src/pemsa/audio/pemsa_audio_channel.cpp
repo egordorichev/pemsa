@@ -25,6 +25,7 @@ void PemsaAudioChannel::play(int sfx, bool music, int offset, int length) {
 	this->playingMusic = music;
 	this->stopLooping = false;
 	this->length = length;
+	this->didLoop = false;
 
 	PemsaChannelInfo* info = &this->infos[0];
 
@@ -252,6 +253,10 @@ bool PemsaAudioChannel::isPlayingMusic() {
 
 void PemsaAudioChannel::preventLoop() {
 	this->stopLooping = true;
+}
+
+bool PemsaAudioChannel::hasLooped() {
+	return this->didLoop;
 }
 
 PemsaChannelInfo::PemsaChannelInfo() {

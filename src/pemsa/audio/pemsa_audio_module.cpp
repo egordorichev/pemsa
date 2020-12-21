@@ -85,23 +85,10 @@ double PemsaAudioModule::createSample() {
 					}
 				}
 
-				bool loopFound = false;
-
 				if (!found) {
-					for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
-						if (ram[this->channels[i]->getSfx() * 68 + PEMSA_RAM_SFX + 67] != 0) {
-							loopFound = true;
-							break;
-						}
-					}
-
-					if (!loopFound) {
-						this->playMusic(-1);
-					}
-				}
-
-				if (found || loopFound) {
-					this->playMusic(this->currentMusic + (found ? 1 : 0));
+					this->playMusic(-1);
+				} else if (this->currentMusic < 63) {
+					this->playMusic(this->currentMusic + 1);
 				}
 			}
 		}
