@@ -100,10 +100,6 @@ PemsaCartridgeModule::~PemsaCartridgeModule() {
 }
 
 void PemsaCartridgeModule::update(double dt) {
-	if (this->cart != nullptr) {
-		this->cart->time += dt;
-	}
-
 	if (this->destruct) {
 		this->destruct = false;
 		this->cleanupAndLoad(lastLoaded);
@@ -447,6 +443,8 @@ void PemsaCartridgeModule::gameLoop() {
 	this->callIfExists("_init");
 
 	while (this->threadRunning) {
+		this->cart->time += 1.0 / (this->cart->highFps ? 60 : 30);
+
 		if (!this->paused) {
 			if (this->cart->highFps) {
 				this->callIfExists("_update60");
@@ -457,7 +455,7 @@ void PemsaCartridgeModule::gameLoop() {
 			this->callIfExists("_draw");
 		}
 
-		this->flip();
+		this->waitForNextFrame();
 	}
 }
 
@@ -573,12 +571,15 @@ void PemsaCartridgeModule::stop() {
 	this->threadRunning = false;
 }
 
-void PemsaCartridgeModule::flip() {
+void PemsaCartridgeModule::waitForNextFrame() {
 	this->callIfExists("__update_menu");
 
 	this->waiting = true;
 	std::unique_lock<std::mutex> uniqueLock(this->mutex);
-	this->lock.wait(uniqueLock, [this] { return !this->waiting || !this->threadRunning; });
+
+	this->lock.wait(uniqueLock, [this] {
+		return !this->waiting || !this->threadRunning;
+	});
 }
 
 void PemsaCartridgeModule::setPaused(bool paused) {
@@ -589,7 +590,7 @@ void PemsaCartridgeModule::initiateSelfDestruct() {
 	this->destruct = true;
 }
 
-void PemsaCartridgeModule::notify() {
+void PemsaCartridgeModule::allowExecutionOfNextFrame() {
 	this->waiting = false;
 	this->lock.notify_all();
 }
@@ -734,4 +735,8 @@ bool PemsaCartridgeModule::save(const char* path, bool useCodeTag) {
 
 	file.close();
 	return true;
+}
+
+bool PemsaCartridgeModule::hasNewFrame() {
+	return this->waiting;
 }

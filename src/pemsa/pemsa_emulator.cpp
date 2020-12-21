@@ -62,3 +62,13 @@ void PemsaEmulator::reset() {
 void PemsaEmulator::stop() {
 	*this->running = false;
 }
+
+void PemsaEmulator::render() {
+	PemsaGraphicsBackend* graphicsBackend = this->graphicsModule->getBackend();
+
+	if (cartridgeModule->hasNewFrame()) {
+		graphicsBackend->flip();
+	}
+
+	graphicsBackend->render();
+}

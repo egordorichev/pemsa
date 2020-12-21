@@ -28,11 +28,13 @@ class PemsaCartridgeModule : public PemsaModule {
 		PemsaCartridge* getCart();
 		std::mutex* getMutex();
 
-		void flip();
+		void waitForNextFrame();
 		void setPaused(bool paused);
 		void cleanupCart();
 		void initiateSelfDestruct();
-		void notify();
+		void allowExecutionOfNextFrame();
+
+		bool hasNewFrame();
 	private:
 		PemsaCartridge* cart;
 

@@ -8,6 +8,7 @@ class PemsaGraphicsBackend : public PemsaBackend {
 		virtual void createSurface() = 0;
 		virtual void flip() = 0;
 		virtual int getFps() = 0;
+		virtual void render() = 0;
 };
 
 #endif

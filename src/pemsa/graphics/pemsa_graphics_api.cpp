@@ -42,7 +42,7 @@ static int read_color(lua_State* state, int slot) {
 }
 
 static int flip(lua_State* state) {
-	emulator->getCartridgeModule()->flip();
+	emulator->getCartridgeModule()->waitForNextFrame();
 	return 0;
 }
 

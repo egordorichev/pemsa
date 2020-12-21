@@ -2,7 +2,6 @@
 #include "pemsa/pemsa_emulator.hpp"
 
 #include <mutex>
-#include <iostream>
 
 #define PEMSA_LOW_FPS_DELTA 1 / 30.0
 #define PEMSA_HIGH_FPS_DELTA 1 / 60.0
@@ -21,17 +20,12 @@ void PemsaGraphicsModule::update(double dt) {
 	this->time += dt;
 
 	PemsaCartridgeModule* cartridgeModule = this->emulator->getCartridgeModule();
-	PemsaCartridge* cart = cartridgeModule->getCart();
 
-	double renderDelta = (cart != nullptr && cartridgeModule->getCart()->highFps) ? PEMSA_HIGH_FPS_DELTA : PEMSA_LOW_FPS_DELTA;
+	double renderDelta = (cartridgeModule->getCart() != nullptr && cartridgeModule->getCart()->highFps) ? PEMSA_HIGH_FPS_DELTA : PEMSA_LOW_FPS_DELTA;
 
-	while (this->time >= renderDelta) {
+	if (this->time >= renderDelta) {
 		this->time -= renderDelta;
-
-		std::unique_lock<std::mutex> uniqueLock(*cartridgeModule->getMutex());
-
-		this->backend->flip();
-		cartridgeModule->notify();
+		this->emulator->getCartridgeModule()->allowExecutionOfNextFrame();
 	}
 }
 

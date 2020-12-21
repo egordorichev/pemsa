@@ -19,6 +19,7 @@ class PemsaEmulator {
 		~PemsaEmulator();
 
 		void update(double dt);
+		void render();
 		void reset();
 
 		PemsaGraphicsModule* getGraphicsModule();
