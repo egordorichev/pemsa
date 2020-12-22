@@ -20,7 +20,6 @@ PemsaAudioModule::PemsaAudioModule(PemsaEmulator* emulator, PemsaAudioBackend* b
 	this->currentMusic = -1;
 	this->paused = false;
 	this->output = 0;
-
 	this->epow = 1 - exp(-(1.0 / PEMSA_SAMPLE_RATE) * 2 * M_PI * 4000);
 
 	this->backend->setupBuffer();
@@ -39,7 +38,7 @@ double PemsaAudioModule::sample() {
 }
 
 double PemsaAudioModule::createSample() {
-	if (paused) {
+	if (this->paused) {
 		return 0;
 	}
 

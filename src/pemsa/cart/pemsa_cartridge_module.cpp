@@ -537,7 +537,7 @@ void PemsaCartridgeModule::cleanupCart() {
 	}
 
 	if (this->threadRunning) {
-		this->threadRunning = false;
+		this->stop();
 		this->lock.notify_all();
 		this->gameThread->join();
 
@@ -641,6 +641,10 @@ void PemsaCartridgeModule::saveData() {
 
 void PemsaCartridgeModule::stop() {
 	this->threadRunning = false;
+
+	if (this->cart != nullptr) {
+		luaL_error(this->cart->state, "the cart was stopped");
+	}
 }
 
 void PemsaCartridgeModule::waitForNextFrame() {

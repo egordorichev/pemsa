@@ -82,8 +82,6 @@ static int extcmd(lua_State* state) {
 
 static int stop(lua_State* state) {
 	emulator->getCartridgeModule()->stop();
-	luaL_error(state, "the cart was stopped");
-
 	return 0;
 }
 
