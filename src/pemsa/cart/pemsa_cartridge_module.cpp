@@ -6,6 +6,7 @@
 #include "pemsa/util/pemsa_font.hpp"
 
 #include "lualib.h"
+#include "lstate.h"
 
 #include <iostream>
 #include <fstream>
@@ -515,8 +516,6 @@ void PemsaCartridgeModule::gameLoop() {
 	this->callIfExists("_init");
 
 	while (this->threadRunning) {
-		this->cart->time += 1.0 / (this->cart->highFps ? 60 : 30);
-
 		if (!this->paused) {
 			if (this->cart->highFps) {
 				this->callIfExists("_update60");
@@ -642,7 +641,7 @@ void PemsaCartridgeModule::saveData() {
 void PemsaCartridgeModule::stop() {
 	this->threadRunning = false;
 
-	if (this->cart != nullptr) {
+	if (this->cart != nullptr && this->cart->state->errorJmp) {
 		luaL_error(this->cart->state, "the cart was stopped");
 	}
 }
@@ -656,6 +655,11 @@ void PemsaCartridgeModule::waitForNextFrame() {
 	this->lock.wait(uniqueLock, [this] {
 		return !this->waiting || !this->threadRunning;
 	});
+
+	if (this->threadRunning) {
+		this->emulator->getInputModule()->updateInput();
+		this->cart->time += 1.0 / (this->cart->highFps ? 60 : 30);
+	}
 }
 
 void PemsaCartridgeModule::setPaused(bool paused) {
