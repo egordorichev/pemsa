@@ -83,8 +83,8 @@ PemsaToken PemsaScanner::scan() {
 		case '@': return this->makeToken(TOKEN_DOG);
 		case '$': return this->makeToken(TOKEN_DOLLAR);
 		case '^': return this->makeToken(TOKEN_CAP);
-		case '&': return this->makeToken(TOKEN_BAND);
-		case '|': return this->makeToken(TOKEN_BOR);
+		case '&': return this->makeToken(this->match('=') ? TOKEN_AMPERSAND_EQUAL : TOKEN_BAND);
+		case '|': return this->makeToken(this->match('=') ? TOKEN_BAR_EQUAL : TOKEN_BOR);
 		case '#': return this->makeToken(TOKEN_SHARP);
 		case '(': return this->makeToken(TOKEN_LEFT_PAREN);
 		case ')': return this->makeToken(TOKEN_RIGHT_PAREN);
