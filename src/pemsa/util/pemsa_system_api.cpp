@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <iostream>
+#include <cstring>
 
 static PemsaEmulator* emulator;
 
@@ -53,9 +54,20 @@ static int tonum(lua_State* state) {
 	}
 
 	const char* ostr = luaL_checkstring(state, 1);
-	char *endptr;
+	char *endptr = nullptr;
+	int length = strlen(ostr);
 
-	pemsa_pushnumber_raw(state, strtofix16(ostr, &endptr));
+	if (length == 0) {
+		return 0;
+	}
+
+	fix16_t number = strtofix16(ostr, &endptr);
+
+	if (endptr != ostr + length) {
+		return 0;
+	}
+
+	pemsa_pushnumber_raw(state, number);
 
 	return 1;
 }
