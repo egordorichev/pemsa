@@ -44,6 +44,30 @@ static int reset(lua_State* state) {
 	return 0;
 }
 
+static int load(lua_State* state) {
+	const char* name = luaL_checkstring(state, 1);
+	emulator->getCartridgeModule()->cleanupAndLoad(name);
+
+	return 0;
+}
+
+static int list_carts(lua_State* state) {
+	lua_newtable(state);
+
+	for (int i = 0; i < 3; i++) {
+		lua_newtable(state);
+
+		lua_pushstring(state, "slipways");
+		lua_rawseti(state, -2, 1);
+		lua_pushstring(state, "egor");
+		lua_rawseti(state, -2, 2);
+
+		lua_rawseti(state, -2, i+1);
+	}
+
+	return 1;
+}
+
 void pemsa_open_cartridge_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -52,4 +76,6 @@ void pemsa_open_cartridge_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "cartdata", cartdata);
 	lua_register(state, "__set_paused", set_paused);
 	lua_register(state, "__reset", reset);
+	lua_register(state, "__load", load);
+	lua_register(state, "__list_carts", list_carts);
 }

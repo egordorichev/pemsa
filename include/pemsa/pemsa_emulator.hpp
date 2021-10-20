@@ -18,7 +18,7 @@ class PemsaEmulator {
 		PemsaEmulator(PemsaGraphicsBackend* graphics, PemsaAudioBackend *audio, PemsaInputBackend *input, bool* running, bool disableSplash = false);
 		~PemsaEmulator();
 
-		void update(double dt);
+		bool update(double dt);
 		void render();
 		void reset();
 

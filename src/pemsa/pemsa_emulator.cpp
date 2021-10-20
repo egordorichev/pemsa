@@ -23,10 +23,12 @@ PemsaEmulator::~PemsaEmulator() {
 	}
 }
 
-void PemsaEmulator::update(double dt) {
+bool PemsaEmulator::update(double dt) {
 	for (int i = 0; i < PEMSA_MODULE_COUNT; i++) {
 		this->modules[i]->update(dt);
 	}
+
+	return this->cartridgeModule->isDone();
 }
 
 PemsaGraphicsModule *PemsaEmulator::getGraphicsModule() {
