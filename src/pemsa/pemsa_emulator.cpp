@@ -63,6 +63,7 @@ void PemsaEmulator::reset() {
 
 void PemsaEmulator::stop() {
 	*this->running = false;
+	this->cartridgeModule->stop();
 }
 
 void PemsaEmulator::render() {

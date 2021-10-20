@@ -61,10 +61,10 @@ static int load(lua_State* state) {
 
 static int list_carts(lua_State* state) {
 	lua_newtable(state);
-	int i = 0;
+	int i = 1;
 
 	for (const auto & entry : fs::directory_iterator("./")) {
-		if (entry.is_directory()) {
+		if (entry.is_directory() || entry.path().extension() != ".p8") {
 			continue;
 		}
 
@@ -106,7 +106,6 @@ static int read_cdata(lua_State* state) {
 		file.open(path + std::string(".p8"));
 
 		if (file.bad() || !file.is_open()) {
-			std::cerr << "Failed to open the file\n";
 			return 0;
 		}
 	}

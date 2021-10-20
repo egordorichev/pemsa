@@ -176,7 +176,6 @@ PemsaToken PemsaScanner::scan() {
 				code[i + 1] = advance();
 			}
 
-			// std::cout << len << ": " << code[0] << ", " << code[1] << ", " << code[2] << ", " << code[3] << "\n";
 #define CASE(a, b, c, d, e, u, z) if (code[0] == a && code[1] == b && (code[0] == -53 || (code[2] == c && (code[0] != -16 || code[3] == d)))) { return this->makeAsciiToken(z); }
 #include "pemsa/cart/pemsa_cases.hpp"
 #undef CASE

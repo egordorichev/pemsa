@@ -122,8 +122,6 @@ void PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
 
 bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	this->done = false;
-
-	std::cout << "# Loading " << path << "\n";
 	std::ifstream file(path);
 
 	if (file.bad() || !file.is_open()) {
@@ -131,7 +129,6 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 		file.open(path + std::string(".p8"));
 
 		if (file.bad() || !file.is_open()) {
-			std::cerr << "Failed to open the file\n";
 			return false;
 		}
 	}
@@ -491,8 +488,6 @@ PemsaCartridge *PemsaCartridgeModule::getCart() {
 }
 
 void PemsaCartridgeModule::gameLoop() {
-	std::cout << "Started the game loop\n";
-
 	this->threadRunning = true;
 	this->cart->time = 1 / 30.0;
 
@@ -544,7 +539,6 @@ void PemsaCartridgeModule::gameLoop() {
 	}
 
 	this->cleanupCart();
-	std::cout << "Exited the game loop\n";
 }
 
 void PemsaCartridgeModule::cleanupCart() {
@@ -560,8 +554,8 @@ void PemsaCartridgeModule::cleanupCart() {
 		this->gameThread->join();
 
 		lua_close(this->cart->state);
-		this->threadRunning = false;
 
+		this->threadRunning = false;
 		delete this->gameThread;
 	}
 
@@ -673,6 +667,7 @@ void PemsaCartridgeModule::stop() {
 	}
 
 	this->threadRunning = false;
+	this->waiting = false;
 }
 
 void PemsaCartridgeModule::waitForNextFrame() {
