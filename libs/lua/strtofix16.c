@@ -133,7 +133,7 @@ fix16_t strtofix16(const char *nptr, char** endptr) {
 	}
 
 	// Skip extra digits
-	while (isxdigit((*nptr) || isbdigit(*nptr)) && *nptr != '\0') {
+	while ((isxdigit(*nptr) || isbdigit(*nptr) || isdigit(*nptr)) && *nptr != '\0') {
 		nptr++;
 	}
 

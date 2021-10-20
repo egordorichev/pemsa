@@ -131,6 +131,9 @@ end
 function deli(a, i)
 	if a ~= nil then table.remove(a, i) end
 end
+function __load_splore()
+	__load("splore")
+end
 local __menu_options_custom={}
 local __current_option=1
 local __menu_on=false
@@ -147,6 +150,7 @@ function __update_menu()
 	add(__menu_options,"continue",1)
 	add(__menu_options,"favorite")
 	add(__menu_options,"reset cart")
+	add(__menu_options,"back to menu")
 
 	if btnp(6) then
 		if __menu_on and __current_option==#__menu_options-1 then
@@ -158,7 +162,9 @@ function __update_menu()
 
 			if not __menu_on then
 				local fn=__menu_functions[__current_option-1]
-				if __current_option==#__menu_options then fn=__reset end
+				if __current_option==#__menu_options -1 then fn=__reset end
+				if __current_option==#__menu_options then fn=__load_splore end
+
 				if fn then fn() end
 				cls()
 			end

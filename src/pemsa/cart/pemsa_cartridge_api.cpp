@@ -1,5 +1,8 @@
 #include "pemsa/pemsa_emulator.hpp"
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 static PemsaEmulator* emulator;
 
 static int dget(lua_State* state) {
@@ -53,16 +56,17 @@ static int load(lua_State* state) {
 
 static int list_carts(lua_State* state) {
 	lua_newtable(state);
+	int i = 0;
 
-	for (int i = 0; i < 3; i++) {
+	for (const auto & entry : fs::directory_iterator("./")) {
 		lua_newtable(state);
 
-		lua_pushstring(state, "slipways");
-		lua_rawseti(state, -2, 1);
-		lua_pushstring(state, "egor");
-		lua_rawseti(state, -2, 2);
+			lua_pushstring(state, entry.path().stem().c_str());
+			lua_rawseti(state, -2, 1);
+			lua_pushstring(state, "egor");
+			lua_rawseti(state, -2, 2);
 
-		lua_rawseti(state, -2, i+1);
+			lua_rawseti(state, -2, i++);
 	}
 
 	return 1;
