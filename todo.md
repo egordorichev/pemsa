@@ -6,3 +6,4 @@
 * music() fade out, channel mask?
 * display errors publically  
 * reset cart menu option fails
+* will hang if closed while the splash plays
