@@ -565,6 +565,8 @@ void PemsaCartridgeModule::cleanupCart() {
 		delete this->gameThread;
 	}
 
+	this->saveData();
+
 	delete this->cart->code;
 	delete this->cart->cartDataId;
 	delete this->cart->name;
