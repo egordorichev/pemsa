@@ -564,6 +564,11 @@ void PemsaCartridgeModule::cleanupCart() {
 	delete this->cart->name;
 	delete this->cart->author;
 	delete this->cart;
+
+	if (this->nextPath) {
+		this->load(this->nextPath, this->onlyLoad);
+		this->nextPath = nullptr;
+	}
 }
 
 void PemsaCartridgeModule::callIfExists(const char *method_name) {
