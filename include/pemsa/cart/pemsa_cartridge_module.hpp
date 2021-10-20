@@ -12,7 +12,7 @@
 
 class PemsaCartridgeModule : public PemsaModule {
 	public:
-		PemsaCartridgeModule(PemsaEmulator* emulator, bool disableSplash);
+		PemsaCartridgeModule(PemsaEmulator* emulator, bool enableSplash);
 		~PemsaCartridgeModule();
 
 		void reset() override;
@@ -45,7 +45,7 @@ class PemsaCartridgeModule : public PemsaModule {
 		std::thread* gameThread;
 		const char* lastLoaded;
 
-		bool disableSplash;
+		bool enableSplash;
 		bool waiting;
 		bool threadRunning;
 		bool paused;

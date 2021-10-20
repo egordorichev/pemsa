@@ -27,6 +27,7 @@
 struct PemsaCartridge {
 	lua_State* state;
 
+	const char* id;
 	const char* code;
 	const char* name;
 	const char* author;

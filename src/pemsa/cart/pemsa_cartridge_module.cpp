@@ -91,10 +91,10 @@ static void print_line(uint8_t* buffer, const char* text, int x, int y, int c) {
 	}
 }
 
-PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator, bool disableSplash) : PemsaModule(emulator) {
+PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator, bool enableSplash) : PemsaModule(emulator) {
 	this->destruct = false;
 	this->threadRunning = false;
-	this->disableSplash = disableSplash;
+	this->enableSplash = enableSplash;
 	this->onlyLoad = false;
 	this->nextPath = nullptr;
 	this->lastLoaded = nullptr;
@@ -370,9 +370,11 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	this->lastLoaded = path;
 
 	lua_State* state = luaL_newstate();
+	std::string stem = std::filesystem::path(path).stem().string();
 
 	this->cart->state = state;
-	this->cart->cartDataId = take_string(std::filesystem::path(path).stem().string());
+	this->cart->cartDataId = take_string(stem);
+	this->cart->id = take_string(stem);
 	this->cart->fullPath = path;
 	this->cart->label = take_string(label.str());
 
@@ -496,10 +498,15 @@ void PemsaCartridgeModule::gameLoop() {
 
 	lua_State* state = this->cart->state;
 
-	if (this->disableSplash) {
+	if (!this->enableSplash) {
 		lua_pushboolean(state, true);
 		lua_setglobal(state, "__skip");
+	} else {
+		this->enableSplash = false;
 	}
+
+	lua_pushstring(state, this->cart->id);
+	lua_setglobal(state, "__cart");
 
 	if (luaL_loadbuffer(state, this->cart->code, this->cart->codeLength, "=cart") != 0) {
 		this->reportLuaError();
@@ -562,6 +569,7 @@ void PemsaCartridgeModule::cleanupCart() {
 	delete this->cart->cartDataId;
 	delete this->cart->name;
 	delete this->cart->author;
+	delete this->cart->id;
 	delete this->cart;
 
 	if (this->nextPath) {
@@ -845,7 +853,7 @@ void PemsaCartridgeModule::reset() {
 
 	this->destruct = false;
 	this->threadRunning = false;
-	this->disableSplash = disableSplash;
+	this->enableSplash = false;
 	this->onlyLoad = false;
 	this->nextPath = nullptr;
 	this->lastLoaded = nullptr;
