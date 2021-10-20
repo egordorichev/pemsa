@@ -99,10 +99,11 @@ PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator, bool disable
 	this->nextPath = nullptr;
 	this->lastLoaded = nullptr;
 	this->cart = nullptr;
+	this->done = false;
 }
 
 PemsaCartridgeModule::~PemsaCartridgeModule() {
-	this->cleanupCart();
+
 }
 
 void PemsaCartridgeModule::update(double dt) {
@@ -120,6 +121,8 @@ void PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
 }
 
 bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
+	this->done = false;
+
 	std::cout << "# Loading " << path << "\n";
 	std::ifstream file(path);
 
@@ -138,10 +141,6 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	if (!std::getline(file, line) || memcmp(line.c_str(), "pico-8 cartridge", 16) != 0) {
 		std::cerr << "Invalid file header\n";
 		return false;
-	}
-
-	if (this->cart != nullptr) {
-		this->cleanupCart();
 	}
 
 	this->cart = new PemsaCartridge();
@@ -538,19 +537,16 @@ void PemsaCartridgeModule::gameLoop() {
 		this->waitForNextFrame();
 	}
 
+	this->cleanupCart();
 	std::cout << "Exited the game loop\n";
 }
 
 void PemsaCartridgeModule::cleanupCart() {
+	this->done = true;
+
 	if (this->cart == nullptr) {
 		return;
 	}
-
-	delete this->cart->code;
-	delete this->cart->cartDataId;
-	delete this->cart->name;
-	delete this->cart->author;
-	delete this->cart;
 
 	if (this->threadRunning) {
 		this->stop();
@@ -562,6 +558,12 @@ void PemsaCartridgeModule::cleanupCart() {
 
 		delete this->gameThread;
 	}
+
+	delete this->cart->code;
+	delete this->cart->cartDataId;
+	delete this->cart->name;
+	delete this->cart->author;
+	delete this->cart;
 }
 
 void PemsaCartridgeModule::callIfExists(const char *method_name) {
@@ -582,6 +584,10 @@ void PemsaCartridgeModule::callIfExists(const char *method_name) {
 }
 
 bool PemsaCartridgeModule::globalExists(const char *name) {
+	if (!this->threadRunning) {
+		return false;
+	}
+
 	lua_State* state = this->cart->state;
 
 	lua_getglobal(state, name);
@@ -648,11 +654,11 @@ void PemsaCartridgeModule::saveData() {
 }
 
 void PemsaCartridgeModule::stop() {
-	this->threadRunning = false;
-
 	if (this->cart != nullptr && this->cart->state->errorJmp) {
 		luaL_error(this->cart->state, "the cart was stopped");
 	}
+
+	this->threadRunning = false;
 }
 
 void PemsaCartridgeModule::waitForNextFrame() {
@@ -833,14 +839,16 @@ bool PemsaCartridgeModule::hasNewFrame() {
 void PemsaCartridgeModule::reset() {
 	PemsaModule::reset();
 
-	if (this->nextPath != nullptr) {
-		this->paused = false;
-
-		std::cout << "Setting up new cart " << this->nextPath << "\n";
-		this->load(this->nextPath, this->onlyLoad);
-	}
+	this->destruct = false;
+	this->threadRunning = false;
+	this->disableSplash = disableSplash;
+	this->onlyLoad = false;
+	this->nextPath = nullptr;
+	this->lastLoaded = nullptr;
+	this->cart = nullptr;
+	this->done = false;
 }
 
 bool PemsaCartridgeModule::isDone() {
-	return !this->threadRunning;
+	return this->done;
 }

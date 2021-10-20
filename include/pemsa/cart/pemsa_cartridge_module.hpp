@@ -53,6 +53,7 @@ class PemsaCartridgeModule : public PemsaModule {
 
 		const char* nextPath;
 		bool onlyLoad;
+		bool done;
 
 		void gameLoop();
 
