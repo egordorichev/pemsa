@@ -224,7 +224,6 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 			}
 
 			if (cartState != old_state) {
-
 				index = 0;
 				continue;
 			}

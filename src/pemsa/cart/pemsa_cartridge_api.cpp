@@ -122,6 +122,24 @@ static int read_cdata(lua_State* state) {
 		return 0;
 	}
 
+	bool reading_label = false;
+	std::stringstream label;
+
+	while (std::getline(file, line)) {
+		const char *cline = line.c_str();
+		size_t length = line.size();
+
+		// Smallest label is __lua__ (7 chars)
+		if (length > 6 && memcmp(cline, "__", 2) == 0) {
+			reading_label = (memcmp(cline, "__label__", 9) == 0);
+			continue;
+		}
+
+		if (reading_label) {
+			label << line;
+		}
+	}
+
 	std::string name;
 	std::string author;
 
@@ -152,8 +170,9 @@ static int read_cdata(lua_State* state) {
 
 	lua_pushstring(state, name.c_str());
 	lua_pushstring(state, author.c_str());
+	lua_pushstring(state, label.str().c_str());
 
-	return 2;
+	return 3;
 }
 
 void pemsa_open_cartridge_api(PemsaEmulator* machine, lua_State* state) {
