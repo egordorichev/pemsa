@@ -2,6 +2,7 @@
 #include "pemsa/pemsa_emulator.hpp"
 
 #include <mutex>
+#include <iostream>
 
 #define PEMSA_LOW_FPS_DELTA 1 / 30.0
 #define PEMSA_HIGH_FPS_DELTA 1 / 60.0
@@ -26,6 +27,20 @@ void PemsaGraphicsModule::update(double dt) {
 	if (this->time >= renderDelta) {
 		this->time -= renderDelta;
 		this->emulator->getCartridgeModule()->allowExecutionOfNextFrame();
+	}
+}
+
+void PemsaGraphicsModule::displayError(const char* error) {
+	lua_State* state = this->emulator->getCartridgeModule()->getCart()->state;
+	lua_getglobal(state, "__error");
+
+	if (lua_isnil(state, -1)) {
+		lua_pop(state, 1);
+	} else {
+		lua_pushstring(state, error);
+		if (lua_pcall(state, 1, 0, lua_gettop(state) - 2) != 0) {
+			std::cerr << "Error function error: " << lua_tostring(state, -1) << "\n";
+		}
 	}
 }
 

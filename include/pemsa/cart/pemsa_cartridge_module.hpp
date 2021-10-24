@@ -19,6 +19,8 @@ class PemsaCartridgeModule : public PemsaModule {
 		void update(double dt) override;
 
 		void cleanupAndLoad(const char* path, bool onlyLoad = false);
+		bool loadFromStringStream(const char* path, std::stringstream string, bool onlyLoad);
+		bool loadFromString(const char* path, std::string string, bool onlyLoad);
 		bool load(const char* path, bool onlyLoad = false);
 		bool save(const char* path, bool useCodeTag = true);
 

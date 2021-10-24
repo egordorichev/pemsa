@@ -1,5 +1,6 @@
 #include "pemsa/audio/pemsa_audio_module.hpp"
 #include "pemsa/pemsa_emulator.hpp"
+#include "pemsa/pemsa_predefines.hpp"
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES

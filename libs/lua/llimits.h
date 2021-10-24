@@ -35,7 +35,10 @@ typedef union {
 typedef LUAI_UACNUMBER l_uacNumber;
 typedef LUAI_UACINT l_uacInt;
 
+#if !defined(lua_assert)
 #define lua_assert(c)		((void)0)
+#endif
+
 #define check_exp(c,e)		(e)
 #define lua_longassert(c)	((void)0)
 

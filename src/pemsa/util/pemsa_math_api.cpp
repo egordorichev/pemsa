@@ -1,4 +1,5 @@
 #include "pemsa/pemsa_emulator.hpp"
+#include "pemsa/pemsa_predefines.hpp"
 
 #include <cmath>
 #include <string.h>

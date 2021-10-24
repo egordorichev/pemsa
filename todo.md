@@ -6,4 +6,8 @@
 * music() fade out, channel mask?
 * display errors publically  
 * reset cart menu option fails
-* will hang if closed while the splash plays
+* will hang if closed while the splash plays (or some other carts)
+
+# minor
+
+* read version from the file and put it in cart rom

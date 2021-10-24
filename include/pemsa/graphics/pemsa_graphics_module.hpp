@@ -28,8 +28,9 @@ class PemsaGraphicsModule : public PemsaModule {
 		~PemsaGraphicsModule();
 
 		void update(double dt) override;
-		PemsaGraphicsBackend* getBackend();
+		void displayError(const char* error);
 
+		PemsaGraphicsBackend* getBackend();
 		PemsaDrawMode getDrawMode();
 	private:
 		PemsaGraphicsBackend* backend;

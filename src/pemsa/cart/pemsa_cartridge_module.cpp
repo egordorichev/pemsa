@@ -120,23 +120,15 @@ void PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
 	this->cleanupCart();
 }
 
-bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
-	this->done = false;
-	std::ifstream file(path);
+bool PemsaCartridgeModule::loadFromString(const char* path, std::string string, bool onlyLoad) {
+	return this->loadFromStringStream(path, std::stringstream(string), onlyLoad);
+}
 
-	if (file.bad() || !file.is_open()) {
-		file.close();
-		file.open(path + std::string(".p8"));
-
-		if (file.bad() || !file.is_open()) {
-			return false;
-		}
-	}
-
+bool PemsaCartridgeModule::loadFromStringStream(const char* path, std::stringstream stream, bool onlyLoad) {
 	std::string line;
 
-	if (!std::getline(file, line) || memcmp(line.c_str(), "pico-8 cartridge", 16) != 0) {
-		std::cerr << "Invalid file header\n";
+	if (!std::getline(stream, line) || memcmp(line.c_str(), "pico-8 cartridge", 16) != 0) {
+		std::cerr << "Invalid stream header\n";
 		return false;
 	}
 
@@ -145,9 +137,9 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 	this->cart->name = nullptr;
 	this->cart->author = nullptr;
 
-	if (!std::getline(file, line) || memcmp(line.c_str(), "version", 7) != 0) {
+	if (!std::getline(stream, line) || memcmp(line.c_str(), "version", 7) != 0) {
 		// TODO: read version from the line and put it in cart rom
-		std::cerr << "Invalid file header\n";
+		std::cerr << "Invalid stream header\n";
 		return false;
 	}
 
@@ -161,7 +153,7 @@ bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
 
 	uint8_t* rom = this->cart->rom;
 
-	while (std::getline(file, line)) {
+	while (std::getline(stream, line)) {
 		const char* cline = line.c_str();
 		size_t length = line.size();
 
@@ -449,9 +441,9 @@ end
 	this->cart->code = take_string(codeString);
 
 #ifdef PEMSA_SAVE_CODE
-	std::ofstream codeFile("code.lua", std::ios::trunc);
-	codeFile << codeString;
-	codeFile.close();
+	std::ofstream codestream("code.lua", std::ios::trunc);
+	codestream << codeString;
+	codestream.close();
 #endif
 
 	this->cart->codeLength = codeString.length();
@@ -477,6 +469,25 @@ end
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
 
 	return true;
+}
+
+bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
+	this->done = false;
+	std::ifstream file(path);
+
+	if (file.bad() || !file.is_open()) {
+		file.close();
+		file.open(path + std::string(".p8"));
+
+		if (file.bad() || !file.is_open()) {
+			return false;
+		}
+	}
+
+	std::stringstream string;
+	string << file.rdbuf();
+
+	return this->loadFromString(path, string.str(), onlyLoad);
 }
 
 std::mutex *PemsaCartridgeModule::getMutex() {
@@ -607,7 +618,10 @@ bool PemsaCartridgeModule::globalExists(const char *name) {
 
 void PemsaCartridgeModule::reportLuaError() {
 	if (this->cart != nullptr) {
-		std::cerr << lua_tostring(this->cart->state, -1) << "\n";
+		const char* error = lua_tostring(this->cart->state, -1);
+		this->emulator->getGraphicsModule()->displayError(error);
+
+		std::cerr << error << "\n";
 		this->threadRunning = false;
 	}
 }

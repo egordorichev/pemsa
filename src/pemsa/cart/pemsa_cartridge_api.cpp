@@ -59,6 +59,10 @@ static int load(lua_State* state) {
 	return 0;
 }
 
+#ifdef _WIN32
+#include <comdef.h>
+#endif
+
 static int list_carts(lua_State* state) {
 	lua_newtable(state);
 	int i = 1;
@@ -70,7 +74,16 @@ static int list_carts(lua_State* state) {
 
 		lua_newtable(state);
 
-		lua_pushstring(state, entry.path().stem().c_str());
+		auto str = entry.path().stem().c_str();
+
+		#ifdef _WIN32 // Dear windows, just why?
+			_bstr_t b(str);
+			const char* out = b;
+		#else
+			const char* out = str;
+		#endif
+
+		lua_pushstring(state, out);
 		lua_rawseti(state, -2, 1);
 		lua_pushstring(state, "egor");
 		lua_rawseti(state, -2, 2);
