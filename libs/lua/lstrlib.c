@@ -68,6 +68,11 @@ static lua_Integer posrelat (lua_Integer pos, size_t len) {
 
 
 static int str_sub (lua_State *L) {
+	if (lua_isnil(L, 1)) {
+		lua_pushliteral(L, "");
+		return 1;
+	}
+
   size_t l;
   const char *s = luaL_checklstring(L, 1, &l);
   lua_Integer start = posrelat(luaL_checkinteger(L, 2), l);

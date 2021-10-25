@@ -125,6 +125,7 @@ bool PemsaCartridgeModule::loadFromString(const char* path, std::string string, 
 }
 
 bool PemsaCartridgeModule::loadFromStringStream(const char* path, std::stringstream stream, bool onlyLoad) {
+	path = take_cstring(path);
 	std::string line;
 
 	if (!std::getline(stream, line) || memcmp(line.c_str(), "pico-8 cartridge", 16) != 0) {
@@ -560,24 +561,29 @@ void PemsaCartridgeModule::cleanupCart() {
 	}
 
 	if (this->threadRunning) {
+		lua_close(this->cart->state);
+
 		this->stop();
 		this->lock.notify_all();
 		this->gameThread->join();
-
-		lua_close(this->cart->state);
-
 		this->threadRunning = false;
+
 		delete this->gameThread;
 	}
 
 	this->saveData();
 
-	delete this->cart->code;
-	delete this->cart->cartDataId;
-	delete this->cart->name;
-	delete this->cart->author;
-	delete this->cart->id;
-	delete this->cart;
+	PemsaCartridge* cart = this->cart;
+	this->cart = nullptr;
+
+	if (cart != nullptr) {
+		delete cart->code;
+		delete cart->cartDataId;
+		delete cart->name;
+		delete cart->author;
+		delete cart->id;
+		delete cart;
+	}
 
 	if (this->nextPath) {
 		this->load(this->nextPath, this->onlyLoad);
@@ -586,11 +592,16 @@ void PemsaCartridgeModule::cleanupCart() {
 }
 
 void PemsaCartridgeModule::callIfExists(const char *method_name) {
-	if (!this->threadRunning) {
+	if (!this->threadRunning || this->cart == nullptr) {
 		return; // Thread safe return
 	}
 
 	lua_State* state = this->cart->state;
+
+	if (state == nullptr) {
+		return;
+	}
+
 	lua_getglobal(state, method_name);
 
 	if (lua_isnil(state, -1)) {
