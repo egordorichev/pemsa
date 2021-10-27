@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(pemsa)
 
+IF( DEFINED WINDOWS )
+    add_compile_definitions(WINDOWS)
+ENDIF( DEFINED WINDOWS )
+
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_STANDARD 17)
 
