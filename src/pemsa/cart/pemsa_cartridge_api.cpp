@@ -78,7 +78,16 @@ static int list_carts(lua_State* state) {
 
 		lua_newtable(state);
 
-		lua_pushstring(state, entry.path().stem().c_str());
+		auto stem = entry.path().stem();
+
+		#ifdef _WIN32 // Dear windows, just why?
+			_bstr_t b(stem.c_str());
+			const char* out = b;
+		#else
+			const char* out = stem.c_str();
+		#endif
+
+		lua_pushstring(state, out);
 		lua_rawseti(state, -2, 1);
 		lua_pushstring(state, "test");
 		lua_rawseti(state, -2, 2);
