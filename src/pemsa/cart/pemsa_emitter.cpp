@@ -152,7 +152,7 @@ function __update_menu()
 	add(__menu_options,"reset cart")
 	add(__menu_options,"back to menu")
 
-	if btnp(6) and __cart~="splore" then
+	if (btnp(6) or (__menu_on and (btnp(5) or btnp(4)))) and __cart~="splore" then
 		if __menu_on and __current_option==#__menu_options-2 then
 			__favorite=not __favorite
 		else

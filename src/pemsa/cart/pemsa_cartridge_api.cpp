@@ -76,9 +76,11 @@ static int list_carts(lua_State* state) {
 			continue;
 		}
 
-		lua_newtable(state);
-
 		auto stem = entry.path().stem();
+
+		if (stem == "splore") {
+			continue;
+		}
 
 		#ifdef _WIN32 // Dear windows, just why?
 			_bstr_t b(stem.c_str());
@@ -86,6 +88,8 @@ static int list_carts(lua_State* state) {
 		#else
 			const char* out = stem.c_str();
 		#endif
+
+		lua_newtable(state);
 
 		lua_pushstring(state, out);
 		lua_rawseti(state, -2, 1);
