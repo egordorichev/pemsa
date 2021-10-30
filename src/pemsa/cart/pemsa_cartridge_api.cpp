@@ -6,6 +6,10 @@
 #include <cstring>
 #include <algorithm>
 
+#ifdef WINDOWS
+#include <sstream>
+#endif
+
 namespace fs = std::filesystem;
 
 static PemsaEmulator* emulator;
