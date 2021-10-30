@@ -19,6 +19,7 @@ PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *
 
 PemsaEmulator::~PemsaEmulator() {
 	for (int i = 0; i < PEMSA_MODULE_COUNT; i++) {
+		this->modules[i]->reset();
 		delete this->modules[i];
 	}
 }

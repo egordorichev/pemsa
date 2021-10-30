@@ -1,9 +1,13 @@
 # mvp
 
 * favorite carts
-* windows splore fix
-* full screen
-* scaling int/float
+* allow to use x/c in pause menu/splore
+* if a game crashes, can't return to splore (make a error screen)
+
+# ideally later on
+
+* splore sections
+* splore search
 
 # whatever no time rn
 

@@ -550,8 +550,6 @@ void PemsaCartridgeModule::gameLoop() {
 
 		this->waitForNextFrame();
 	}
-
-	// this->cleanupCart();
 }
 
 void PemsaCartridgeModule::cleanupCart() {
@@ -876,6 +874,7 @@ bool PemsaCartridgeModule::hasNewFrame() {
 
 void PemsaCartridgeModule::reset() {
 	PemsaModule::reset();
+	bool cleanup = this->gameThread != nullptr && this->cart != nullptr;
 
 	this->destruct = false;
 	this->threadRunning = false;
@@ -885,6 +884,11 @@ void PemsaCartridgeModule::reset() {
 	this->lastLoaded = nullptr;
 	this->cart = nullptr;
 	this->done = false;
+
+	if (cleanup) {
+		this->lock.notify_all();
+		this->gameThread->join();
+	}
 }
 
 bool PemsaCartridgeModule::isDone() {
