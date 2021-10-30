@@ -109,6 +109,9 @@ PemsaToken PemsaScanner::scan() {
 
 		case '.': {
 			if (this->match('.')) {
+				if (this->match('=')) {
+					return this->makeToken(TOKEN_DOT_DOT_EQUAL);
+				}
 				return this->makeToken(this->match('.') ? TOKEN_DOT_DOT_DOT : TOKEN_DOT_DOT);
 			}
 
