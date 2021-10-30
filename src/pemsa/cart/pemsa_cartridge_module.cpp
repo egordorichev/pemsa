@@ -103,7 +103,7 @@ PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator, bool enableS
 }
 
 PemsaCartridgeModule::~PemsaCartridgeModule() {
-
+	this->cleanupCart();
 }
 
 void PemsaCartridgeModule::update(double dt) {
@@ -116,8 +116,7 @@ void PemsaCartridgeModule::update(double dt) {
 void PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
 	this->nextPath = path;
 	this->onlyLoad = onlyLoad;
-
-	this->cleanupCart();
+	this->destruct = true;
 }
 
 bool PemsaCartridgeModule::loadFromString(const char* path, std::string string, bool onlyLoad) {
@@ -473,6 +472,8 @@ end
 }
 
 bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
+	emulator->reset();
+
 	this->done = false;
 	std::ifstream file(path);
 
@@ -550,7 +551,7 @@ void PemsaCartridgeModule::gameLoop() {
 		this->waitForNextFrame();
 	}
 
-	this->cleanupCart();
+	// this->cleanupCart();
 }
 
 void PemsaCartridgeModule::cleanupCart() {
@@ -561,12 +562,15 @@ void PemsaCartridgeModule::cleanupCart() {
 	}
 
 	if (this->threadRunning) {
-		lua_close(this->cart->state);
-
 		this->stop();
+
+		this->threadRunning = false;
 		this->lock.notify_all();
 		this->gameThread->join();
-		this->threadRunning = false;
+
+		if (this->cart->state) {
+			lua_close(this->cart->state);
+		}
 
 		delete this->gameThread;
 	}
@@ -687,7 +691,7 @@ void PemsaCartridgeModule::saveData() {
 }
 
 void PemsaCartridgeModule::stop() {
-	if (this->cart != nullptr && this->cart->state->errorJmp) {
+	if (this->cart != nullptr && this->cart->state && this->cart->state->errorJmp) {
 		luaL_error(this->cart->state, "the cart was stopped");
 	}
 

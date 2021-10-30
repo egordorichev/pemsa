@@ -153,7 +153,7 @@ function __update_menu()
 	add(__menu_options,"back to menu")
 
 	if btnp(6) and __cart~="splore" then
-		if __menu_on and __current_option==#__menu_options-1 then
+		if __menu_on and __current_option==#__menu_options-2 then
 			__favorite=not __favorite
 		else
 			__menu_on=not __menu_on
@@ -203,7 +203,7 @@ function __update_menu()
 	for i=1,#__menu_options do
 		local current=__current_option==i
 		print(__menu_options[i],x+11+(__menu_options[i] and 1 or 0),y-1+i*8,7)
-		if i==#__menu_options-1 then
+		if i==#__menu_options-2 then
 			print("\135",x+51,y-1+i*8,__favorite and 8 or 13)
 		end
 	end

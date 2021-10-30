@@ -48,7 +48,7 @@ static int set_paused(lua_State* state) {
 }
 
 static int reset(lua_State* state) {
-	emulator->getCartridgeModule()->initiateSelfDestruct();
+	emulator->getCartridgeModule()->cleanupAndLoad(emulator->getCartridgeModule()->getCart()->fullPath);
 	return 0;
 }
 
