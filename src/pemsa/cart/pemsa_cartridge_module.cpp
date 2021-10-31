@@ -102,6 +102,7 @@ PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator, bool enableS
 	this->cart = nullptr;
 	this->done = false;
 	this->gameThread = nullptr;
+	this->firstLaunch = true;
 }
 
 PemsaCartridgeModule::~PemsaCartridgeModule() {
@@ -369,75 +370,7 @@ bool PemsaCartridgeModule::loadFromStringStream(const char* path, std::stringstr
 	this->cart->fullPath = path;
 	this->cart->label = take_string(label.str());
 
-	std::string codeString = R"(
-if not __skip then
-	local data="00077770007777700070700000777000007770000000000000777770007777700070707000700070000000000077777000777770000770000000770000077000007777700077777000000000000770700077707000707770007077700000000000777770007777700070700000777770000777700000000090a0b000001000008111c00000100000f0e0d000"
-	local function wait(a) for i = 1,a do flip() end end
-	cls()
-	for y=0,127 do
-	 for x=2,127,8 do
-	  pset(x,y,rnd(6))
-	 end
-	end
-	wait(3)
-	for y=0,127,2 do
-	 for x=0,127,4 do
-	  pset(x,y,6+flr((x+y)/8)%8)
-	 end
-	end
-	wait(3)
-	for y=0,127,3 do
-	 for x=2,127,4 do
-	  pset(x,y,10+rnd(4))
-	 end
-	end
-	wait(3)
-	for y=0,127 do
-	 for x=1,127,2 do
-	  pset(x,y,pget(x+1,y))
-	 end
-	end
-	wait(2)
-	for y=1,127,4 do
-	 memset(0x6000+64*y,0,64*3)
-	end
-	wait(3)
-	cls()
-	wait(15)
-	local osfx=""
-	for i=0,67 do
-	 osfx=osfx..tostr(peek(0x3200+i),true)
-	end
-	local s="0070.00000059.0000006b.0000005b.00000070.0000005b.00000075.00000059.00000075.00000053.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000000.00000001.0000000c.00000000.00000000.0000"
-	local function psfx(d)
-		for i=0,67 do
-		 local ind=i*9+1
-		 poke(0x3200+i,tonum("0x"..sub(d,ind,ind+8)))
-		end
-	end
-	psfx(s)
-	sfx(0)
-	for x=0,34 do
-	 for y=0,7 do
-	  local i=x*8+y+1
-	  pset(x+1,y+3,tonum("0x"..sub(data,i,i)))
-	 end
-	end
-	wait(5)
-	color(6)
-	cursor(0,18)
-	print("pemsa 0.1")
-	wait(5)
-	print("(c) 2014-20 unofficial\n")
-	print("\nbooting catridge...")
-	wait(40)
-	psfx(osfx)
-end
-)";
-
-	std::replace(codeString.begin(), codeString.end(), '\n', ' ');
-
-	codeString += code.str();
+	std::string codeString = code.str();
 
 	if (!codePreformatted) {
 		PemsaScanner scanner(codeString.c_str());
@@ -476,7 +409,10 @@ end
 }
 
 bool PemsaCartridgeModule::load(const char *path, bool onlyLoad) {
-	emulator->reset();
+	if (!this->firstLaunch) {
+		emulator->reset();
+		this->firstLaunch = false;
+	}
 
 	this->done = false;
 	std::ifstream file(path);

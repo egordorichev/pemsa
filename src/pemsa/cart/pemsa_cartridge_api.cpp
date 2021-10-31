@@ -78,7 +78,7 @@ static int list_carts(lua_State* state) {
 
 		auto stem = entry.path().stem();
 
-		if (stem == "splore") {
+		if (stem.compare("splore") == 0) {
 			continue;
 		}
 
