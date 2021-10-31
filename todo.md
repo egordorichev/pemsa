@@ -3,6 +3,8 @@
 * favorite carts
 * if a game crashes, can't return to splore (make a error screen)
 
+* export all carts, manually remove diamonds
+
 # ideally later on
 
 * splore sections
