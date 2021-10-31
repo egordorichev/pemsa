@@ -602,16 +602,14 @@ static int print(lua_State* state) {
 	int x;
 	int y;
 	int c;
-	bool givenCoords = lua_gettop(state) > 1;
+	bool givenCoords = lua_gettop(state) > 2 && lua_isnumber(state, 2) && lua_isnumber(state, 3);
 
 	if (givenCoords) {
 		x = floor(pemsa_checknumber(state, 2)) - drawStateModule->getCameraX();
 		y = floor(pemsa_checknumber(state, 3)) - drawStateModule->getCameraY();
-		c = read_color(state, 4);
 	} else {
 		x = drawStateModule->getCursorX();
 		y = drawStateModule->getCursorY();
-		c = drawStateModule->getColor();
 
 		if (y + 18 >= 127) {
 			memcpy(memoryModule->ram + PEMSA_RAM_SCREEN, memoryModule->ram + PEMSA_RAM_SCREEN + 0x180, 0x2000 - 0x180);
@@ -620,6 +618,12 @@ static int print(lua_State* state) {
 		} else {
 			drawStateModule->setCursorY(y + 6);
 		}
+	}
+
+	if (lua_gettop(state) > 3) {
+		c = read_color(state, 4);
+	} else {
+		c = drawStateModule->getColor();
 	}
 
 	int index = 0;

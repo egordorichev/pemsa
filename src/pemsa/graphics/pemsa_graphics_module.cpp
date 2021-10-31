@@ -31,6 +31,8 @@ void PemsaGraphicsModule::update(double dt) {
 }
 
 void PemsaGraphicsModule::displayError(const char* error) {
+	emulator->getDrawStateModule()->reset();
+
 	lua_State* state = this->emulator->getCartridgeModule()->getCart()->state;
 	lua_getglobal(state, "__error");
 
@@ -38,6 +40,7 @@ void PemsaGraphicsModule::displayError(const char* error) {
 		lua_pop(state, 1);
 	} else {
 		lua_pushstring(state, error);
+
 		if (lua_pcall(state, 1, 0, lua_gettop(state) - 2) != 0) {
 			std::cerr << "Error function error: " << lua_tostring(state, -1) << "\n";
 		}

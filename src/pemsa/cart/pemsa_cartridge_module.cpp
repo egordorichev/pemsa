@@ -14,6 +14,7 @@
 #include <cstring>
 #include <filesystem>
 #include <sstream>
+#include <algorithm>
 
 #define STATE_LUA 0
 #define STATE_GFX 1
@@ -431,7 +432,11 @@ if not __skip then
 	wait(40)
 	psfx(osfx)
 end
-)" + code.str();
+)";
+
+	std::replace(codeString.begin(), codeString.end(), '\n', ' ');
+
+	codeString += code.str();
 
 	if (!codePreformatted) {
 		PemsaScanner scanner(codeString.c_str());
@@ -632,9 +637,9 @@ bool PemsaCartridgeModule::globalExists(const char *name) {
 void PemsaCartridgeModule::reportLuaError() {
 	if (this->cart != nullptr) {
 		const char* error = lua_tostring(this->cart->state, -1);
-		this->emulator->getGraphicsModule()->displayError(error);
-
 		std::cerr << error << "\n";
+
+		this->emulator->getGraphicsModule()->displayError(error);
 		this->threadRunning = false;
 	}
 }
