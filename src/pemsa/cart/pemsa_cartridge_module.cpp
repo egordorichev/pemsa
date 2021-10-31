@@ -101,6 +101,7 @@ PemsaCartridgeModule::PemsaCartridgeModule(PemsaEmulator *emulator, bool enableS
 	this->lastLoaded = nullptr;
 	this->cart = nullptr;
 	this->done = false;
+	this->gameThread = nullptr;
 }
 
 PemsaCartridgeModule::~PemsaCartridgeModule() {
@@ -457,7 +458,6 @@ end
 		return true;
 	}
 
-	// TODO: tbh should limit the functions from here?
 	luaL_openlibs(state);
 
 	pemsa_open_graphics_api(emulator, state);
@@ -470,7 +470,6 @@ end
 	pemsa_open_audio_api(emulator, state);
 
 	memcpy(emulator->getMemoryModule()->ram, rom, 0x4300);
-
 	this->gameThread = new std::thread(&PemsaCartridgeModule::gameLoop, this);
 
 	return true;
@@ -879,7 +878,9 @@ bool PemsaCartridgeModule::hasNewFrame() {
 
 void PemsaCartridgeModule::reset() {
 	PemsaModule::reset();
-	bool cleanup = this->gameThread != nullptr && this->cart != nullptr;
+
+	auto thread = this->gameThread;
+	bool cleanup = thread != nullptr && this->cart != nullptr;
 
 	this->destruct = false;
 	this->threadRunning = false;
@@ -890,9 +891,11 @@ void PemsaCartridgeModule::reset() {
 	this->cart = nullptr;
 	this->done = false;
 
-	if (cleanup) {
+	if (cleanup && thread != nullptr) {
 		this->lock.notify_all();
 		this->gameThread->join();
+
+		delete this->gameThread;
 	}
 }
 

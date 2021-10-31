@@ -137,7 +137,7 @@ static int read_cdata(lua_State* state) {
 		std::getline(file, line); // Skip headers, version & __lua__
 	}
 
-	if (line != "__lua__") {
+	if (line != "__lua__" && line != "__code__") {
 		std::cerr << "No __lua__ mark found as expected\n";
 		return 0;
 	}
