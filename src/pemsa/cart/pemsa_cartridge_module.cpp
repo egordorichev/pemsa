@@ -745,7 +745,7 @@ bool PemsaCartridgeModule::save(const char* path, bool useCodeTag) {
 	file << "pico-8 cartridge // http://www.pico-8.com\n";
 	file << "version 29\n";
 
-	file << (useCodeTag ? "__code__" : "__lua__");
+	file << (useCodeTag ? "__code__\n" : "__lua__\n");
 	file << this->cart->code;
 
 	file << "\n__gfx__\n";
