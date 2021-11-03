@@ -94,7 +94,7 @@ function all(a)
  if a == nil or n == 0 then 
   return function() end 
  end 
- local i = 0
+ local i = 1
  local previous_i = nil
  return function() 
   if (a[i] == previous_i) then
