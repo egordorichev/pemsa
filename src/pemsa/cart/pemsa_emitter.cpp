@@ -345,8 +345,9 @@ end
 			case TOKEN_STAR_EQUAL:
 			case TOKEN_BAR_EQUAL:
 			case TOKEN_AMPERSAND_EQUAL:
-			case TOKEN_PLUS_EQUAL: {
-				output << "=" << std::string(expressionStart, token.start - expressionStart) << std::string(token.start, 1);
+			case TOKEN_PLUS_EQUAL:
+			case TOKEN_DOT_DOT_EQUAL: {
+				output << "=" << std::string(expressionStart, token.start - expressionStart) << std::string(token.start, token.length-1);
 				break;
 			}
 
