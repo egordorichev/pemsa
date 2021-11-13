@@ -75,7 +75,7 @@ std::string pemsa_emit(PemsaScanner* scanner) {
 	// Emoji button setup
 	std::string additionalCode = R"~(
 A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = -2560.5, 31455.5, 32125.5, 1, 6943.5, 3855.5, 2, -19008.5, 4, -20032.5,0.5, -20128.5, 3, -18402.5, -1632.5, 20927.5, -26208.5, -20192.5, 0, 21845.5, 5, 20767.5, -2624.5, 23130.5, -25792.5, -24351.5 
-sub, cocreate, coresume, yield, costatus, __debug, debug, run = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, debug, nil, __reset
+sub, cocreate, coresume, yield, costatus, __debug, debug, run, unpack, pack = string.sub, coroutine.create, coroutine.resume, coroutine.yield, coroutine.status, debug, nil, __reset, table.unpack, table.pack
 function __error(e)
  print('runtime error',nil,nil,14)
  print(e,nil,nil,6)

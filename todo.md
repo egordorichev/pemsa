@@ -1,9 +1,12 @@
 # mvp
 
-* favorite carts
-* if a game crashes, can't return to splore (make a error screen)
+* bring out pack & unpack
 
-* export all carts, manually remove diamonds
+* when rendering the menu reset clip, camera, etc, in the future render gui on a separate layer, for now center menu on small screen
+* don't cut out commets
+* favorite carts
+* if a game crashes, can't return to splore
+* diamonds issue (no idea how to resolve)
 
 # ideally later on
 
