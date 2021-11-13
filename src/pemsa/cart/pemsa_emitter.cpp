@@ -82,14 +82,7 @@ function __error(e)
  print(__debug.traceback(),nil,nil,13)
 end
 function foreach(a, f)
- if not a then return end
- local copy={}
- for i=1,#a do
-  if a[i] ~= nil then table.insert(copy,a[i]) end
- end
- for i=1,#copy do
-  f(copy[i])
- end
+ for i in all(a) do f(i) end
 end
 function count(a) if not a then return 0 end return #a end 
 function arraylen(t)
@@ -102,16 +95,20 @@ function arraylen(t)
  return len 
 end 
 function all(a) 
- if a == nil then 
+ local n = arraylen(a)
+ if a == nil or n == 0 then 
   return function() end 
  end 
- local i = 0
- local n = arraylen(a) 
+ local i = 1
+ local previous_i = nil
  return function() 
-  i = i + 1 
+  if (a[i] == previous_i) then
+   i = i + 1
+  end
   while (a[i] == nil and i <= n) do 
    i = i + 1 
   end 
+  previous_i = a[i]
   return a[i] 
  end 
 end 
@@ -348,8 +345,9 @@ end
 			case TOKEN_STAR_EQUAL:
 			case TOKEN_BAR_EQUAL:
 			case TOKEN_AMPERSAND_EQUAL:
-			case TOKEN_PLUS_EQUAL: {
-				output << "=" << std::string(expressionStart, token.start - expressionStart) << std::string(token.start, 1);
+			case TOKEN_PLUS_EQUAL:
+			case TOKEN_DOT_DOT_EQUAL: {
+				output << "=" << std::string(expressionStart, token.start - expressionStart) << std::string(token.start, token.length-1);
 				break;
 			}
 
