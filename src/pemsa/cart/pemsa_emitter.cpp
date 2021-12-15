@@ -8,6 +8,7 @@
 #include <climits>
 #include <iomanip>
 #include <algorithm>
+#include <fstream>
 
 static float strtof(const char* ostr, int base) {
 	char* str = (char*) malloc(strlen(ostr) + 1);
@@ -35,7 +36,6 @@ static float strtof(const char* ostr, int base) {
 static PemsaTokenType skippableTokens[] = {
 	TOKEN_AND, TOKEN_OR,
 
-	TOKEN_SHARP,
 	TOKEN_DOT, TOKEN_DOT_DOT, TOKEN_DOT_DOT_DOT,
 	TOKEN_EQUAL_EQUAL,
 
@@ -50,7 +50,74 @@ static PemsaTokenType skippableTokens[] = {
 	TOKEN_EOF
 };
 
+std::string pemsa_pre_emit(PemsaScanner* scanner) {
+	std::stringstream output;
+	PemsaToken token = PemsaToken();
+	PemsaToken previous;
+
+	bool running = true;
+
+	const char* expressionStart = scanner->getCurrent();
+	const char* start = expressionStart;
+
+	while (running) {
+		token = scanner->scan();
+
+		switch (token.type) {
+			case TOKEN_EOF: {
+				running = false;
+				break;
+			}
+			case TOKEN_SHARP: {
+				expressionStart = token.start + token.length;
+
+				previous = token;
+				token = scanner->scan();
+				auto value = std::string(token.start, token.length);
+				if (value == "include") {
+					// scan whitespace
+					do {
+						previous = token;
+						token = scanner->scan();
+					} while (token.type == TOKEN_WHITESPACE);
+
+					// get filename
+					std::string filename = "";
+					auto prevLine = token.line;
+					while (prevLine == token.line && token.type != TOKEN_WHITESPACE) {
+						filename.append(std::string(token.start, token.length));
+
+						previous = token;
+						prevLine = token.line;
+						token = scanner->scan();
+					}
+
+					std::ifstream file;
+					file.open(filename);
+					std::ostringstream sstr;
+					sstr << file.rdbuf();
+					output << sstr.str() << '\n';
+				}
+				else {
+					output << '#' << std::string(token.start, token.length);
+					break;
+				}
+			}
+			default: {
+				output << std::string(token.start, token.length);
+				break;
+			}
+		}
+	}
+
+	auto str_output = output.str();
+	scanner->reset(str_output.c_str());
+	return str_output;
+}
+
 std::string pemsa_emit(PemsaScanner* scanner) {
+	auto str_output = pemsa_pre_emit(scanner);
+
 	std::stringstream output;
 	PemsaToken token = PemsaToken();
 	PemsaToken previous;

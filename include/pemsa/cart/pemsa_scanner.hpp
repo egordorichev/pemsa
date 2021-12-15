@@ -24,7 +24,8 @@ enum PemsaTokenType {
 	TOKEN_WHITESPACE, TOKEN_TILDA, TOKEN_CAP, TOKEN_UNKNOWN,
 	TOKEN_BAND, TOKEN_BOR, TOKEN_DOG, TOKEN_DOLLAR,
 	TOKEN_AMPERSAND_EQUAL,
-	TOKEN_BAR_EQUAL
+	TOKEN_BAR_EQUAL,
+	TOKEN_INCLUDE
 };
 
 struct PemsaToken {
@@ -40,9 +41,11 @@ class PemsaScanner {
 
 		PemsaToken scan();
 		const char* getCurrent();
+		void reset(const char* new_source = nullptr);
 	private:
 		const char* start;
 		const char* current;
+		const char* source;
 
 		int line;
 

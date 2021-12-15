@@ -4,8 +4,8 @@
 #include <iostream>
 
 PemsaScanner::PemsaScanner(const char *source) {
-	this->current = source;
-	this->line = 1;
+	this->source = source;
+	this->reset();
 }
 
 static bool isDigit(char c) {
@@ -18,6 +18,15 @@ static bool isDigitOrHex(char c) {
 
 static bool isAlpha(char c) {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
+
+void PemsaScanner::reset(const char* new_source) {
+	if (new_source != nullptr) {
+		this->source = new_source;
+	}
+
+	this->current = this->source;
+	this->line = 1;
 }
 
 PemsaToken PemsaScanner::parseIdentifier() {
@@ -385,6 +394,10 @@ PemsaTokenType PemsaScanner::decideIdentifierType() {
 					case 'f': return TOKEN_IF;
 					case 'n': return TOKEN_IN;
 				}
+			}
+			else
+			{
+				this->checkKeyword(2, 3, "nclude", TOKEN_INCLUDE);
 			}
 
 			break;
