@@ -580,13 +580,13 @@ void PemsaCartridgeModule::reportLuaError() {
 	}
 }
 
-void PemsaCartridgeModule::loadData(const char *path) {
+bool PemsaCartridgeModule::loadData(const char *path) {
 	if (this->cart == nullptr) {
-		return;
+		return false;
 	}
 
 	this->cart->cartDataId = take_cstring(path);
-	std::string fullPath = std::string(PEMSA_CART_DATA_PATH) + "/" + std::string(path);
+	std::string fullPath = std::string(PEMSA_CART_DATA_PATH) +  std::string(path);
 	std::ifstream file(fullPath);
 
 	fix16_t* data = this->cart->cartData;
@@ -597,12 +597,14 @@ void PemsaCartridgeModule::loadData(const char *path) {
 		}
 
 		file.close();
+		return true;
 	} else {
 		for (int i = 0; i < PEMSA_CART_DATA_SIZE; i++) {
 			data[i] = 0;
 		}
 
 		this->saveData();
+		return false;
 	}
 }
 

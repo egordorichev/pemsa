@@ -24,7 +24,7 @@ class PemsaCartridgeModule : public PemsaModule {
 		bool load(const char* path, bool onlyLoad = false);
 		bool save(const char* path, bool useCodeTag = true);
 
-		void loadData(const char* path);
+		bool loadData(const char* path);
 		void saveData();
 		void stop();
 

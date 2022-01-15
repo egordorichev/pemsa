@@ -41,9 +41,9 @@ static int dset(lua_State* state) {
 
 static int cartdata(lua_State* state) {
 	const char* name = luaL_checkstring(state, 1);
-	emulator->getCartridgeModule()->loadData(name);
+	lua_pushboolean(state, emulator->getCartridgeModule()->loadData(name));
 
-	return 0;
+	return 1;
 }
 
 static int set_paused(lua_State* state) {
