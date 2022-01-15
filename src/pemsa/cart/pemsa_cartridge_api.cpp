@@ -204,6 +204,7 @@ void pemsa_open_cartridge_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "__set_paused", set_paused);
 	lua_register(state, "__reset", reset);
 	lua_register(state, "__load", load);
+	lua_register(state, "load", load);
 	lua_register(state, "__list_carts", list_carts);
 	lua_register(state, "__read_cdata", read_cdata);
 }
