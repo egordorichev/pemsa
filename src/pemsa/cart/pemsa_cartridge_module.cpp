@@ -373,7 +373,8 @@ bool PemsaCartridgeModule::loadFromStringStream(const char* path, std::stringstr
 	std::string codeString = code.str();
 
 	if (!codePreformatted) {
-		PemsaScanner scanner(codeString.c_str());
+		std::string preprocessedString = pemsa_pre_emit(codeString);
+		PemsaScanner scanner(preprocessedString.c_str());
 		codeString = pemsa_emit(&scanner);
 	}
 

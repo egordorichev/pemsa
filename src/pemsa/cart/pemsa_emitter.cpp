@@ -50,74 +50,44 @@ static PemsaTokenType skippableTokens[] = {
 	TOKEN_EOF
 };
 
-std::string pemsa_pre_emit(PemsaScanner* scanner) {
-	std::stringstream output;
-	PemsaToken token = PemsaToken();
-	PemsaToken previous;
-
-	bool running = true;
-
-	const char* expressionStart = scanner->getCurrent();
-	const char* start = expressionStart;
-
-	while (running) {
-		token = scanner->scan();
-
-		switch (token.type) {
-			case TOKEN_EOF: {
-				running = false;
-				break;
-			}
-			case TOKEN_SHARP: {
-				expressionStart = token.start + token.length;
-
-				previous = token;
-				token = scanner->scan();
-				auto value = std::string(token.start, token.length);
-				if (value == "include") {
-					// scan whitespace
-					do {
-						previous = token;
-						token = scanner->scan();
-					} while (token.type == TOKEN_WHITESPACE);
-
-					// get filename
-					std::string filename = "";
-					auto prevLine = token.line;
-					while (prevLine == token.line && token.type != TOKEN_WHITESPACE) {
-						filename.append(std::string(token.start, token.length));
-
-						previous = token;
-						prevLine = token.line;
-						token = scanner->scan();
-					}
-
-					std::ifstream file;
-					file.open(filename);
-					std::ostringstream sstr;
-					sstr << file.rdbuf();
-					output << sstr.str() << '\n';
-				}
-				else {
-					output << '#' << std::string(token.start, token.length);
-					break;
-				}
-			}
-			default: {
-				output << std::string(token.start, token.length);
-				break;
-			}
+std::string pemsa_pre_emit(std::string source) {
+	auto found = source.find("#include");
+	while (found != std::string::npos) {
+		std::string filename = "";
+		auto i = found + 8;
+		while (i != std::string::npos && source[i] != '\n') {
+			filename += source[i];
+			i++;
 		}
+
+		auto length = i - found;
+		auto whitespacePos = filename.find(" ");
+		while (whitespacePos != std::string::npos) {
+			filename.erase(whitespacePos, 1);
+			whitespacePos = filename.find(" ");
+		}
+
+		if (filename.find(".lua") != std::string::npos) {
+			std::ifstream file;
+			file.open(filename);
+
+			if (!file.is_open()) {
+				std::cerr << "Error: " << strerror(errno) << std::endl;
+			}
+
+			std::ostringstream sstr;
+			sstr << file.rdbuf();
+
+			source.replace(found, length, sstr.str() + "\n");
+		}
+
+		found = source.find("#include");
 	}
 
-	auto str_output = output.str();
-	scanner->reset(str_output.c_str());
-	return str_output;
+	return source;
 }
 
 std::string pemsa_emit(PemsaScanner* scanner) {
-	auto str_output = pemsa_pre_emit(scanner);
-
 	std::stringstream output;
 	PemsaToken token = PemsaToken();
 	PemsaToken previous;
