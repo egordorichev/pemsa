@@ -117,7 +117,12 @@ void PemsaCartridgeModule::update(double dt) {
 }
 
 void PemsaCartridgeModule::cleanupAndLoad(const char* path, bool onlyLoad) {
-	this->nextPath = path;
+	// get full path of the new cartridge in relation to the current one.
+	auto fullPath = std::filesystem::path(this->cart->fullPath).replace_filename(path).string();
+	char* cFullPath = new char[fullPath.length()];
+	strcpy(cFullPath, fullPath.c_str());
+	
+	this->nextPath = cFullPath;
 	this->onlyLoad = onlyLoad;
 	this->destruct = true;
 }
@@ -373,7 +378,7 @@ bool PemsaCartridgeModule::loadFromStringStream(const char* path, std::stringstr
 	std::string codeString = code.str();
 
 	if (!codePreformatted) {
-		std::string preprocessedString = pemsa_pre_emit(codeString);
+		std::string preprocessedString = pemsa_pre_emit(codeString, this->cart->fullPath);
 		PemsaScanner scanner(preprocessedString.c_str());
 		codeString = pemsa_emit(&scanner);
 	}

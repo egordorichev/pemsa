@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <fstream>
+#include <filesystem>
 
 static float strtof(const char* ostr, int base) {
 	char* str = (char*) malloc(strlen(ostr) + 1);
@@ -50,7 +51,7 @@ static PemsaTokenType skippableTokens[] = {
 	TOKEN_EOF
 };
 
-std::string pemsa_pre_emit(std::string source) {
+std::string pemsa_pre_emit(std::string source, const char* cartPath) {
 	auto found = source.find("#include");
 	while (found != std::string::npos) {
 		std::string filename = "";
@@ -71,8 +72,17 @@ std::string pemsa_pre_emit(std::string source) {
 			std::ifstream file;
 			file.open(filename);
 
-			if (!file.is_open()) {
-				std::cerr << "Error: " << strerror(errno) << std::endl;
+			if (file.bad() || !file.is_open()) {
+				file.close();
+
+				// replace cartridge path filename with included filename.
+				// this allows the emulator to find the correct file from #include directive.
+				file.open(std::filesystem::absolute(
+					std::filesystem::path(cartPath).replace_filename(filename)));
+
+				if (file.bad() || !file.is_open()) {
+					std::cerr << "Error: " << strerror(errno) << std::endl;
+				}
 			}
 
 			std::ostringstream sstr;
