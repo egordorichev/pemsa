@@ -628,22 +628,31 @@ void PemsaCartridgeModule::saveData() {
 	file.close();
 }
 
+void hook(lua_State* L, lua_Debug *ar) {
+	luaL_error(L, "the cart was stopped");
+}
+
 void PemsaCartridgeModule::stop() {
 	if (this->cart != nullptr && this->cart->state && this->cart->state->errorJmp) {
-		luaL_error(this->cart->state, "the cart was stopped");
+		lua_sethook(this->cart->state, hook, LUA_MASKCOUNT, 1);
 	}
 
 	this->threadRunning = false;
 	this->waiting = false;
+
+	this->lock.notify_all();
+	this->uniqueLock->unlock();
+
+	delete this->uniqueLock;
 }
 
 void PemsaCartridgeModule::waitForNextFrame() {
 	this->callIfExists("__update_menu");
 
 	this->waiting = true;
-	std::unique_lock<std::mutex> uniqueLock(this->mutex);
+	this->uniqueLock = new std::unique_lock(this->mutex);
 
-	this->lock.wait(uniqueLock, [this] {
+	this->lock.wait(*this->uniqueLock, [this] {
 		return !this->waiting || !this->threadRunning;
 	});
 
