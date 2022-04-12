@@ -630,6 +630,7 @@ void PemsaCartridgeModule::saveData() {
 
 void hook(lua_State* L, lua_Debug *ar) {
 	luaL_error(L, "the cart was stopped");
+	printf("stop\n");
 }
 
 void PemsaCartridgeModule::stop() {
@@ -641,18 +642,15 @@ void PemsaCartridgeModule::stop() {
 	this->waiting = false;
 
 	this->lock.notify_all();
-	this->uniqueLock->unlock();
-
-	delete this->uniqueLock;
 }
 
 void PemsaCartridgeModule::waitForNextFrame() {
 	this->callIfExists("__update_menu");
 
 	this->waiting = true;
-	this->uniqueLock = new std::unique_lock(this->mutex);
+	std::unique_lock<std::mutex> uniqueLock(this->mutex);
 
-	this->lock.wait(*this->uniqueLock, [this] {
+	this->lock.wait(uniqueLock, [this] {
 		return !this->waiting || !this->threadRunning;
 	});
 

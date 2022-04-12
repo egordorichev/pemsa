@@ -45,14 +45,13 @@ class PemsaCartridgeModule : public PemsaModule {
 		std::condition_variable lock;
 		std::mutex mutex;
 		std::thread* gameThread;
-		std::unique_lock<std::mutex>* uniqueLock;
 		const char* lastLoaded;
 
 		bool enableSplash;
-		std::atomic_bool waiting;
-		std::atomic_bool threadRunning;
-		std::atomic_bool paused;
-		std::atomic_bool destruct;
+		bool waiting;
+		bool threadRunning;
+		bool paused;
+		bool destruct;
 
 		const char* nextPath;
 		bool onlyLoad;
