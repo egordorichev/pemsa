@@ -26,6 +26,7 @@ void PemsaDrawStateModule::reset() {
 	ram[PEMSA_RAM_CLIP_BOTTOM] = 128;
 
 	ram[PEMSA_RAM_DRAW_COLOR] = 6;
+	ram[PEMSA_RAM_DRAW_MODE] = 0;
 }
 
 bool PemsaDrawStateModule::isTransparent(int color) {

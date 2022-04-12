@@ -440,11 +440,18 @@ PemsaCartridge *PemsaCartridgeModule::getCart() {
 	return this->cart;
 }
 
+void empty_hook(lua_State* L, lua_Debug *ar) {
+
+}
+
 void PemsaCartridgeModule::gameLoop() {
 	this->threadRunning = true;
+	this->waiting = false;
+	this->destruct = false;
 	this->cart->time = 1 / 30.0;
 
 	lua_State* state = this->cart->state;
+	lua_sethook(state, empty_hook, LUA_MASKCOUNT, 1000000000);
 
 	if (!this->enableSplash) {
 		lua_pushboolean(state, true);

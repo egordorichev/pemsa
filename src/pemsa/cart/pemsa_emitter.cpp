@@ -135,6 +135,7 @@ function deli(a, i)
 end
 function __load_splore()
 	__load("splore")
+	__reset_graphics()
 end
 local __menu_options_custom={}
 local __current_option=1

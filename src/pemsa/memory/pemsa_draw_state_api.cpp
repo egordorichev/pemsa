@@ -119,6 +119,11 @@ static int cursor(lua_State* state) {
 	return 0;
 }
 
+static int reset(lua_State* state) {
+	emulator->getDrawStateModule()->reset();
+	return 0;
+}
+
 void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state) {
 	emulator = machine;
 
@@ -129,4 +134,5 @@ void pemsa_open_draw_state_api(PemsaEmulator* machine, lua_State* state) {
 	lua_register(state, "fillp", fillp);
 	lua_register(state, "camera", camera);
 	lua_register(state, "cursor", cursor);
+	lua_register(state, "__reset_graphics", reset);
 }
