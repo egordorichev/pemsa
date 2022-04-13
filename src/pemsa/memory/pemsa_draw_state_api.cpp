@@ -120,7 +120,14 @@ static int cursor(lua_State* state) {
 }
 
 static int reset(lua_State* state) {
+	PemsaMemoryModule* currentMemory = emulator->getMemoryModule();
+
+	emulator->setMemoryModule(emulator->getActualMemoryModule());
 	emulator->getDrawStateModule()->reset();
+	emulator->setMemoryModule(emulator->getSystemMemoryModule());
+	emulator->getDrawStateModule()->reset();
+	emulator->setMemoryModule(currentMemory);
+
 	return 0;
 }
 
