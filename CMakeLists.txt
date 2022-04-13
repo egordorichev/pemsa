@@ -1,8 +1,22 @@
 cmake_minimum_required(VERSION 3.16)
 project(pemsa)
 
+if(WIN32)
+	add_custom_target(write_git_hash
+		${CMAKE_CURRENT_SOURCE_DIR}/get_git_commit.cmd
+		COMMENT "Call batch script for writing git hash"
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	)
+else()
+	add_custom_target(write_git_hash
+		${CMAKE_CURRENT_SOURCE_DIR}/get_git_commit.sh
+		COMMENT "Call shell script for writing git hash"
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	)
+endif()
+
 IF( DEFINED WINDOWS )
-    add_compile_definitions(WINDOWS)
+	add_compile_definitions(WINDOWS)
 ENDIF( DEFINED WINDOWS )
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -31,6 +45,7 @@ add_library(pemsa STATIC src/pemsa/pemsa_emulator.cpp src/pemsa/pemsa_backend.cp
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/lua/ ${CMAKE_CURRENT_SOURCE_DIR}/libs/fixmath/ ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 target_link_libraries(pemsa customlua fixmath)
+add_dependencies(pemsa write_git_hash)
 
 set_target_properties(pemsa PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist/)
 set_target_properties(pemsa PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist/)

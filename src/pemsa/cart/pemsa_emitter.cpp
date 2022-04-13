@@ -1,4 +1,5 @@
 #include "pemsa/cart/pemsa_emitter.hpp"
+#include "pemsa/githash.h"
 #include "fix16.hpp"
 
 #include <sstream>
@@ -288,14 +289,14 @@ if not __skip then
 	wait(5)
 	color(6)
 	cursor(0,18)
-	print("pemsa 0.1")
+	print("pemsa v0.1 )~" + git_hash + std::string(R"~(")
 	wait(5)
 	print("(c) 2014-20 unofficial\n")
 	print("\nbooting catridge...")
 	wait(40)
 	psfx(osfx)
 end
-)~";
+)~");
 
 	std::replace(additionalCode.begin(), additionalCode.end(), '\n', ' ');
 	output << additionalCode;

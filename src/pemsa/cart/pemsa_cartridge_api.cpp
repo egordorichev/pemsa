@@ -138,7 +138,7 @@ static int read_cdata(lua_State* state) {
 	}
 
 	if (line != "__lua__" && line != "__code__") {
-		std::cerr << "No __lua__ mark found as expected\n";
+		std::cerr << "No __lua__ mark found as expected in " << path << "\n";
 		return 0;
 	}
 
