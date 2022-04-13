@@ -124,6 +124,7 @@ static int reset(lua_State* state) {
 
 	emulator->setMemoryModule(emulator->getActualMemoryModule());
 	emulator->getDrawStateModule()->reset();
+	emulator->getAudioModule()->stopAll();
 	emulator->setMemoryModule(emulator->getSystemMemoryModule());
 	emulator->getDrawStateModule()->reset();
 	emulator->setMemoryModule(currentMemory);

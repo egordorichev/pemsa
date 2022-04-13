@@ -202,6 +202,13 @@ void PemsaAudioModule::stop() {
 	}
 }
 
+void PemsaAudioModule::stopAll() {
+	for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+		PemsaAudioChannel *channel = this->channels[i];
+		channel->stop();
+	}
+}
+
 PemsaAudioChannel *PemsaAudioModule::getChannel(int i) {
 	return this->channels[i];
 }

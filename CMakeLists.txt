@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(pemsa)
 
+message(STATUS ${CMAKE_CURRENT_SOURCE_DIR}/get_git_commit.cmd)
+
 if(WIN32)
 	add_custom_target(write_git_hash
 		${CMAKE_CURRENT_SOURCE_DIR}/get_git_commit.cmd

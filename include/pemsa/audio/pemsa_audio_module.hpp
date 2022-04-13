@@ -21,6 +21,7 @@ class PemsaAudioModule : public PemsaModule {
 		void playSfx(int sfx, int channel = -1, int offset = 0, int length = 31);
 		void playMusic(int music);
 		void stop();
+		void stopAll();
 
 		PemsaAudioChannel* getChannel(int i);
 
