@@ -9,6 +9,10 @@ static int music(lua_State* state) {
 		emulator->getAudioModule()->playMusic(n);
 	}
 
+	if (n == -1) {
+		emulator->getAudioModule()->stop();
+	}
+
 	return 0;
 }
 

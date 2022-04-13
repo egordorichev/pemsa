@@ -188,6 +188,20 @@ void PemsaAudioModule::playMusic(int music) {
 	}
 }
 
+void PemsaAudioModule::stop() {
+	if (this->currentMusic != -1) {
+		for (int i = 0; i < PEMSA_CHANNEL_COUNT; i++) {
+			PemsaAudioChannel *channel = this->channels[i];
+
+			if (channel->isPlayingMusic()) {
+				channel->stop();
+			}
+		}
+
+		this->currentMusic = -1;
+	}
+}
+
 PemsaAudioChannel *PemsaAudioModule::getChannel(int i) {
 	return this->channels[i];
 }
