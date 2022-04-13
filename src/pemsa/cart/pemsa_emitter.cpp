@@ -143,6 +143,7 @@ local __menu_on=false
 local __menu_functions={}
 local __favorite=false
 function __update_menu()
+	cls(15)
 	if not btnp(6) and not __menu_on then return end
 
 	local __menu_options={}

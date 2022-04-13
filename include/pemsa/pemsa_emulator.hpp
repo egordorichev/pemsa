@@ -11,7 +11,7 @@
 #include "pemsa/util/pemsa_util.hpp"
 #include "lua.h"
 
-#define PEMSA_MODULE_COUNT 6
+#define PEMSA_MODULE_COUNT 7
 
 class PemsaEmulator {
 	public:
@@ -27,7 +27,11 @@ class PemsaEmulator {
 		PemsaInputModule* getInputModule();
 		PemsaCartridgeModule* getCartridgeModule();
 		PemsaMemoryModule* getMemoryModule();
+		PemsaMemoryModule* getActualMemoryModule();
+		PemsaMemoryModule* getSystemMemoryModule();
 		PemsaDrawStateModule* getDrawStateModule();
+
+		void setMemoryModule(PemsaMemoryModule* module);
 
 		void stop();
 	private:
@@ -38,7 +42,10 @@ class PemsaEmulator {
 		PemsaInputModule* inputModule;
 		PemsaCartridgeModule* cartridgeModule;
 		PemsaMemoryModule* memoryModule;
+		PemsaMemoryModule* systemMemoryModule;
 		PemsaDrawStateModule* drawStateModule;
+
+		PemsaMemoryModule* currentMemoryModule;
 
 		bool* running;
 };

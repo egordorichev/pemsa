@@ -1,6 +1,8 @@
 #include "pemsa/pemsa_emulator.hpp"
 #include "pemsa/util/pemsa_font.hpp"
 
+#include <cstring>
+
 PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *audio, PemsaInputBackend *input, bool* running, bool enableSplash) {
 	this->running = running;
 	pemsa_setup_font();
@@ -13,8 +15,16 @@ PemsaEmulator::PemsaEmulator(PemsaGraphicsBackend *graphics, PemsaAudioBackend *
 	this->modules[1] = (PemsaModule*) (this->audioModule = new PemsaAudioModule(this, audio));
 	this->modules[2] = (PemsaModule*) (this->inputModule = new PemsaInputModule(this, input));
 	this->modules[3] = (PemsaModule*) (this->cartridgeModule = new PemsaCartridgeModule(this, enableSplash));
-	this->modules[4] = (PemsaModule*) (this->memoryModule = new PemsaMemoryModule(this));
+	this->modules[4] = (PemsaModule*) (this->memoryModule = this->currentMemoryModule = new PemsaMemoryModule(this));
 	this->modules[5] = (PemsaModule*) (this->drawStateModule = new PemsaDrawStateModule(this));
+	this->modules[6] = (PemsaModule*) (this->systemMemoryModule = new PemsaMemoryModule(this));
+
+	this->currentMemoryModule = this->systemMemoryModule;
+	this->drawStateModule->reset();
+	this->currentMemoryModule = this->memoryModule;
+
+	// Clear the system screen with pink (color 15), so that it is transparent
+	memset(this->systemMemoryModule->ram + PEMSA_RAM_SCREEN, (15 << 4) + 15, 0x2000);
 }
 
 PemsaEmulator::~PemsaEmulator() {
@@ -49,11 +59,23 @@ PemsaCartridgeModule *PemsaEmulator::getCartridgeModule() {
 }
 
 PemsaMemoryModule *PemsaEmulator::getMemoryModule() {
+	return this->currentMemoryModule;
+}
+
+PemsaMemoryModule *PemsaEmulator::getActualMemoryModule() {
 	return this->memoryModule;
+}
+
+PemsaMemoryModule *PemsaEmulator::getSystemMemoryModule() {
+	return this->systemMemoryModule;
 }
 
 PemsaDrawStateModule *PemsaEmulator::getDrawStateModule() {
 	return this->drawStateModule;
+}
+
+void PemsaEmulator::setMemoryModule(PemsaMemoryModule* module) {
+	this->currentMemoryModule = module;
 }
 
 void PemsaEmulator::reset() {
