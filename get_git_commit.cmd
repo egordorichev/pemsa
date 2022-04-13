@@ -1,5 +1,5 @@
 @echo off
-FOR /F "tokens=* USEBACKQ" %%F IN (`git describe --dirty --always --tags`) DO (
+FOR /F "tokens=* USEBACKQ" %%F IN (`git describe --always --tags`) DO (
 SET var=%%F
 )
 ECHO #ifndef GITHASH_H > include/pemsa/githash.h
