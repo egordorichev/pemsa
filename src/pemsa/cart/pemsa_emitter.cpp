@@ -384,17 +384,31 @@ end
 				}
 
 				char prev = '\0';
+				int i = 0;
 
-				for (int i = start; i < end; i++) {
-					const char* str = token.start + i;
+				for (const char* str = token.start + 1; str < token.start + token.length - 1; i++) {
+					int cplen = 1;
 
-					if (i < end - 1) {
-#define CASE(a, b, c, d, u, e, z) if (str[0] == a && str[1] == b && (str[0] == -53 || (str[2] == c && (str[0] != -16 || str[3] == d)))) { output << "\\" << e; i += (str[0] == -16 ? 3 : (str[0] == -53 ? 1 : 2)); continue; }
-#include "pemsa/cart/pemsa_cases.hpp"
-#undef CASE
+					if ((*str & 0xf8) == 0xf0) {
+						cplen = 4;
+					} else if ((*str & 0xf0) == 0xe0) {
+						cplen = 3;
+					} else if ((*str & 0xe0) == 0xc0) {
+						cplen = 2;
 					}
 
 					char c = *str;
+					str += cplen;
+
+					if (cplen > 1) {
+#define CASE(a, b, c, d, u, e, z) if (str[-cplen] == a && str[-cplen + 1] == b && str[-cplen + 2] == c) { output << "\\" << e; continue; }
+#include "pemsa/cart/pemsa_cases.hpp"
+#undef CASE
+
+						std::cerr << "Unknown char " << std::hex << str[0] << " " << str[1] << " " << str[2] << "\n";
+
+						continue;
+					}
 
 					if (c == '\n') {
 						// \n after [[ and empty line is ignored by lua
