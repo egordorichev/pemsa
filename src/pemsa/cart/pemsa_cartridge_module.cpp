@@ -652,9 +652,9 @@ void PemsaCartridgeModule::stop() {
 }
 
 void PemsaCartridgeModule::waitForNextFrame() {
-	this->emulator->setMemoryModule(this->emulator->getSystemMemoryModule());
+	// this->emulator->setMemoryModule(this->emulator->getSystemMemoryModule());
 	this->callIfExists("__update_menu");
-	this->emulator->setMemoryModule(this->emulator->getActualMemoryModule());
+	// this->emulator->setMemoryModule(this->emulator->getActualMemoryModule());
 
 	this->waiting = true;
 	std::unique_lock<std::mutex> uniqueLock(this->mutex);

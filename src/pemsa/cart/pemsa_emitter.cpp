@@ -144,7 +144,6 @@ local __menu_on=false
 local __menu_functions={}
 local __favorite=false
 function __update_menu()
-	cls(15)
 	if not btnp(6) and not __menu_on then return end
 
 	local __menu_options={}
@@ -386,7 +385,7 @@ end
 				char prev = '\0';
 				int i = 0;
 
-				for (const char* str = token.start + 1; str < token.start + token.length - 1; i++) {
+				for (const char* str = token.start + start; str < token.start + end; i++) {
 					int cplen = 1;
 
 					if ((*str & 0xf8) == 0xf0) {
@@ -412,7 +411,7 @@ end
 
 					if (c == '\n') {
 						// \n after [[ and empty line is ignored by lua
-						if (!multiline || i != start) {
+						if (!multiline || i != 0) {
 							output << "\\n";
 						}
 
