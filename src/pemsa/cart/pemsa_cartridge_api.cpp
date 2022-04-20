@@ -71,14 +71,16 @@ static int list_carts(lua_State* state) {
 	lua_newtable(state);
 	int i = 1;
 
-	for (const auto & entry : fs::directory_iterator("./")) {
+	for (const auto & entry : fs::recursive_directory_iterator("./")) {
 		if (entry.is_directory() || entry.path().extension() != ".p8") {
 			continue;
 		}
 
-		auto stem = entry.path().stem();
+		auto p = entry.path();
+		auto stem = p.replace_extension().string();
+		stem = stem.substr(2, stem.length() - 1);
 
-		if (stem.compare("splore") == 0) {
+		if (stem == "splore") {
 			continue;
 		}
 
